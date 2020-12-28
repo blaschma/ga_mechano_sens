@@ -1,0 +1,27 @@
+
+
+
+#make dirs
+mkdir disp_pos
+cd disp_pos
+cp $helper_files/run_disp.sh ./
+mkdir 0000
+cd 0000
+cp ../../coord ./
+cp ../../limits ./
+define < $build_calc_file
+cd ..
+sbatch run_disp-sh #all the variables
+cd ..
+
+mkdir disp_neg
+cd disp_neg
+cp $helper_files/run_disp.sh ./
+mkdir 0000
+cd 0000
+cp ../../coord ./
+cp ../../limits ./
+define < $build_calc_file
+cd ..
+sbatch run_disp-sh #all the variables
+cd ..
