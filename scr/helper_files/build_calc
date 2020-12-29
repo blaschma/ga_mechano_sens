@@ -1,0 +1,32 @@
+
+
+a coord
+*
+no
+*
+eht
+y
+0
+y
+no
+scf
+shift
+no
+0.1
+
+iter
+2000
+damp
+2.7
+
+
+
+dft
+on
+func pbe
+grid 4
+*
+ri
+on
+*
+*

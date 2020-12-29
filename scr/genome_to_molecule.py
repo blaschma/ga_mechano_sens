@@ -7,6 +7,7 @@ import configparser
 import os
 import os.path
 from os import path
+import subprocess
 
 Genome = List[int]
 Point = namedtuple("Point", ['x','y', 'z'])
@@ -114,7 +115,7 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 			raise ValueError("coupling seems to be funny")
 		return coupling_index, coupling_angle
 
-	def write_file_parts_to_file(xyz_file_parts, path, fixed_beginning, fixed_end):
+	def write_file_parts_to_file(xyz_file_parts, path, fixed_beginning, fixed_end, config_path):
 		"""
 		write xyz file parts to proper xyz file and turbomole coord file 
 
@@ -129,7 +130,7 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 		"""
 		#load ang to bohr factor
 		cfg = configparser.ConfigParser()
-		cfg.read("../config")
+		cfg.read(config_path)
 		ang2Bohr = float(cfg.get('Building Procedure', 'ang2Bohr'))
 
 		file_xyz = open(path+"/coord.xyz", "w")
@@ -306,7 +307,7 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 
 
 	#write xyz_file_parts to xyz file
-	write_file_parts_to_file(xyz_file_parts, xyz_file_path, fixed_beginning, fixed_end)	
+	write_file_parts_to_file(xyz_file_parts, xyz_file_path, fixed_beginning, fixed_end, config_path)	
 
 		
 def load_building_blocks(path):
@@ -327,7 +328,7 @@ def load_building_blocks(path):
 	return building_blocks
 
 			
-def process_genome(generation : int, individual: int, genome:Genome):
+def process_genome(generation : int, individual: int, genome:Genome, run_path):
 		"""
 		translates genome to xyz file. xyz file will be stored in $data/generation/individual and stretching and other calculations will be invoked
 
@@ -335,15 +336,22 @@ def process_genome(generation : int, individual: int, genome:Genome):
 			param1 (int) : generation
 			param2 (int) : individual in generation
 			param3 (Genome): genome to process
+			param4 (String): path of current run
 		Returns:
 			int : success (0), failure (-1)
 		"""		
+		#set up config path
+		config_path = run_path + "/config"
+
 
 		#check where building blocks are stored and generation data should be stored
 		cfg = configparser.ConfigParser()
-		cfg.read("../config")
+		cfg.read(config_path)
+		#TODO: set up correctly
 		building_block_path = cfg.get('Building Procedure', 'building_block_path')
-		generation_data_path = cfg.get('Building Procedure', 'generation_data_path')
+		generation_data_path = run_path + "/" + cfg.get('Building Procedure', 'generation_data_path')
+		print("-.-.-.-.-.-.-.-.-")
+		print(generation_data_path)
 
 		#create directories for calculations  
 		calc_path = generation_data_path + "/" + str(generation)
@@ -360,7 +368,13 @@ def process_genome(generation : int, individual: int, genome:Genome):
 		
 		#load building blocks
 		building_blocks = load_building_blocks("test")	
-		construction_loop(genome, building_blocks, "../config", calc_path)
+
+		#construct molecule from genome
+		construction_loop(genome, building_blocks, config_path, calc_path)
+
+		#run next step -> invoke turbomole calculations
+		set_up_turbo_calculations_path = cfg.get('Basics', 'helper_files') + "/set_up_turbo_calculations.sh"		
+		os.system(set_up_turbo_calculations_path+" "+calc_path+" "+config_path + " " + str(generation) + " " + str(individual))
 
 
 
@@ -370,12 +384,12 @@ if __name__ == '__main__':
 	napthtalene = Building_Block(abbrev="N", num_atoms=18,origin=0, para_pos=12, para_angle=0., meta_pos=11 , meta_angle = -np.pi/3., ortho_pos=10, ortho_angle=-2.*np.pi/3, fixed_left=-1, path="../building_blocks_xyz/naphtalene.xyz")
 	dbPc1 = Building_Block(abbrev="dbPc1", num_atoms=32,origin=12, para_pos=1, para_angle=0, meta_pos=0 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left=-1, path="../building_blocks_xyz/dbPc1_block.xyz")
 	building_blocks = [benzene,napthtalene,dbPc1]
-	genome = [2,0,2,0,0]
+	genome = [0,0,0]
 
 
 	#construction_loop(genome, building_blocks, "../config", "./output.xyz")
 
-	process_genome(0,1,[2,0,2,0,0])
+	process_genome(0,1,[0,0,0],"/alcc/gpfs2/home/u/blaschma/test/")
 
 
 	"""
