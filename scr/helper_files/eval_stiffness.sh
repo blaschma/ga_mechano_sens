@@ -104,5 +104,6 @@ cd ..
 cd $start_dir
 num_atoms=$(wc -l < ../coord)
 
-python3 $helper_files/plot_totalEnergy_single.py ../$2 $num_atoms
+#now all the evaluation is done
+python3 $helper_files/eval_stiffness.py ../$2 $num_atoms
 

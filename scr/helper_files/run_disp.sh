@@ -92,16 +92,24 @@ if [ "$parent" = "disp_neg" ]; then
    touch ../DISP_NEG_DONE
 fi
 
-#if calc for pos and neg displacement are ready
+#generation_individual
+filename=$(basename ${PWD%/*/*})_$(basename ${PWD%/*})
+
+#if calc for pos and neg displacement are ready -> evaluation
 file=../DISP_POS_DONE
 if test -f "$file"; then
     file=../DISP_NEG_DONE
     if test -f "$file"; then
-        echo $(basename ${PWD%/*/*})
-        echo $(basename ${PWD%/*})
-        filename=$(basename ${PWD%/*/*})_$(basename ${PWD%/*})
-        echo $filename
-        . $helper_files/collect_total_energy.sh $(basename ${PWD%/*}) $filename $config_file
+        echo "now evaluate everything"
+        #all the evaluation scripts
+        . $helper_files/eval_stiffness.sh $(basename ${PWD%/*}) $filename $config_file
+
+
+        #now everything is done
+        echo "i reached the end...tell everyone"
+        touch ../../${filename}_DONE
     fi
 fi
+
+
 
