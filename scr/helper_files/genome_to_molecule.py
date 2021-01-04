@@ -327,7 +327,8 @@ def load_building_blocks(path):
 
 	return building_blocks
 
-			
+
+		
 def process_genome(generation : int, individual: int, genome:Genome, run_path):
 		"""
 		translates genome to xyz file. xyz file will be stored in $data/generation/individual and stretching and other calculations will be invoked
