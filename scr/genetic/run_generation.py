@@ -46,7 +46,7 @@ def run_generation(generation : int, config_path, calculation_path):
 
 	#first generation
 	if(generation == 0):
-		population, fitness_value = ga.run_generation(
+		population = ga.run_generation(
 		populate_func=partial(
 			ev.generate_population, size=population_size, genome_length=genome_length
 			),
@@ -58,11 +58,15 @@ def run_generation(generation : int, config_path, calculation_path):
 		fitness_limit=5,
 		generation_limit=generation_limit,
 		population_size=population_size,
-		generation=generation)
+		generation=generation,
+		fitness_value=0)
+
 	#every other generation
 	else:
-		population = read_population(config_path, calculation_path)
-		population, fitness_value = ga.run_generation(
+		#generation-1 because prevois generation should be read
+		population, fitness_value = read_population(generation-1,config_path, calculation_path)
+		print(fitness_value)
+		population = ga.run_generation(
 		populate_func=partial(
 			ev.generate_population, size=population_size, genome_length=genome_length
 			),
@@ -74,15 +78,16 @@ def run_generation(generation : int, config_path, calculation_path):
 		fitness_limit=5,
 		generation_limit=generation_limit,
 		population_size=population_size,
-		generation=generation)
+		generation=generation,
+		fitness_value=fitness_value)
 
 
 
 		#print(population)
 		#print(fitness_value)
-	write_generation(population, fitness_value, generation, config_path, calculation_path)
+	write_generation(population,generation, config_path, calculation_path)
 
-def write_generation(population, fitness_value,generation, config_path, calculation_path):
+def write_generation(population, generation, config_path, calculation_path):
 	"""
     write current generation to calculation_path/current_generation.dat and to generation_data/generation/generation_summary.dat.
     First file contains only information about the population. The second file contains the fittness value, too. In addition a file 
@@ -90,10 +95,9 @@ def write_generation(population, fitness_value,generation, config_path, calculat
 
     Args:
     		param1 (Population) : population to write
-    		param2 (List(float)) : Fittness values
-    		param3 (int) : Generation
-            param4 (String) : Path to config file
-            param5 (String) : Path to calculation              
+    		param2 (int) : Generation
+            param3 (String) : Path to config file
+            param4 (String) : Path to calculation              
     Returns:
             
     """
@@ -112,34 +116,57 @@ def write_generation(population, fitness_value,generation, config_path, calculat
 		
 	for i in range(0, len(population)):		
 		first_file.write(str(population[i]).replace('[', "").replace("]", "")+ "\n")
-		second_file.write(str(fitness_value[i]) + "		" + str(population[i]).replace('[', "").replace("]", "")+ "\n")
-	
+		#second_file.write(str(fitness_value[i]) + "		" + str(population[i]).replace('[', "").replace("]", "")+ "\n")
+		second_file.write(str(population[i]).replace('[', "").replace("]", "")+ "\n")
+
 	generation_file.write(str(generation))
 	generation_file.close()
 
 	first_file.close()
 	second_file.close()
 
-def read_population(config_path, calculation_path):
+def read_population(generation, config_path, calculation_path):
 	"""
-    read current generation from calculation path
+    read current generation individuals and their fitness from calculation path
 
     Args:
-		param1 (String) : Path to config file
-		param2 (String) : Path to calculation              
+    	param1 (int) : number of generation which should be read
+		param2 (String) : Path to config file
+		param3 (String) : Path to calculation              
     Returns:
+    	(population, fitness_values)
             
     """
-	filename = calculation_path + "/curr_population.dat"	
-	file = open(filename)
+	try:
+		filename_population = calculation_path + "/curr_population.dat"	
+		file_population = open(filename_population)
+		filename_fitness = calculation_path + "/generation_data/" + str(generation) + "/fitness.dat"	
+		file_fitness = open(filename_fitness)
+	except OSError as e:
+		print("Cannot open file " + str(e))
+		return -1,-1
+
+	#read population
 	population = list()
-	for line in file:
+	for line in file_population:
 		#print(line)
 		tmp = line.strip().split(", ")
 		tmp = [int(tmp[i]) for i in range(0,len(tmp))]
 		population.append(tmp)
 
-	return population
+	#read fitness values
+	fitness_value = list()
+	for line in file_fitness:
+		#print(line)
+		try:
+			tmp = float(line)
+		except ValueError as e:
+			print("Faulty fitness file " + str(e))
+			return -1,-1
+		fitness_value.append(tmp)
+		
+
+	return population, fitness_value
 
 def next_generation(config_path, calculation_path):
 	"""
@@ -159,6 +186,13 @@ def next_generation(config_path, calculation_path):
 
 	except (OSError,ValueError) as e:
 		print("generation file cannot be found or generation file is faulty " + str(e))
+
+
+	#check if generation was correctly processed
+	file_to_check = calculation_path + "/generation_data/" + str(generation) + "/fitness.dat"
+	if(os.path.exists(file_to_check) == False):
+		print("Generation " + str(generation) + " was not processed correctly")
+		return -1
 
 	#increase number of genrations
 	generation += 1

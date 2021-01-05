@@ -87,19 +87,22 @@ def run_generation(
 		fitness_limit: int,
 		generation_limit: int,
 		population_size:int,
-		generation: int
+		generation: int,
+		fitness_value
 	) :
 	#list of fitness_values
 
-	fitness_value = list()
+	
 
 	#initialize first population
 	if(generation == 0):
-		population = populate_func()	
+		population = populate_func()
+		#invoke fitness evaluation
+		for i in range(0, population_size):
+			fitness_func(population[i],generation,i)
+		return population
 
-	#evaluate pupulation
-	fitness_value = [fitness_func(population[i],generation,i) for i in range(0,population_size)]
-	print("fitness_value " + str(fitness_value))
+
 	#sort population
 	zipped_lists = zip(fitness_value, population)
 	sorted_pairs = sorted(zipped_lists, reverse=True)
@@ -130,5 +133,5 @@ def run_generation(
 		next_generation += [offspring_a, offspring_b]
 	population = next_generation
 	
-	return population, fitness_value
+	return population
 
