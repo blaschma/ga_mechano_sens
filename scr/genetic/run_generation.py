@@ -7,6 +7,7 @@ import sys
 import genetic_algorithm as ga
 from functools import partial
 
+
 def run_generation(generation : int, config_path, calculation_path):
 	"""
     Runs evolution. Inits calculation dirs and invokes evaluation of first generation
@@ -186,6 +187,14 @@ def next_generation(config_path, calculation_path):
 
 	except (OSError,ValueError) as e:
 		print("generation file cannot be found or generation file is faulty " + str(e))
+
+	#check if generation limit is reached
+	cfg = configparser.ConfigParser()
+	cfg.read(config_path)
+	generation_limit = int(cfg.get('Genetic Algorithm', 'generation_limit'))
+	if(generation>=generation_limit):
+		print("Generation limit reached")
+		return 0
 
 
 	#check if generation was correctly processed

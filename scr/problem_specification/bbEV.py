@@ -70,7 +70,7 @@ class bbEv(evaluation_methods.Evaluation):
 
 	def fitness(self, genome: Genome, generation: int, individual: int) -> float:
 		
-		#gtm.process_genome(generation,individual,genome,"/alcc/gpfs2/home/u/blaschma/test/")
+		gtm.process_genome(generation,individual,genome,"/alcc/gpfs2/home/u/blaschma/test/")
 		return random()
 
 
