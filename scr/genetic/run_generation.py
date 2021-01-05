@@ -84,8 +84,9 @@ def run_generation(generation : int, config_path, calculation_path):
 
 def write_generation(population, fitness_value,generation, config_path, calculation_path):
 	"""
-    write current generation to calculation_path/current_generation-dat and to generation_data/generation/generation_summary.dat.
-    First file contains only information about the population. The second file contains the fittness value, too.
+    write current generation to calculation_path/current_generation.dat and to generation_data/generation/generation_summary.dat.
+    First file contains only information about the population. The second file contains the fittness value, too. In addition a file 
+    calculation_path/generation.dat which contains the current number of generations
 
     Args:
     		param1 (Population) : population to write
@@ -101,6 +102,7 @@ def write_generation(population, fitness_value,generation, config_path, calculat
 		first_file_path = calculation_path + "/curr_population.dat"
 		second_file_path = calculation_path + "/generation_data/" + str(generation)
 		first_file = open(first_file_path, "w")
+		generation_file = open(calculation_path + "/generation.dat", "w")
 		if(path.exists(second_file_path) == False):
 			os.mkdir(second_file_path)	
 		second_file = open(second_file_path + "/summary.dat", "w")	
@@ -111,6 +113,10 @@ def write_generation(population, fitness_value,generation, config_path, calculat
 	for i in range(0, len(population)):		
 		first_file.write(str(population[i]).replace('[', "").replace("]", "")+ "\n")
 		second_file.write(str(fitness_value[i]) + "		" + str(population[i]).replace('[', "").replace("]", "")+ "\n")
+	
+	generation_file.write(str(generation))
+	generation_file.close()
+
 	first_file.close()
 	second_file.close()
 
@@ -119,11 +125,8 @@ def read_population(config_path, calculation_path):
     read current generation from calculation path
 
     Args:
-    		param1 (Population) : population to write
-    		param2 (List(float)) : Fittness values
-    		param3 (int) : Generation
-            param4 (String) : Path to config file
-            param5 (String) : Path to calculation              
+		param1 (String) : Path to config file
+		param2 (String) : Path to calculation              
     Returns:
             
     """
@@ -138,17 +141,39 @@ def read_population(config_path, calculation_path):
 
 	return population
 
+def next_generation(config_path, calculation_path):
+	"""
+    Invokes the next generation. The number of generation is read from calculation_path/generation.dat
 
+    Args:
+    	param1 (String) : Path to config file
+		param2 (String) : Path to calculation              
+    Returns:
+            
+    """
+	try:
+		filename = calculation_path + "/generation.dat"	
+		file = open(filename)
+		for line in file:
+			generation = int(line)
 
+	except (OSError,ValueError) as e:
+		print("generation file cannot be found or generation file is faulty " + str(e))
+
+	#increase number of genrations
+	generation += 1
+	run_generation(generation, config_path, calculation_path)
 
 
 if __name__ == '__main__':
-	config_path= "C:/Users/bergb/OneDrive/Studium/Master/Masterarbeit/Code/genetic_algorithm/genetic_algorithm/test/config"
-	calculation_path = "C:/Users/bergb/OneDrive/Studium/Master/Masterarbeit/Code/genetic_algorithm/genetic_algorithm/test/"
+	#config_path= "C:/Users/bergb/OneDrive/Studium/Master/Masterarbeit/Code/genetic_algorithm/genetic_algorithm/test/config"
+	#calculation_path = "C:/Users/bergb/OneDrive/Studium/Master/Masterarbeit/Code/genetic_algorithm/genetic_algorithm/test/"
+	config_path = "/alcc/gpfs2/home/u/blaschma/test/config"
+	calculation_path = "/alcc/gpfs2/home/u/blaschma/test/"
 	#for i in range(0,10000):
-	#run_generation(0, config_path, calculation_path)
+	run_generation(0, config_path, calculation_path)
 	#print(population)
-	#run_generation(2, config_path, calculation_path)
+	next_generation(config_path, calculation_path)
 	#read_population(config_path, calculation_path)
 
 
