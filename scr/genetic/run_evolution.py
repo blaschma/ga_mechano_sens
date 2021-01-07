@@ -5,22 +5,20 @@ from os import path
 import run_generation as rg
 
 def run_evolution(config_path, calculation_path):
-    """
-    Runs evolution. Inits calculation dirs and invokes evaluation of first generation
+	"""
+	Runs evolution. Inits calculation dirs and invokes evaluation of first generation
 
-    Args:
-            param1 (String) : Path to config file
-            param2 (String) : Path to calculation
-            
-            
+	Args:
+		param1 (String) : Path to config file
+		param2 (String) : Path to calculation
 
-    Returns:
-            error codes (int)
-    """
-    #check config file
-    if(path.exists(config_path) == False):
-    	print("Faulty config file")
-    	return -1
+	Returns:
+		error codes (int)
+	"""
+	#check config file
+	if(path.exists(config_path) == False):
+		print("Faulty config file")
+		return -1
 
 
 	generation_data_path = calculation_path + "/" "generation_data"
@@ -37,3 +35,7 @@ def run_evolution(config_path, calculation_path):
 
 	rg.run_generation(0, config_path, calculation_path)
 
+if __name__ == '__main__':
+	config_path = "/alcc/gpfs2/home/u/blaschma/test/config"
+	calculation_path = "/alcc/gpfs2/home/u/blaschma/test/"
+	run_evolution(config_path, calculation_path)

@@ -315,14 +315,14 @@ def load_building_blocks(path):
 	load building blocks and set up Building_Block objects
 
 	Args:
-		param1 (path) : path to building blocks
+		param1 (path) : path to dir where building_blocks are located
 	Returns:
 		list(Building_Block)
 	"""		
 	#TODO : automatization
-	benzene = Building_Block(abbrev="B", num_atoms=6,origin=0, para_pos=3, para_angle=0, meta_pos=4 , meta_angle = -np.pi/3., ortho_pos=5, ortho_angle=-2.*np.pi/3, fixed_left = -1, path="../../building_blocks_xyz/benzene.xyz")
-	napthtalene = Building_Block(abbrev="N", num_atoms=18,origin=0, para_pos=12, para_angle=0., meta_pos=11 , meta_angle = -np.pi/3., ortho_pos=10, ortho_angle=-2.*np.pi/3, fixed_left = -1, path="../../building_blocks_xyz/naphtalene.xyz")
-	dbPc1 = Building_Block(abbrev="dbPc1", num_atoms=32,origin=12, para_pos=1, para_angle=0, meta_pos=0 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1, path="../../building_blocks_xyz/dbPc1_block.xyz")
+	benzene = Building_Block(abbrev="B", num_atoms=6,origin=0, para_pos=3, para_angle=0, meta_pos=4 , meta_angle = -np.pi/3., ortho_pos=5, ortho_angle=-2.*np.pi/3, fixed_left = -1, path=path+"/benzene.xyz")
+	napthtalene = Building_Block(abbrev="N", num_atoms=18,origin=0, para_pos=12, para_angle=0., meta_pos=11 , meta_angle = -np.pi/3., ortho_pos=10, ortho_angle=-2.*np.pi/3, fixed_left = -1, path=path+"/naphtalene.xyz")
+	dbPc1 = Building_Block(abbrev="dbPc1", num_atoms=32,origin=12, para_pos=1, para_angle=0, meta_pos=0 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1, path=path+"/dbPc1_block.xyz")
 	building_blocks = [benzene,napthtalene,dbPc1]
 
 	return building_blocks
@@ -368,7 +368,7 @@ def process_genome(generation : int, individual: int, genome:Genome, run_path):
 		    return -1
 		
 		#load building blocks
-		building_blocks = load_building_blocks("test")	
+		building_blocks = load_building_blocks(building_block_path)	
 
 		#construct molecule from genome
 		construction_loop(genome, building_blocks, config_path, calc_path)

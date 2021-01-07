@@ -112,9 +112,11 @@ if test -f "$file"; then
 fi
 
 #check if calculations of all individuals are ready
-num_finished = ls -1f | grep _DONE | wc -l 
-if $num_finished -eq $population_size; then
+num_finished=$(ls ../../ -1f | grep _DONE | wc -l) 
+if [ "$num_finished" -eq "$population_size" ]; then
     echo "Everybody seems to be ready"
-    python3 $genetic_algorithm_path/genetic/invoke_next_generation.py $config_file "/alcc/gpfs2/home/u/blaschma/test/"
+    #/alcc/gpfs2/home/u/blaschma/Master_Code/genetic_algorithm/scr/genetic/invoke_next_generation.py
+    python3 $genetic_algorithm_path/scr/genetic/invoke_next_generation.py $config_file "/alcc/gpfs2/home/u/blaschma/test/"
+fi
 
 

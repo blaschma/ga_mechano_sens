@@ -30,10 +30,12 @@ def run_generation(generation : int, config_path, calculation_path):
 	generation_limit = int(cfg.get('Genetic Algorithm', 'generation_limit'))	
 	genome_length = int(cfg.get('Genetic Algorithm', 'genome_length'))	 
 	evaluation_methods_path = cfg.get('Genetic Algorithm', 'evaluation_methods_path')
+	genetic_algorithm_path = cfg.get('Basics', 'genetic_algorithm_path')
 
 	#check if default setting for evaluation methods
 	if(evaluation_methods_path == "default"):
-		#sys.path.insert(1, '../problem_specification/')
+		#make sure problem_specification path is found
+		sys.path.append(os.path.realpath(genetic_algorithm_path + "/scr/"))
 		sys.path.append(os.path.realpath('..'))
 		from problem_specification import bbEV 
 		ev = bbEV.bbEv(generation, 0) #-> todo individual processing

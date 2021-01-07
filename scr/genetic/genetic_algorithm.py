@@ -132,6 +132,10 @@ def run_generation(
 		#add offspring to generation
 		next_generation += [offspring_a, offspring_b]
 	population = next_generation
+
+	#invoke evaluation of  new population
+	for i in range(0, population_size):
+		fitness_func(population[i],generation,i)
 	
 	return population
 
