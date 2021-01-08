@@ -206,6 +206,7 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 	cfg.read(config_path)
 	cc_bond_length = float(cfg.get('Building Procedure', 'CC_bond_lengt'))
 	conjugation_angle_from_file = float(cfg.get('Building Procedure', 'conjugation_angle'))
+	building_block_path = cfg.get('Building Procedure', 'building_block_path')
 	#conjugation_angle_from_file = 0.0
 
 	#ensure that genome is not empty
@@ -213,6 +214,20 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 		print("Genome was emtpy")
 		# TODO: proper treatment
 
+	print(genome)
+	#add anchor to end -> couplings are missing 
+	#add left anchor
+	anchor_left, anchor_right = load_anchors_blocks(building_block_path)
+	building_blocks.append(anchor_left)
+	#para coupling
+	genome.insert(0, 0)
+	genome.insert(0, len(building_blocks)-1)
+	#add right anchor
+	building_blocks.append(anchor_right)
+	#para coupling
+	genome.append(0)
+	genome.append(len(building_blocks)-1)
+	print(genome)
 	#data content of every part of xyz file is stored in this list	
 	xyz_file_parts = list()
 
@@ -327,6 +342,23 @@ def load_building_blocks(path):
 
 	return building_blocks
 
+def load_anchors_blocks(path):
+	"""
+	load anchor blocks and set up Building_Block objects.
+
+	Args:
+		param1 (path) : path to dir where anchors are located
+	Returns:
+		list(Building_Block)
+	"""		
+	#TODO : automatization
+	left = Building_Block(abbrev="l", num_atoms=12,origin=6, para_pos=0, para_angle=0, meta_pos=1 , meta_angle = -np.pi/3., ortho_pos=2, ortho_angle=-2.*np.pi/3, fixed_left = 6, path=path+"/anchor_left.xyz")
+	right = Building_Block(abbrev="r", num_atoms=12,origin=0, para_pos=6, para_angle=0., meta_pos=11 , meta_angle = -np.pi/3., ortho_pos=10, ortho_angle=-2.*np.pi/3, fixed_left = -1, path=path+"/anchor_right.xyz")
+	
+	anchors = [left,right]
+
+	return anchors
+
 
 		
 def process_genome(generation : int, individual: int, genome:Genome, run_path):
@@ -390,7 +422,7 @@ if __name__ == '__main__':
 
 	#construction_loop(genome, building_blocks, "../config", "./output.xyz")
 
-	process_genome(0,1,[0,0,0],"/alcc/gpfs2/home/u/blaschma/test/")
+	process_genome(0,1,[0],"/alcc/gpfs2/home/u/blaschma/test/")
 
 
 	"""
