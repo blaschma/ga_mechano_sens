@@ -23,14 +23,14 @@ def process_block_to_add(coupling_point: Point, coupling_angle :  Angle, conjuga
 	Adds block_to_add to left_block. Method takes care of right alignment, shifting and rotation of block_to_add.
 
 	Args:
-		param1 (Point) : coupling point
-		param2 (Angle) : coupling angle
-		param3 (Angle) : conjugation angle
-		param4 (float) : c-c bond length (Angstrom)
-		param5 (Building_Block) : block to be added
+		param1 (Point): coupling point
+		param2 (Angle): coupling angle
+		param3 (Angle): conjugation angle
+		param4 (float): c-c bond length (Angstrom)
+		param5 (Building_Block): block to be added
 
 	Returns:
-		np.ndarray ([atom/x/y/z, line])
+		np.ndarray: ([atom/x/y/z, line])
 
 	"""
 
@@ -76,7 +76,7 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 	Construction loop Genome -> proper xyz file
 
 	Args:
-		param1 (Genome) : Genome to build
+		param1 (Genome): Genome to build
 
 	Returns:
 		
@@ -87,11 +87,11 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 		determines coupling index (atom and corresponding line in xyz file of building block refered in genome[index]) and coupling angle
 
 		Args:
-			param1 (Genome) : Genome to build
-			param2 (int) : index which block is processed and used as coupling point. Must be even -> odd indices are couplings
+			param1 (Genome): Genome to build
+			param2 (int): index which block is processed and used as coupling point. Must be even -> odd indices are couplings
 
 		Returns:
-			(int,float) : corresponding line in xyz file of building block refered in genome[index], coupling angle
+			(int,float): corresponding line in xyz file of building block refered in genome[index], coupling angle
 
 		"""
 		if(index > len(genome)-2 or index < 0):
@@ -120,10 +120,10 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 		write xyz file parts to proper xyz file and turbomole coord file 
 
 		Args:
-			param1 (List of np.ndarray) : List of xyz files
-			param2 (String) : path
-			param3 (int) : fixed_beginning (index of atom in first block which should be fixed)
-			param4 (int) : fixed_end (index of atom in last block which should be fixed)
+			param1 (List of np.ndarray): List of xyz files
+			param2 (String): path
+			param3 (int): fixed_beginning (index of atom in first block which should be fixed)
+			param4 (int): fixed_end (index of atom in last block which should be fixed)
 		Returns:
 			
 
@@ -184,8 +184,8 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 		determines nearest neghbour of atom with index coupling index in dat content of atom type atom_type
 
 		Args:
-			param1 (List of np.ndarray) : List of xyz files
-			param2 (int) : coupling_inxex
+			param1 (List of np.ndarray): List of xyz files
+			param2 (int): coupling_inxex
 			param3 (string): atom_type of nearest neighbour
 		Returns:
 			int : index of nearest neighbour
@@ -330,7 +330,7 @@ def load_building_blocks(path):
 	load building blocks and set up Building_Block objects
 
 	Args:
-		param1 (path) : path to dir where building_blocks are located
+		param1 (path): path to dir where building_blocks are located
 	Returns:
 		list(Building_Block)
 	"""		
@@ -347,7 +347,7 @@ def load_anchors_blocks(path):
 	load anchor blocks and set up Building_Block objects.
 
 	Args:
-		param1 (path) : path to dir where anchors are located
+		param1 (path): path to dir where anchors are located
 	Returns:
 		list(Building_Block)
 	"""		
@@ -366,8 +366,8 @@ def process_genome(generation : int, individual: int, genome:Genome, run_path):
 		translates genome to xyz file. xyz file will be stored in $data/generation/individual and stretching and other calculations will be invoked
 
 		Args:
-			param1 (int) : generation
-			param2 (int) : individual in generation
+			param1 (int): generation
+			param2 (int): individual in generation
 			param3 (Genome): genome to process
 			param4 (String): path of current run
 		Returns:
