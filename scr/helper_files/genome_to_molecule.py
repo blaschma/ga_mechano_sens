@@ -198,7 +198,7 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 				distance = (float(datContent[1,i])-float(datContent[1,coupling_index]))**2+(float(datContent[2,i])-float(datContent[2,coupling_index]))**2+(float(datContent[3,i])-float(datContent[3,coupling_index]))**2			
 				intersting_atoms_distance.append(distance)
 		intersting_atoms = [x for _,x in sorted(zip(intersting_atoms_distance,intersting_atoms))]
-
+		print("interesting neighbour " + str(intersting_atoms[0]))
 		return intersting_atoms[0]
 
 	#load properties from config file 
@@ -277,7 +277,9 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 
 
 
-
+			#determine index of atom at origin
+			origin = building_blocks[genome[i]].origin
+			print("old origin " + str(origin))
 
 			#if other block will be added -> hydrogen at c coupling atom must be removed
 			if(i != len(genome)-1):				
@@ -290,7 +292,9 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 				
 
 				#remove hydrogen or other atom bonded to coupling atom
-				nearest_neighbour = determine_nearest_neighbour(datContent, coupling_index, "H")								
+				print("remove coupling hydrogen")
+				nearest_neighbour = determine_nearest_neighbour(datContent, coupling_index, "H")
+				print("genome " + str(genome[i]))								
 				datContent = np.delete(datContent,nearest_neighbour,1)
 				
 				#update coupling index and fixed beginning
@@ -298,12 +302,17 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 					coupling_index -= 1
 					if(i == 0 and fixed_beginning>nearest_neighbour):
 						fixed_beginning -=1
+				#update origin
+				if(origin>nearest_neighbour):
+					origin -=1
+					print("new origin "  + str(origin))
+
 
 			#hydrogen bonded to C atom at origin must be removed, too (except for first atom)
 			if(i != 0):						
-				#determine index of atom at origin
-				origin = building_blocks[genome[i]].origin
+				
 				#remove hydrogen or other atom bonded to atom at origin
+				print("remove origin hydrogen with origin " + str(origin))
 				nearest_neighbour = determine_nearest_neighbour(datContent, origin, "H")				
 				datContent = np.delete(datContent,nearest_neighbour,1)
 				#update coupling index and fixed ending
@@ -337,7 +346,7 @@ def load_building_blocks(path):
 	#TODO : automatization
 	benzene = Building_Block(abbrev="B", num_atoms=6,origin=0, para_pos=3, para_angle=0, meta_pos=4 , meta_angle = -np.pi/3., ortho_pos=5, ortho_angle=-2.*np.pi/3, fixed_left = -1, path=path+"/benzene.xyz")
 	napthtalene = Building_Block(abbrev="N", num_atoms=18,origin=0, para_pos=12, para_angle=0., meta_pos=11 , meta_angle = -np.pi/3., ortho_pos=10, ortho_angle=-2.*np.pi/3, fixed_left = -1, path=path+"/naphtalene.xyz")
-	dbPc1 = Building_Block(abbrev="dbPc1", num_atoms=32,origin=12, para_pos=1, para_angle=0, meta_pos=0 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1, path=path+"/dbPc1_block.xyz")
+	dbPc1 = Building_Block(abbrev="dbPc1", num_atoms=32,origin=13, para_pos=1, para_angle=0, meta_pos=0 , meta_angle = +np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1, path=path+"/dbPc1_block.xyz")
 	building_blocks = [benzene,napthtalene,dbPc1]
 
 	return building_blocks
@@ -415,14 +424,14 @@ def process_genome(generation : int, individual: int, genome:Genome, run_path):
 if __name__ == '__main__':
 	benzene = Building_Block(abbrev="B", num_atoms=6,origin=0, para_pos=3, para_angle=0, meta_pos=4 , meta_angle = -np.pi/3., ortho_pos=5, ortho_angle=-2.*np.pi/3, fixed_left=-1, path="../building_blocks_xyz/benzene.xyz")
 	napthtalene = Building_Block(abbrev="N", num_atoms=18,origin=0, para_pos=12, para_angle=0., meta_pos=11 , meta_angle = -np.pi/3., ortho_pos=10, ortho_angle=-2.*np.pi/3, fixed_left=-1, path="../building_blocks_xyz/naphtalene.xyz")
-	dbPc1 = Building_Block(abbrev="dbPc1", num_atoms=32,origin=12, para_pos=1, para_angle=0, meta_pos=0 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left=-1, path="../building_blocks_xyz/dbPc1_block.xyz")
+	dbPc1 = Building_Block(abbrev="dbPc1", num_atoms=32,origin=13, para_pos=1, para_angle=0, meta_pos=0 , meta_angle = np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left=-1, path="../building_blocks_xyz/dbPc1_block.xyz")
 	building_blocks = [benzene,napthtalene,dbPc1]
 	genome = [0,0,0]
 
 
 	#construction_loop(genome, building_blocks, "../config", "./output.xyz")
 
-	process_genome(0,1,[0],"/alcc/gpfs2/home/u/blaschma/test/")
+	process_genome(0,28,[1,1,2],"/alcc/gpfs2/home/u/blaschma/test/")
 
 
 	"""
