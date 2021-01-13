@@ -22,6 +22,9 @@ INTEL=$intel_path
 export PARA_ARCH=SMP
 export SMPCPUS=$cpus_per_task
 
+ulimit -s unlimited
+ulimit -a > mylimits.out
+
 
 
 
@@ -116,6 +119,7 @@ num_finished=$(ls ../../ -1f | grep _DONE | wc -l)
 if [ "$num_finished" -eq "$population_size" ]; then
     echo "Everybody seems to be ready"
     #/alcc/gpfs2/home/u/blaschma/Master_Code/genetic_algorithm/scr/genetic/invoke_next_generation.py
+    python3 $genetic_algorithm_path/scr/helper_files/eval_fitness.py "/alcc/gpfs2/home/u/blaschma/test/generation_data/"$(basename ${PWD%/*/*})
     python3 $genetic_algorithm_path/scr/genetic/invoke_next_generation.py $config_file "/alcc/gpfs2/home/u/blaschma/test/"
 fi
 

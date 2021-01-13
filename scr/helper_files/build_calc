@@ -17,14 +17,14 @@ no
 iter
 2000
 damp
-2.7
+2.1
 
 
 
 dft
 on
 func pbe
-grid 4
+grid 5
 *
 ri
 on

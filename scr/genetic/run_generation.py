@@ -63,9 +63,11 @@ def run_generation(generation : int, config_path, calculation_path):
 		population_size=population_size,
 		generation=generation,
 		fitness_value=0)
+		print("Generation zero " + str(generation))
 
 	#every other generation
 	else:
+
 		#generation-1 because prevois generation should be read
 		population, fitness_value = read_population(generation-1,config_path, calculation_path)
 		print(fitness_value)
@@ -88,6 +90,7 @@ def run_generation(generation : int, config_path, calculation_path):
 
 		#print(population)
 		#print(fitness_value)
+	print("after run " + str(population))
 	write_generation(population,generation, config_path, calculation_path)
 
 def write_generation(population, generation, config_path, calculation_path):

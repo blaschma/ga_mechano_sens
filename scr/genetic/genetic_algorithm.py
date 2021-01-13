@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib
 #matplotlib.use('Agg') # Must be before importing matplotlib.pyplot or pylab!
 import matplotlib.pyplot as plt
+import copy
 
 
 Genome = List[int]
@@ -40,8 +41,7 @@ def run_evolution(
 		#evaluate pupulation
 		population = sorted(
 			population,
-			key = lambda genome: fitness_func(genome),
-			reverse = True
+			key = lambda genome: fitness_func(genome)			
 			)
 		fitness_value.append(fitness_func(population[0]))
 
@@ -70,8 +70,7 @@ def run_evolution(
 	#sort final population 
 	population = sorted(
 			population,
-			key = lambda genome: fitness_func(genome),
-			reverse = True
+			key = lambda genome: fitness_func(genome)
 			)
 	return population, i,fitness_value
 
@@ -97,9 +96,12 @@ def run_generation(
 	#initialize first population
 	if(generation == 0):
 		population = populate_func()
+		print("populated population " +str(population))
 		#invoke fitness evaluation
+		population_for_fitness_eval = copy.deepcopy(population)
 		for i in range(0, population_size):
-			fitness_func(population[i],generation,i)
+			fitness_func(population_for_fitness_eval[i],generation,i)
+		print("population after fitness_func " +str(population))
 		return population
 
 
@@ -134,8 +136,9 @@ def run_generation(
 	population = next_generation
 
 	#invoke evaluation of  new population
+	population_for_fitness_eval = copy.deepcopy(population)
 	for i in range(0, population_size):
-		fitness_func(population[i],generation,i)
+		fitness_func(population_for_fitness_eval[i],generation,i)
 	
 	return population
 

@@ -46,7 +46,7 @@ def load_and_plot(molecule_name,n_atoms):
 	print("a=" + str(fit[0]))
 
 	#write fit data to file
-	file = open(molecule_name + "_stiffnes.dat", "w")
+	file = open("../stiffness.dat", "w")
 	file.write("a b c std(a) std(b) std(c)  -> a(x-b)**2+c" + "\n")
 	file.write(str(fit[0]) + "	" + str(fit[1]) + "	" + str(fit[2]) + "	" + str(std[0]) + "	" + str(std[1]) + "	" + str(std[2]))
 	file.close()

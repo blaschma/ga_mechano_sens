@@ -5,6 +5,7 @@ from random import choices, randint, randrange, random
 from collections import namedtuple
 from typing import List, Callable, Tuple
 from helper_files import genome_to_molecule as gtm
+import copy
 
 class bbEv(evaluation_methods.Evaluation):
 	Genome = List[int]
@@ -27,12 +28,13 @@ class bbEv(evaluation_methods.Evaluation):
 		#self.anthracen = Building_Block(abbrev="A", num_atoms=14, para_pos=11, meta_pos=12 ,ortho_pos=13, path="./hamiltionians/anthracen.txt")
 		#self.building_blocks = [benzene,naphthalene,anthracen]
 
+		#todo : dependency on interchangeable module not good
 		self.building_blocks=gtm.load_building_blocks("")
 
 		self.para = self.Coupling(abbrev="p")
 		self.meta = self.Coupling(abbrev="m")
-		self.ortho = self.Coupling(abbrev="o")
-		self.couplings = [self.para, self.meta, self.ortho]
+		#self.ortho = self.Coupling(abbrev="o")
+		self.couplings = [self.para, self.meta]
 
 		hamiltionians = 0
 
@@ -69,8 +71,8 @@ class bbEv(evaluation_methods.Evaluation):
 		return [self.generate_genome(genome_length) for _ in range(size)]
 
 	def fitness(self, genome: Genome, generation: int, individual: int) -> float:
-		
-		gtm.process_genome(generation,individual,genome,"/alcc/gpfs2/home/u/blaschma/test/")
+		genome_copy = copy.deepcopy(genome)
+		gtm.process_genome(generation,individual,genome_copy,"/alcc/gpfs2/home/u/blaschma/test/")
 		return random()
 
 

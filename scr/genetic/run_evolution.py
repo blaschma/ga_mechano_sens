@@ -26,7 +26,7 @@ def run_evolution(config_path, calculation_path):
 	try:
 		#create generation dir
 		if(path.exists(generation_data_path) == False):
-			os.mkdir(calc_path)
+			os.mkdir(calculation_path)
 			generation_zero_path = generation_data_path + "/0"
 			os.mkdir(generation_zero_path)
 	except OSError:

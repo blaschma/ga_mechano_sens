@@ -215,6 +215,7 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 		# TODO: proper treatment
 
 	print(genome)
+	
 	#add anchor to end -> couplings are missing 
 	#add left anchor
 	anchor_left, anchor_right = load_anchors_blocks(building_block_path)
@@ -227,6 +228,7 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 	#para coupling
 	genome.append(0)
 	genome.append(len(building_blocks)-1)
+	
 	print(genome)
 	#data content of every part of xyz file is stored in this list	
 	xyz_file_parts = list()
@@ -279,7 +281,7 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 
 			#determine index of atom at origin
 			origin = building_blocks[genome[i]].origin
-			print("old origin " + str(origin))
+			#print("old origin " + str(origin))
 
 			#if other block will be added -> hydrogen at c coupling atom must be removed
 			if(i != len(genome)-1):				
@@ -292,9 +294,9 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 				
 
 				#remove hydrogen or other atom bonded to coupling atom
-				print("remove coupling hydrogen")
+				#print("remove coupling hydrogen")
 				nearest_neighbour = determine_nearest_neighbour(datContent, coupling_index, "H")
-				print("genome " + str(genome[i]))								
+				#print("genome " + str(genome[i]))								
 				datContent = np.delete(datContent,nearest_neighbour,1)
 				
 				#update coupling index and fixed beginning
@@ -305,14 +307,14 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 				#update origin
 				if(origin>nearest_neighbour):
 					origin -=1
-					print("new origin "  + str(origin))
+					#print("new origin "  + str(origin))
 
 
 			#hydrogen bonded to C atom at origin must be removed, too (except for first atom)
 			if(i != 0):						
 				
 				#remove hydrogen or other atom bonded to atom at origin
-				print("remove origin hydrogen with origin " + str(origin))
+				#print("remove origin hydrogen with origin " + str(origin))
 				nearest_neighbour = determine_nearest_neighbour(datContent, origin, "H")				
 				datContent = np.delete(datContent,nearest_neighbour,1)
 				#update coupling index and fixed ending
@@ -347,7 +349,9 @@ def load_building_blocks(path):
 	benzene = Building_Block(abbrev="B", num_atoms=6,origin=0, para_pos=3, para_angle=0, meta_pos=4 , meta_angle = -np.pi/3., ortho_pos=5, ortho_angle=-2.*np.pi/3, fixed_left = -1, path=path+"/benzene.xyz")
 	napthtalene = Building_Block(abbrev="N", num_atoms=18,origin=0, para_pos=12, para_angle=0., meta_pos=11 , meta_angle = -np.pi/3., ortho_pos=10, ortho_angle=-2.*np.pi/3, fixed_left = -1, path=path+"/naphtalene.xyz")
 	dbPc1 = Building_Block(abbrev="dbPc1", num_atoms=32,origin=13, para_pos=1, para_angle=0, meta_pos=0 , meta_angle = +np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1, path=path+"/dbPc1_block.xyz")
+	#dbPc4 = Building_Block(abbrev="dbPc4", num_atoms=55,origin=22, para_pos=1, para_angle=0, meta_pos=0 , meta_angle = +np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1, path=path+"/dbPc4.xyz")
 	building_blocks = [benzene,napthtalene,dbPc1]
+	#building_blocks = [benzene,napthtalene]
 
 	return building_blocks
 
@@ -371,52 +375,52 @@ def load_anchors_blocks(path):
 
 		
 def process_genome(generation : int, individual: int, genome:Genome, run_path):
-		"""
-		translates genome to xyz file. xyz file will be stored in $data/generation/individual and stretching and other calculations will be invoked
+	"""
+	translates genome to xyz file. xyz file will be stored in $data/generation/individual and stretching and other calculations will be invoked
 
-		Args:
-			param1 (int): generation
-			param2 (int): individual in generation
-			param3 (Genome): genome to process
-			param4 (String): path of current run
-		Returns:
-			int : success (0), failure (-1)
-		"""		
-		#set up config path
-		config_path = run_path + "/config"
+	Args:
+		param1 (int): generation
+		param2 (int): individual in generation
+		param3 (Genome): genome to process
+		param4 (String): path of current run
+	Returns:
+		int : success (0), failure (-1)
+	"""		
+	#set up config path
+	config_path = run_path + "/config"
 
 
-		#check where building blocks are stored and generation data should be stored
-		cfg = configparser.ConfigParser()
-		cfg.read(config_path)
-		#TODO: set up correctly
-		building_block_path = cfg.get('Building Procedure', 'building_block_path')
-		generation_data_path = run_path + "/" + cfg.get('Building Procedure', 'generation_data_path')
-		print("-.-.-.-.-.-.-.-.-")
-		print(generation_data_path)
+	#check where building blocks are stored and generation data should be stored
+	cfg = configparser.ConfigParser()
+	cfg.read(config_path)
+	#TODO: set up correctly
+	building_block_path = cfg.get('Building Procedure', 'building_block_path')
+	generation_data_path = run_path + "/" + cfg.get('Building Procedure', 'generation_data_path')
+	print("-.-.-.-.-.-.-.-.-")
+	print(generation_data_path)
 
-		#create directories for calculations  
-		calc_path = generation_data_path + "/" + str(generation)
-		try:
-			#create generation dir
-			if(path.exists(calc_path) == False):
-				os.mkdir(calc_path)
-			#create individual dir
-			calc_path = generation_data_path + "/" + str(generation)+ "/" + str(individual)
+	#create directories for calculations  
+	calc_path = generation_data_path + "/" + str(generation)
+	try:
+		#create generation dir
+		if(path.exists(calc_path) == False):
 			os.mkdir(calc_path)
-		except OSError:
-		    print ("Creation of the directory %s failed" % calc_path)
-		    return -1
-		
-		#load building blocks
-		building_blocks = load_building_blocks(building_block_path)	
+		#create individual dir
+		calc_path = generation_data_path + "/" + str(generation)+ "/" + str(individual)
+		os.mkdir(calc_path)
+	except OSError:
+	    print ("Creation of the directory %s failed" % calc_path)
+	    return -1
+	
+	#load building blocks
+	building_blocks = load_building_blocks(building_block_path)	
 
-		#construct molecule from genome
-		construction_loop(genome, building_blocks, config_path, calc_path)
+	#construct molecule from genome
+	construction_loop(genome, building_blocks, config_path, calc_path)
 
-		#run next step -> invoke turbomole calculations
-		set_up_turbo_calculations_path = cfg.get('Basics', 'helper_files') + "/set_up_turbo_calculations.sh"		
-		os.system(set_up_turbo_calculations_path+" "+calc_path+" "+config_path + " " + str(generation) + " " + str(individual))
+	#run next step -> invoke turbomole calculations
+	set_up_turbo_calculations_path = cfg.get('Basics', 'helper_files') + "/set_up_turbo_calculations.sh"		
+	os.system(set_up_turbo_calculations_path+" "+calc_path+" "+config_path + " " + str(generation) + " " + str(individual))
 
 
 
