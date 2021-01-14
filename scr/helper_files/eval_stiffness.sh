@@ -17,13 +17,15 @@ exec 3<> ../$2_totalEnergy.dat
 #collects total energy in given directory ($1)
 
 start_dir=$(pwd)
+
+#go to start dir
 cd $1
 
 #process disp_pos
 
 
 echo "processing disp_pos"
-cd $start_dir/$1
+#cd $start_dir/$1
 cd "disp_pos"
 old_dir=$(pwd)
 
@@ -62,7 +64,9 @@ do
 done
 
 echo "processing disp_neg"
-cd $start_dir/$1
+#go back to startdir
+cd $1
+#cd $start_dir/$1
 cd "disp_neg"
 old_dir=$(pwd)
 

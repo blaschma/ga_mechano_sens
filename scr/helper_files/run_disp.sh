@@ -105,7 +105,8 @@ if test -f "$file"; then
     if test -f "$file"; then
         echo "now evaluate everything"
         #all the evaluation scripts
-        . $helper_files/eval_stiffness.sh $(basename ${PWD%/*}) $filename $config_file
+        GRANDDADDY="$(cd ../; pwd)"
+        . $helper_files/eval_stiffness.sh $GRANDDADDY $filename $config_file
 
 
         #now everything is done

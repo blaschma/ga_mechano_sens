@@ -30,6 +30,10 @@ def load_stiffness_data(gen_dir):
 			stiffness_file = open(gen_dir + "/" + dirs[i] + "/stiffness.dat")
 		except OSError as e:
 			print("stiffness file not found " + str(e))
+			#todo :proper treatment
+			stiffness.append(100)
+			std_stiffness.append(100)
+			continue
 			return -1
 		#skip first line 
 		for line in stiffness_file:
@@ -63,9 +67,9 @@ def eval_fittness(stiffness, std_stiffness):
 		if(stiffness[i]<0.0):
 			print("negative!")
 			stiffness[i] = 100.0
-		if(np.abs(std_stiffness[i]/stiffness[i])>0.1):
+		if(np.abs(std_stiffness[i]/stiffness[i])>0.05):
 			stiffness[i] = 100.0
-	#apply sigmoid function
+
 	print(stiffness)
 	stiffness = np.asarray(stiffness)
 	fittness = 1/(stiffness+0.2)
