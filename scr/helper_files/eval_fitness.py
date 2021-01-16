@@ -16,17 +16,18 @@ def load_stiffness_data(gen_dir):
 
 	"""
 	#load list of dirs and ensure it is a dir. Sort them 
+	print("load fitness data")
 	dirs = os.listdir(gen_dir)
-	print(dirs)
 	dirs = [i for i in dirs if os.path.isdir(gen_dir + "/" + i)]
 	dirs = sorted(dirs)
-	
+	print(dirs)
 	stiffness = list()
 	std_stiffness = list()
 
 	#read stiffness files and append stiffness and std to lists
 	for i in range(len(dirs)):
 		try:
+			print("open " + str(dirs[i]))
 			stiffness_file = open(gen_dir + "/" + dirs[i] + "/stiffness.dat")
 		except OSError as e:
 			print("stiffness file not found " + str(e))
@@ -41,11 +42,10 @@ def load_stiffness_data(gen_dir):
 		stiffness_file.close()
 
 		stiffness_line = stiffness_line.strip().split("	")
+		print(stiffness_line)
 		stiffness.append(float(stiffness_line[0]))
 		std_stiffness.append(float(stiffness_line[3]))
 
-	print(stiffness)
-	print(std_stiffness)
 
 	return stiffness, std_stiffness
 
@@ -60,19 +60,22 @@ def eval_fittness(stiffness, std_stiffness):
 		np.array: (fitness value)
 
 	"""
-
-	print(stiffness)
+	print("eval fitness")
+	#print(stiffness)
 	for i in range(len(stiffness)):
 		#negative stiffness is not possible -> set values to low fittness
+		print(stiffness[i])
 		if(stiffness[i]<0.0):
 			print("negative!")
 			stiffness[i] = 100.0
-		if(np.abs(std_stiffness[i]/stiffness[i])>0.05):
+		if(np.abs(std_stiffness[i]/stiffness[i])>0.25):
+			print("std to big!")
 			stiffness[i] = 100.0
 
 	print(stiffness)
 	stiffness = np.asarray(stiffness)
 	fittness = 1/(stiffness+0.2)
+	print(fittness)
 
 	return fittness
 
