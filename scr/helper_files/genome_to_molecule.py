@@ -223,36 +223,38 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 		theta = angle
 		
 		print("angle " + str(angle))
+		if(angle != 0):
+			#calculate rotation axis
+			rotation_axis = np.cross(molecule_axis, [0.0,0.0,1.0])
+			rotation_axis = 1.0/np.linalg.norm(rotation_axis)*rotation_axis
+			u = rotation_axis
+			print("rotation axis " + str(rotation_axis))
 
-		#calculate rotation axis
-		rotation_axis = np.cross(molecule_axis, [0.0,0.0,1.0])
-		rotation_axis = 1.0/np.linalg.norm(rotation_axis)*rotation_axis
-		u = rotation_axis
-		print("rotation axis " + str(rotation_axis))
-
-		#calculate rotation_matrix
-		rotation_matrix = [[np.cos(theta) + u[0]**2 * (1-np.cos(theta)), u[0] * u[1] * (1-np.cos(theta)) - u[2] * np.sin(theta), u[0] * u[2] * (1 - np.cos(theta)) + u[1] * np.sin(theta)],
-            [u[0] * u[1] * (1-np.cos(theta)) + u[2] * np.sin(theta), np.cos(theta) + u[1]**2 * (1-np.cos(theta)), u[1] * u[2] * (1 - np.cos(theta)) - u[0] * np.sin(theta)],
-            [u[0] * u[2] * (1-np.cos(theta)) - u[1] * np.sin(theta), u[1] * u[2] * (1-np.cos(theta)) + u[0] * np.sin(theta), np.cos(theta) + u[2]**2 * (1-np.cos(theta))]]
-		print("determinat " + str(np.linalg.det(rotation_matrix)))
-		print("matrix " + str(rotation_matrix))
+			#calculate rotation_matrix
+			rotation_matrix = [[np.cos(theta) + u[0]**2 * (1-np.cos(theta)), u[0] * u[1] * (1-np.cos(theta)) - u[2] * np.sin(theta), u[0] * u[2] * (1 - np.cos(theta)) + u[1] * np.sin(theta)],
+	            [u[0] * u[1] * (1-np.cos(theta)) + u[2] * np.sin(theta), np.cos(theta) + u[1]**2 * (1-np.cos(theta)), u[1] * u[2] * (1 - np.cos(theta)) - u[0] * np.sin(theta)],
+	            [u[0] * u[2] * (1-np.cos(theta)) - u[1] * np.sin(theta), u[1] * u[2] * (1-np.cos(theta)) + u[0] * np.sin(theta), np.cos(theta) + u[2]**2 * (1-np.cos(theta))]]
+			print("determinat " + str(np.linalg.det(rotation_matrix)))
+			print("matrix " + str(rotation_matrix))
 
 
-		for j in range(0, len(xyz_file_parts)):
-			print("j  " + str(j))
-			print(xyz_file_parts[j])
-			for i in range(0, len(xyz_file_parts[j][1,:])):
-				 
-				vector_to_rotate = [round(float(xyz_file_parts[j][1,i]),5),round(float(xyz_file_parts[j][2,i]),5),round(float(xyz_file_parts[j][3,i]),5)]
-				print("atom " + str(xyz_file_parts[j][0,i]))
-				print("vector_to_rotate " + str(vector_to_rotate))
-				rotated_vector = np.asmatrix(rotation_matrix)*np.asmatrix(vector_to_rotate).T
-				print("rotated vector " + str(rotated_vector))
-				print("----------------------")
-				xyz_file_parts[j][1,i] = round(rotated_vector[0,0],5)
-				xyz_file_parts[j][2,i] = round(rotated_vector[1,0],5)
-				xyz_file_parts[j][3,i] = round(rotated_vector[2,0],5)
-		return xyz_file_parts
+			for j in range(0, len(xyz_file_parts)):
+				print("j  " + str(j))
+				print(xyz_file_parts[j])
+				for i in range(0, len(xyz_file_parts[j][1,:])):
+					 
+					vector_to_rotate = [round(float(xyz_file_parts[j][1,i]),5),round(float(xyz_file_parts[j][2,i]),5),round(float(xyz_file_parts[j][3,i]),5)]
+					print("atom " + str(xyz_file_parts[j][0,i]))
+					print("vector_to_rotate " + str(vector_to_rotate))
+					rotated_vector = np.asmatrix(rotation_matrix)*np.asmatrix(vector_to_rotate).T
+					print("rotated vector " + str(rotated_vector))
+					print("----------------------")
+					xyz_file_parts[j][1,i] = round(rotated_vector[0,0],5)
+					xyz_file_parts[j][2,i] = round(rotated_vector[1,0],5)
+					xyz_file_parts[j][3,i] = round(rotated_vector[2,0],5)
+			return xyz_file_parts
+		else:
+			return xyz_file_parts
 
 
 
@@ -493,7 +495,7 @@ if __name__ == '__main__':
 
 	#construction_loop(genome, building_blocks, "../config", "./output.xyz")
 
-	process_genome(0,0,[0,1,0],"/alcc/gpfs2/home/u/blaschma/gtm_test/")
+	process_genome(0,0,[0],"/alcc/gpfs2/home/u/blaschma/test/")
 
 
 	"""

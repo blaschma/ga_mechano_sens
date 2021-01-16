@@ -39,7 +39,12 @@ def load_and_plot(molecule_name,n_atoms):
 	energy = energy * (1./float(n_atoms)+0.0)
 	def func(x, a,b,c):
 		return a * (x-b)**2 +c
-	popt, pcov = curve_fit(func, disp, energy)
+	try:
+		popt, pcov = curve_fit(func, disp, energy)
+	except RuntimeError:
+		print("Fit to wrong model")
+		fit = [-100,-100,-100]
+		std = [1000,1000,1000]
 	fit = popt
 	fitted_data = fit[0] * (disp-fit[1])**2+fit[2]
 	std = np.sqrt(np.diag(pcov))
