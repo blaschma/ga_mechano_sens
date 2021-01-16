@@ -51,18 +51,28 @@ class bbEv(evaluation_methods.Evaluation):
 		Returns:
 			Genome
 	        """
+	    #coupling must contain at least one block and two couplings
+		print("max_length " + str(max_length))
+		if(max_length <= 1):
+			print("sorry max_length too small")
+			return -1
 		num_building_blocks = randrange(1,max_length)
 		
 		indices_building_blocks = np.linspace(0,len(self.building_blocks),len(self.building_blocks),endpoint=False,dtype=int)   
 		indices_couplings = np.linspace(0,len(self.couplings),len(self.couplings),endpoint=False,dtype=int)   
 		selected_building_blocks = choices(indices_building_blocks, k=num_building_blocks)
-		selected_couplings = choices(indices_couplings, k=num_building_blocks-1)
+		selected_couplings = choices(indices_couplings, k=num_building_blocks+2)
 
 		genome=list()
+
+		#add coupling to anchor
+		genome.append(selected_couplings[0])
 		for i in range(0, num_building_blocks):
+			
 			genome.append(selected_building_blocks[i])
-			if(i != num_building_blocks-1):
-				genome.append(selected_couplings[i])
+			
+			genome.append(selected_couplings[i+1])
+			print("genome " + str(genome))
 		return genome
 
 		
@@ -86,8 +96,8 @@ class bbEv(evaluation_methods.Evaluation):
 		)
 
 	def crossover(self, a:Genome, b:Genome) -> Tuple[Genome, Genome]:
-		return (a,b)
-		#return self.single_point_crossover(a,b)
+		#return (a,b)
+		return self.single_point_crossover(a,b)
 
 	def single_point_crossover(self, a:Genome, b:Genome) -> Tuple[Genome, Genome]:
 		
@@ -120,9 +130,9 @@ class bbEv(evaluation_methods.Evaluation):
 		if(random()<probability and len(genome)>=3):
 			new_block = randrange(len(self.building_blocks))
 			#print("new block " + str(new_block))
-			block_to_mutate = randrange(int((len(genome)+1)/2))
+			block_to_mutate = randrange(int((len(genome)-1)/2))
 			#print("block to mutate " + str(block_to_mutate))	
-			block_to_mutate = block_to_mutate+block_to_mutate+1	
+			block_to_mutate = block_to_mutate+block_to_mutate+2
 			
 			
 			mutated_genome.extend(genome[0:block_to_mutate-1])
@@ -137,9 +147,9 @@ class bbEv(evaluation_methods.Evaluation):
 		if(random()<probability and len(genome)>=3):
 			new_coupling = randrange(len(self.couplings))
 			#print("new coupling " + str(new_coupling))		
-			coupling_to_mutate = randrange(0,int((len(genome)-1)/2))
+			coupling_to_mutate = randrange(0,int((len(genome)+1)/2))
 			#print("coupling to mutate " + str(coupling_to_mutate))			
-			coupling_to_mutate = coupling_to_mutate+coupling_to_mutate+2
+			coupling_to_mutate = coupling_to_mutate+coupling_to_mutate+1
 			
 			#genome = genome[0:coupling_to_mutate-1] + couplings[new_coupling].abbrev + genome[coupling_to_mutate:len(genome)]
 			

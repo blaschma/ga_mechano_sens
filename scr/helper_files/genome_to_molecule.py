@@ -94,11 +94,13 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 			(int,float): corresponding line in xyz file of building block refered in genome[index], coupling angle
 
 		"""
+		print("genome " +str(genome) + " index " + str(index))
 		if(index > len(genome)-2 or index < 0):
 			raise ValueError("index is out of proper range")
 
 		# coupling after building_block of interest 
 		i = index + 1
+		
 		#para
 		if(genome[i]==0):
 			coupling_index = building_blocks[genome[index]].para_pos
@@ -278,12 +280,12 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 	anchor_left, anchor_right = load_anchors_blocks(building_block_path)
 	building_blocks.append(anchor_left)
 	#para coupling
-	genome.insert(0, 0)
+	#genome.insert(0, 0)
 	genome.insert(0, len(building_blocks)-1)
 	#add right anchor
 	building_blocks.append(anchor_right)
 	#para coupling
-	genome.append(0)
+	#genome.append(0)
 	genome.append(len(building_blocks)-1)
 	
 	print(genome)
@@ -425,7 +427,7 @@ def load_anchors_blocks(path):
 		list(Building_Block)
 	"""		
 	#TODO : automatization
-	left = Building_Block(abbrev="l", num_atoms=12,origin=6, para_pos=0, para_angle=0, meta_pos=1 , meta_angle = -np.pi/3., ortho_pos=2, ortho_angle=-2.*np.pi/3, fixed_left = 6, path=path+"/anchor_left.xyz")
+	left = Building_Block(abbrev="l", num_atoms=12,origin=6, para_pos=0, para_angle=0, meta_pos=1 , meta_angle = np.pi/3., ortho_pos=2, ortho_angle=-2.*np.pi/3, fixed_left = 6, path=path+"/anchor_left.xyz")
 	right = Building_Block(abbrev="r", num_atoms=12,origin=0, para_pos=6, para_angle=0., meta_pos=11 , meta_angle = -np.pi/3., ortho_pos=10, ortho_angle=-2.*np.pi/3, fixed_left = -1, path=path+"/anchor_right.xyz")
 	
 	anchors = [left,right]
@@ -495,7 +497,7 @@ if __name__ == '__main__':
 
 	#construction_loop(genome, building_blocks, "../config", "./output.xyz")
 
-	process_genome(0,0,[0],"/alcc/gpfs2/home/u/blaschma/test/")
+	process_genome(0,5,[0, 4, 1, 3, 0],"/alcc/gpfs2/home/u/blaschma/test/")
 
 
 	"""
