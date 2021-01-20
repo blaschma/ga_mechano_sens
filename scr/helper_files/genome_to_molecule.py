@@ -412,7 +412,8 @@ def load_building_blocks(path):
 	dbPc1 = Building_Block(abbrev="dbPc1", num_atoms=32,origin=13, para_pos=1, para_angle=0, meta_pos=0 , meta_angle = +np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1, path=path+"/dbPc1_block.xyz")
 	dbPc4 = Building_Block(abbrev="dbPc4", num_atoms=55,origin=22, para_pos=1, para_angle=0, meta_pos=0 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1, path=path+"/dbPc4.xyz")
 	dbPc6 = Building_Block(abbrev="dbPc6", num_atoms=52,origin=17, para_pos=0, para_angle=0, meta_pos=1 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1, path=path+"/dbPc6.xyz")
-	building_blocks = [benzene,napthtalene,dbPc1,dbPc4,dbPc6]
+	dbPc5 = Building_Block(abbrev="dbPc5", num_atoms=58,origin=12, para_pos=26, para_angle=0, meta_pos=20 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1, path=path+"/dbPc5.xyz")
+	building_blocks = [benzene,napthtalene,dbPc1,dbPc4,dbPc6, dbPc5]
 	#building_blocks = [benzene,napthtalene]
 
 	return building_blocks
@@ -497,7 +498,7 @@ if __name__ == '__main__':
 
 	#construction_loop(genome, building_blocks, "../config", "./output.xyz")
 
-	process_genome(0,5,[0, 4, 1, 3, 0],"/alcc/gpfs2/home/u/blaschma/test/")
+	process_genome(0,6,[0,0,0],"/alcc/gpfs2/home/u/blaschma/test/")
 
 
 	"""
