@@ -39,7 +39,7 @@ def eval_T(disp_index, para):
 	numerator_list = list()
 	G0_sr_k = list()
 	G0_sr = 0
-	delta = 0.00000001
+	delta = 1E-1
 	#delta = 0.0
 	
 	for i in range(0,len(eigenvalues)):
@@ -53,7 +53,7 @@ def eval_T(disp_index, para):
 
 		G0_sr += tmp
 
-	T_est = np.real(np.trace(G0_sr*np.conj(G0_sr)))
+	T_est = np.real(np.trace(G0_sr*np.conj(np.transpose(G0_sr))))
 	return T_est, float(disp_index)
 
 
@@ -118,7 +118,12 @@ def plot_T_vs_d(calc_path, molecule_name, n_occupied, config_path):
 	#ACHTUNG !!!: x achse stimmt nicht ganz zuordnung!!
 	plt.savefig(calc_path + "/" + molecule_name + "_T_estimate.pdf", bbox_inches='tight')
 	plt.savefig(calc_path + "/" + molecule_name + "_T_estimate.svg", bbox_inches='tight')
-	top.write_plot_data(calc_path + "/" + molecule_name +  "_T_estimate.dat",(disp,T_est), "disp, T_est")
+
+	plt.yscale("log")
+	#plt.ylim(10E-7,1)
+	plt.savefig(calc_path + "/" + molecule_name + "_T_estimate_log1.pdf", bbox_inches='tight')
+	plt.savefig(calc_path + "/" + molecule_name + "_T_estimate_log1.svg", bbox_inches='tight')
+	top.write_plot_data(calc_path + "/" + molecule_name +  "_T_estimate1.dat",(disp,T_est), "disp, T_est")
 
 
 def plot_energy_levels(calc_path, molecule_name, n_occupied, config_path):
@@ -217,4 +222,4 @@ def plot_energy_levels(calc_path, molecule_name, n_occupied, config_path):
 if __name__ == '__main__':
 	print(sys.argv[1], sys.argv[2], int(sys.argv[3]), sys.argv[4])
 	plot_T_vs_d(sys.argv[1], sys.argv[2], int(sys.argv[3]), sys.argv[4])
-	plot_energy_levels(sys.argv[1], sys.argv[2], int(sys.argv[3]), sys.argv[4])
+	#plot_energy_levels(sys.argv[1], sys.argv[2], int(sys.argv[3]), sys.argv[4])

@@ -5,6 +5,9 @@ from os import path
 import numpy as np
 import sys
 from turbomoleOutputProcessing import turbomoleOutputProcessing as top
+import matplotlib
+matplotlib.use('Agg') # Must be before importing matplotlib.pyplot or pylab!
+import matplotlib.pyplot as plt
 
 def load_transmission_data(gen_dir):
 	"""
@@ -19,9 +22,10 @@ def load_transmission_data(gen_dir):
 	"""	
 
 	dirs = os.listdir(gen_dir)
-	dirs = [i for i in dirs if os.path.isdir(gen_dir + "/" + i)]
+	dirs = [int(i) for i in dirs if os.path.isdir(gen_dir + "/" + i)]
 	dirs = sorted(dirs)
 	print(dirs)
+	dirs = [str(i) for i in dirs]
 	
 	T_estimates = list()
 
@@ -34,7 +38,7 @@ def load_transmission_data(gen_dir):
 		print("transmission file " + str(transmission_file))
 		transmission_file = gen_dir + "/" + dirs[i] + "/" + transmission_file
 		dat_Content = top.read_plot_data(transmission_file)[0]
-		print(dat_Content[1,:])
+		#print(dat_Content[1,:])
 		T_estimates.append(dat_Content)
 
 	return T_estimates
@@ -55,9 +59,10 @@ def load_stiffness_data(gen_dir):
 	#load list of dirs and ensure it is a dir. Sort them 
 	print("load fitness data")
 	dirs = os.listdir(gen_dir)
-	dirs = [i for i in dirs if os.path.isdir(gen_dir + "/" + i)]
+	dirs = [int(i) for i in dirs if os.path.isdir(gen_dir + "/" + i)]
 	dirs = sorted(dirs)
 	print(dirs)
+	dirs = [str(i) for i in dirs]
 	stiffness = list()
 	std_stiffness = list()
 
@@ -152,7 +157,39 @@ if __name__ == '__main__':
 	print(path)
 	#stiffness, std_stiffness = load_stiffness_data(path)
 	T_est = load_transmission_data(path)
-	print(T_est)
+	#print(T_est)
+	fig, ax = plt.subplots(1)
+	NUM_COLORS = len(T_est)
+	cm = plt.get_cmap('tab20')
+	ax.set_prop_cycle('color', [cm(1.*i/NUM_COLORS) for i in range(NUM_COLORS)])
+	f = open(path + "/T_est_data.dat", "w")
+	for i in range(len(T_est)):
+		if(i != 6 and i!=7 and i!=8 or True):
+			ax.plot(T_est[i][0,:], (T_est[i][1,:]), label=str(i))
+			dx = 0.1
+			dy = np.diff(T_est[i][1,:])/dx
+			print(i)
+			
+			f.write(str(i)+"\n")
+			f.write("median " + str(np.median(T_est[i][1,:]))+"\n")
+			f.write("max derivate " + str(np.max(dy))+"\n")
+			f.write("median derivate " + str(np.median(dy))+"\n")
+			f.write("avg derivate " + str(np.average(dy))+"\n")
+			f.write("min derivate " + str(np.min(dy))+"\n")
+			f.write("max abs derivate " + str((np.max(np.abs(dy))))+"\n")
+			f.write("median abs derivate " + str(np.median(abs(dy)))+"\n")
+			f.write("min abs derivate " + str(np.min(abs(dy)))+"\n")
+
+			f.write(".-.-.-.-."+"\n")
+	ax.set_yscale('log')
+	f.close()
+	#ax.set_xlim(-0.1,0.1)
+	#ax.set_ylim(-0.0000001,0.00004)
+	ax.set_xlabel('Displacement ($\mathrm{\AA}$)',fontsize=20)
+	ax.set_ylabel('$\mathrm{T}_{\mathrm{estimate}}$',fontsize=20)
+	ax.legend()
+	plt.savefig(path + "/T_estimates.pdf", bbox_inches='tight')
+
 	#fittness = eval_fittness(stiffness, std_stiffness)
 	#write_fittness(fittness,path)
 	
