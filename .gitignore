@@ -1,3 +1,5 @@
 generation_data
 test
 example
+.idea
+*.pyc
