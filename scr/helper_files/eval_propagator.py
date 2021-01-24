@@ -8,6 +8,7 @@ from multiprocessing import Pool
 from functools import partial
 import sys
 import configparser
+from scipy.optimize import curve_fit
 
 
 
@@ -39,7 +40,7 @@ def eval_T(disp_index, para):
 	numerator_list = list()
 	G0_sr_k = list()
 	G0_sr = 0
-	delta = 1E-1
+	delta = 1E-12
 	#delta = 0.0
 	
 	for i in range(0,len(eigenvalues)):
@@ -109,6 +110,22 @@ def plot_T_vs_d(calc_path, molecule_name, n_occupied, config_path):
 	    T_est.append(x)
 	    disp.append(float(y)*displacement)
 
+	#fit data
+	minimum = np.argmin(T_est)
+	min_disp = disp[minimum]
+	min_T_est = T_est[minimum]
+
+	def func(x, a):
+		return (1-np.exp(-a*np.abs(x-min_disp)+np.log(1-min_T_est)))
+	try:
+		popt, pcov = curve_fit(func, disp, T_est)
+		print(pcov)
+
+	except RuntimeError:
+		print("Fit to wrong model")
+
+	fitted_data = func(np.asarray(disp), popt[0])
+
 
 	plt.plot(disp, T_est)
 	plt.xlabel('Displacement [$\mathrm{\AA}$]',fontsize=20)
@@ -121,10 +138,21 @@ def plot_T_vs_d(calc_path, molecule_name, n_occupied, config_path):
 
 	plt.yscale("log")
 	#plt.ylim(10E-7,1)
-	plt.savefig(calc_path + "/" + molecule_name + "_T_estimate_log1.pdf", bbox_inches='tight')
-	plt.savefig(calc_path + "/" + molecule_name + "_T_estimate_log1.svg", bbox_inches='tight')
-	top.write_plot_data(calc_path + "/" + molecule_name +  "_T_estimate1.dat",(disp,T_est), "disp, T_est")
-
+	plt.savefig(calc_path + "/" + molecule_name + "_T_estimate_log.pdf", bbox_inches='tight')
+	plt.savefig(calc_path + "/" + molecule_name + "_T_estimate_log.svg", bbox_inches='tight')
+	top.write_plot_data(calc_path + "/" + molecule_name +  "_T_estimate.dat",(disp,T_est), "disp, T_est")
+	plt.plot(disp, fitted_data)
+	plt.savefig(calc_path + "/" + molecule_name + "_T_estimate_log_fit.pdf", bbox_inches='tight')
+	plt.savefig(calc_path + "/" + molecule_name + "_T_estimate_log_fit.svg", bbox_inches='tight')
+	file = open(calc_path + "/" + molecule_name + "_T_estimate_params.dat", "w")
+	file.write(str(float(popt[0])))
+	file.write("\n")
+	file.write(str(float(pcov[0])))
+	file.write("\n")
+	file.write(str(min_T_est))
+	file.write("\n")
+	file.write(str(min_disp))
+	file.close()
 
 def plot_energy_levels(calc_path, molecule_name, n_occupied, config_path):
 	"""

@@ -28,20 +28,32 @@ def load_transmission_data(gen_dir):
 	dirs = [str(i) for i in dirs]
 	
 	T_estimates = list()
+	T_estimates_params = list()
+	T_estimates_params_list = list()
 
 	#read stiffness files and append stiffness and std to lists
 	for i in range(len(dirs)):
+		if(i==8):
+			#continue
+			pass
 		print("checking " + str(dirs[i]))
 		for file in os.listdir(gen_dir + "/" + dirs[i]):
 			if fnmatch.fnmatch(file, '*T_estimate.dat'):
 				transmission_file = file
+			if fnmatch.fnmatch(file, '*_T_estimate_params.dat'):
+				param_file = file
 		print("transmission file " + str(transmission_file))
 		transmission_file = gen_dir + "/" + dirs[i] + "/" + transmission_file
 		dat_Content = top.read_plot_data(transmission_file)[0]
+		param_file = open(gen_dir + "/" + dirs[i] + "/" + param_file)
+		T_estimates_params = list()
+		for line in param_file:
+			T_estimates_params.append(float(line))
 		#print(dat_Content[1,:])
 		T_estimates.append(dat_Content)
+		T_estimates_params_list.append(T_estimates_params)
 
-	return T_estimates
+	return T_estimates, T_estimates_params_list
 
 
 
@@ -156,7 +168,15 @@ if __name__ == '__main__':
 	path = sys.argv[1]
 	print(path)
 	#stiffness, std_stiffness = load_stiffness_data(path)
-	T_est = load_transmission_data(path)
+	T_est, T_estimates_params_list = load_transmission_data(path)
+	"""
+	file = open(path + "/T_est_params", "w")
+	for i in range(len(T_estimates_params_list)):
+		file.write(str(T_estimates_params_list[i][0]).replace(".", ",")+"	"+str(T_estimates_params_list[i][1]).replace(".", ",")+"	"+str(T_estimates_params_list[i][2]).replace(".", ",")+"	"+str(T_estimates_params_list[i][3]).replace(".", ",") + "\n")
+	file.close()
+	"""
+	#plot all T estimates
+	#"""
 	#print(T_est)
 	fig, ax = plt.subplots(1)
 	NUM_COLORS = len(T_est)
@@ -192,4 +212,4 @@ if __name__ == '__main__':
 
 	#fittness = eval_fittness(stiffness, std_stiffness)
 	#write_fittness(fittness,path)
-	
+	#"""

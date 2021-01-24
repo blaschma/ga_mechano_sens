@@ -106,8 +106,8 @@ done
 cd ..
 
 cd $start_dir
-num_atoms=$(wc -l < ../coord)
+num_atoms=$(wc -l < $1/coord)
 
 #now all the evaluation is done
-python3 $helper_files/eval_stiffness.py ../$2 $num_atoms
+python3 $helper_files/eval_stiffness.py $1/$2 $num_atoms
 
