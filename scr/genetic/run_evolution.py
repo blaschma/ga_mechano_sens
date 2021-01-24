@@ -35,6 +35,14 @@ def run_evolution(config_path, calculation_path):
 
 	rg.run_generation(0, config_path, calculation_path)
 
+def test(a):
+	"""
+
+	Args:
+		a (object):
+	"""
+	pass
+
 if __name__ == '__main__':
 	config_path = "/alcc/gpfs2/home/u/blaschma/test/config"
 	calculation_path = "/alcc/gpfs2/home/u/blaschma/test/"

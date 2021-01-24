@@ -16,8 +16,6 @@ Building_Block = namedtuple('Building_Block', ['abbrev', 'num_atoms','origin', '
 Coupling = namedtuple('Coupling', ['abbrev'])
 
 
-
-
 def process_block_to_add(coupling_point: Point, coupling_angle :  Angle, conjugation_angle : Angle, cc_bond_length:float, block_to_add: Building_Block):
 	"""
 	Adds block_to_add to left_block. Method takes care of right alignment, shifting and rotation of block_to_add.

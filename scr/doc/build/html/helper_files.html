@@ -1,0 +1,448 @@
+
+<!DOCTYPE html>
+
+<html lang="Python3">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>helper_files package &#8212; Genetic Algorithm  documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Genetic Algorithm  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">helper_files package</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="helper-files-package">
+<h1>helper_files package<a class="headerlink" href="#helper-files-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-helper_files.eval_fitness">
+<span id="helper-files-eval-fitness-module"></span><h2>helper_files.eval_fitness module<a class="headerlink" href="#module-helper_files.eval_fitness" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="helper_files.eval_fitness.eval_fittness">
+<code class="sig-prename descclassname">helper_files.eval_fitness.</code><code class="sig-name descname">eval_fittness</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stiffness</span></em>, <em class="sig-param"><span class="n">std_stiffness</span></em>, <em class="sig-param"><span class="n">T_est</span></em><span class="sig-paren">)</span><a class="headerlink" href="#helper_files.eval_fitness.eval_fittness" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates stiffness values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param1</strong> (<em>List</em>) -- stiffness values (force constants)</p></li>
+<li><p><strong>param2</strong> (<em>List</em>) -- std stiffness values</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(fitness value)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="helper_files.eval_fitness.load_stiffness_data">
+<code class="sig-prename descclassname">helper_files.eval_fitness.</code><code class="sig-name descname">load_stiffness_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gen_dir</span></em><span class="sig-paren">)</span><a class="headerlink" href="#helper_files.eval_fitness.load_stiffness_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads stiffness of all individuals in given dir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>param1</strong> (<em>String</em>) -- dir to process</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(stiffness, std_stiffness)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list,list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="helper_files.eval_fitness.load_transmission_data">
+<code class="sig-prename descclassname">helper_files.eval_fitness.</code><code class="sig-name descname">load_transmission_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gen_dir</span></em><span class="sig-paren">)</span><a class="headerlink" href="#helper_files.eval_fitness.load_transmission_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads transmission data of all individuals in given dir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>param1</strong> (<em>String</em>) -- dir to process</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list(np.ndarray) [individual][0=disp, 1=T_est, stretching step]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="helper_files.eval_fitness.write_fittness">
+<code class="sig-prename descclassname">helper_files.eval_fitness.</code><code class="sig-name descname">write_fittness</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fittness</span></em>, <em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#helper_files.eval_fitness.write_fittness" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write fittness values to file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>param1</strong> (<em>List</em>) -- fittness</p>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-helper_files.eval_propagator">
+<span id="helper-files-eval-propagator-module"></span><h2>helper_files.eval_propagator module<a class="headerlink" href="#module-helper_files.eval_propagator" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="helper_files.eval_propagator.eval_T">
+<code class="sig-prename descclassname">helper_files.eval_propagator.</code><code class="sig-name descname">eval_T</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">disp_index</span></em>, <em class="sig-param"><span class="n">para</span></em><span class="sig-paren">)</span><a class="headerlink" href="#helper_files.eval_propagator.eval_T" title="Permalink to this definition">¶</a></dt>
+<dd><p>evaluates zeroth order Greens function to estimate the Transmission in wide band limit. Function is used in multiprocessing</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param1</strong> (<em>int</em>) -- disp_index. Specifies which index in dir list should be processed</p></li>
+<li><p><strong>param2</strong> (<em>tuple</em>) -- param2[0] list of directories, param2[1] minimal displacement, param2[2] n_occupied</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>estimate for t, int: processed displacement index)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="helper_files.eval_propagator.plot_T_vs_d">
+<code class="sig-prename descclassname">helper_files.eval_propagator.</code><code class="sig-name descname">plot_T_vs_d</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">calc_path</span></em>, <em class="sig-param"><span class="n">molecule_name</span></em>, <em class="sig-param"><span class="n">n_occupied</span></em>, <em class="sig-param"><span class="n">config_path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#helper_files.eval_propagator.plot_T_vs_d" title="Permalink to this definition">¶</a></dt>
+<dd><p>evaluates zeroth order Greens function to estimate the Transmission in wide band limit. T estimate is plotted vs displacement.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param1</strong> (<em>String</em>) -- Path to turbomole calculation</p></li>
+<li><p><strong>param2</strong> (<em>String</em>) -- molecule name generation_individual</p></li>
+<li><p><strong>param3</strong> (<em>int</em>) -- occupied mos -&gt; define fermi energy</p></li>
+<li><p><strong>param4</strong> (<em>String</em>) -- Path to config file</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="helper_files.eval_propagator.plot_energy_levels">
+<code class="sig-prename descclassname">helper_files.eval_propagator.</code><code class="sig-name descname">plot_energy_levels</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">calc_path</span></em>, <em class="sig-param"><span class="n">molecule_name</span></em>, <em class="sig-param"><span class="n">n_occupied</span></em>, <em class="sig-param"><span class="n">config_path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#helper_files.eval_propagator.plot_energy_levels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots energy levels homo-4 ... Lumo+4 vs displacement</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param1</strong> (<em>String</em>) -- Path to turbomole calculation</p></li>
+<li><p><strong>param2</strong> (<em>String</em>) -- molecule name generation_individual</p></li>
+<li><p><strong>param3</strong> (<em>int</em>) -- occupied mos -&gt; define fermi energy</p></li>
+<li><p><strong>param4</strong> (<em>String</em>) -- Path to config file</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-helper_files.eval_stiffness">
+<span id="helper-files-eval-stiffness-module"></span><h2>helper_files.eval_stiffness module<a class="headerlink" href="#module-helper_files.eval_stiffness" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="helper_files.eval_stiffness.load_and_plot">
+<code class="sig-prename descclassname">helper_files.eval_stiffness.</code><code class="sig-name descname">load_and_plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">molecule_name</span></em>, <em class="sig-param"><span class="n">n_atoms</span></em><span class="sig-paren">)</span><a class="headerlink" href="#helper_files.eval_stiffness.load_and_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>loads total energy file and plots it vs displacement. fit is also done and written to STIFFNESS file</p>
+<blockquote>
+<div><p>param1 (String) : molecule_name
+param2 (int) : n_atoms for normalization</p>
+</div></blockquote>
+<p>Returns:</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-helper_files.genome_to_molecule">
+<span id="helper-files-genome-to-molecule-module"></span><h2>helper_files.genome_to_molecule module<a class="headerlink" href="#module-helper_files.genome_to_molecule" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="helper_files.genome_to_molecule.Building_Block">
+<em class="property">class </em><code class="sig-prename descclassname">helper_files.genome_to_molecule.</code><code class="sig-name descname">Building_Block</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">abbrev</span></em>, <em class="sig-param"><span class="n">num_atoms</span></em>, <em class="sig-param"><span class="n">origin</span></em>, <em class="sig-param"><span class="n">para_pos</span></em>, <em class="sig-param"><span class="n">para_angle</span></em>, <em class="sig-param"><span class="n">meta_pos</span></em>, <em class="sig-param"><span class="n">meta_angle</span></em>, <em class="sig-param"><span class="n">ortho_pos</span></em>, <em class="sig-param"><span class="n">ortho_angle</span></em>, <em class="sig-param"><span class="n">fixed_left</span></em>, <em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#helper_files.genome_to_molecule.Building_Block" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py method">
+<dt id="helper_files.genome_to_molecule.Building_Block.abbrev">
+<em class="property">property </em><code class="sig-name descname">abbrev</code><a class="headerlink" href="#helper_files.genome_to_molecule.Building_Block.abbrev" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="helper_files.genome_to_molecule.Building_Block.fixed_left">
+<em class="property">property </em><code class="sig-name descname">fixed_left</code><a class="headerlink" href="#helper_files.genome_to_molecule.Building_Block.fixed_left" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 9</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="helper_files.genome_to_molecule.Building_Block.meta_angle">
+<em class="property">property </em><code class="sig-name descname">meta_angle</code><a class="headerlink" href="#helper_files.genome_to_molecule.Building_Block.meta_angle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 6</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="helper_files.genome_to_molecule.Building_Block.meta_pos">
+<em class="property">property </em><code class="sig-name descname">meta_pos</code><a class="headerlink" href="#helper_files.genome_to_molecule.Building_Block.meta_pos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 5</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="helper_files.genome_to_molecule.Building_Block.num_atoms">
+<em class="property">property </em><code class="sig-name descname">num_atoms</code><a class="headerlink" href="#helper_files.genome_to_molecule.Building_Block.num_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="helper_files.genome_to_molecule.Building_Block.origin">
+<em class="property">property </em><code class="sig-name descname">origin</code><a class="headerlink" href="#helper_files.genome_to_molecule.Building_Block.origin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="helper_files.genome_to_molecule.Building_Block.ortho_angle">
+<em class="property">property </em><code class="sig-name descname">ortho_angle</code><a class="headerlink" href="#helper_files.genome_to_molecule.Building_Block.ortho_angle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 8</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="helper_files.genome_to_molecule.Building_Block.ortho_pos">
+<em class="property">property </em><code class="sig-name descname">ortho_pos</code><a class="headerlink" href="#helper_files.genome_to_molecule.Building_Block.ortho_pos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 7</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="helper_files.genome_to_molecule.Building_Block.para_angle">
+<em class="property">property </em><code class="sig-name descname">para_angle</code><a class="headerlink" href="#helper_files.genome_to_molecule.Building_Block.para_angle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="helper_files.genome_to_molecule.Building_Block.para_pos">
+<em class="property">property </em><code class="sig-name descname">para_pos</code><a class="headerlink" href="#helper_files.genome_to_molecule.Building_Block.para_pos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="helper_files.genome_to_molecule.Building_Block.path">
+<em class="property">property </em><code class="sig-name descname">path</code><a class="headerlink" href="#helper_files.genome_to_molecule.Building_Block.path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 10</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="helper_files.genome_to_molecule.Coupling">
+<em class="property">class </em><code class="sig-prename descclassname">helper_files.genome_to_molecule.</code><code class="sig-name descname">Coupling</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">abbrev</span></em><span class="sig-paren">)</span><a class="headerlink" href="#helper_files.genome_to_molecule.Coupling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py method">
+<dt id="helper_files.genome_to_molecule.Coupling.abbrev">
+<em class="property">property </em><code class="sig-name descname">abbrev</code><a class="headerlink" href="#helper_files.genome_to_molecule.Coupling.abbrev" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="helper_files.genome_to_molecule.Point">
+<em class="property">class </em><code class="sig-prename descclassname">helper_files.genome_to_molecule.</code><code class="sig-name descname">Point</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">z</span></em><span class="sig-paren">)</span><a class="headerlink" href="#helper_files.genome_to_molecule.Point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py method">
+<dt id="helper_files.genome_to_molecule.Point.x">
+<em class="property">property </em><code class="sig-name descname">x</code><a class="headerlink" href="#helper_files.genome_to_molecule.Point.x" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="helper_files.genome_to_molecule.Point.y">
+<em class="property">property </em><code class="sig-name descname">y</code><a class="headerlink" href="#helper_files.genome_to_molecule.Point.y" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="helper_files.genome_to_molecule.Point.z">
+<em class="property">property </em><code class="sig-name descname">z</code><a class="headerlink" href="#helper_files.genome_to_molecule.Point.z" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="helper_files.genome_to_molecule.construction_loop">
+<code class="sig-prename descclassname">helper_files.genome_to_molecule.</code><code class="sig-name descname">construction_loop</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">genome</span><span class="p">:</span> <span class="n">List<span class="p">[</span>int<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">building_blocks</span></em>, <em class="sig-param"><span class="n">config_path</span></em>, <em class="sig-param"><span class="n">xyz_file_path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#helper_files.genome_to_molecule.construction_loop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construction loop Genome -&gt; proper xyz file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>param1</strong> (<em>Genome</em>) -- Genome to build</p>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="helper_files.genome_to_molecule.load_anchors_blocks">
+<code class="sig-prename descclassname">helper_files.genome_to_molecule.</code><code class="sig-name descname">load_anchors_blocks</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#helper_files.genome_to_molecule.load_anchors_blocks" title="Permalink to this definition">¶</a></dt>
+<dd><p>load anchor blocks and set up Building_Block objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>param1</strong> (<em>path</em>) -- path to dir where anchors are located</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list(Building_Block)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="helper_files.genome_to_molecule.load_building_blocks">
+<code class="sig-prename descclassname">helper_files.genome_to_molecule.</code><code class="sig-name descname">load_building_blocks</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#helper_files.genome_to_molecule.load_building_blocks" title="Permalink to this definition">¶</a></dt>
+<dd><p>load building blocks and set up Building_Block objects</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>param1</strong> (<em>path</em>) -- path to dir where building_blocks are located</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list(Building_Block)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="helper_files.genome_to_molecule.process_block_to_add">
+<code class="sig-prename descclassname">helper_files.genome_to_molecule.</code><code class="sig-name descname">process_block_to_add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">coupling_point</span><span class="p">:</span> <span class="n"><a class="reference internal" href="source/helper_files.html#helper_files.genome_to_molecule.Point" title="helper_files.genome_to_molecule.Point">helper_files.genome_to_molecule.Point</a></span></em>, <em class="sig-param"><span class="n">coupling_angle</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">conjugation_angle</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">cc_bond_length</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">block_to_add</span><span class="p">:</span> <span class="n"><a class="reference internal" href="source/helper_files.html#helper_files.genome_to_molecule.Building_Block" title="helper_files.genome_to_molecule.Building_Block">helper_files.genome_to_molecule.Building_Block</a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#helper_files.genome_to_molecule.process_block_to_add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds block_to_add to left_block. Method takes care of right alignment, shifting and rotation of block_to_add.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param1</strong> (<a class="reference internal" href="source/helper_files.html#helper_files.genome_to_molecule.Point" title="helper_files.genome_to_molecule.Point"><em>Point</em></a>) -- coupling point</p></li>
+<li><p><strong>param2</strong> (<em>Angle</em>) -- coupling angle</p></li>
+<li><p><strong>param3</strong> (<em>Angle</em>) -- conjugation angle</p></li>
+<li><p><strong>param4</strong> (<em>float</em>) -- c-c bond length (Angstrom)</p></li>
+<li><p><strong>param5</strong> (<a class="reference internal" href="source/helper_files.html#helper_files.genome_to_molecule.Building_Block" title="helper_files.genome_to_molecule.Building_Block"><em>Building_Block</em></a>) -- block to be added</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>([atom/x/y/z, line])</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="helper_files.genome_to_molecule.process_genome">
+<code class="sig-prename descclassname">helper_files.genome_to_molecule.</code><code class="sig-name descname">process_genome</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">generation</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">individual</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">genome</span><span class="p">:</span> <span class="n">List<span class="p">[</span>int<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">run_path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#helper_files.genome_to_molecule.process_genome" title="Permalink to this definition">¶</a></dt>
+<dd><p>translates genome to xyz file. xyz file will be stored in $data/generation/individual and stretching and other calculations will be invoked</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param1</strong> (<em>int</em>) -- generation</p></li>
+<li><p><strong>param2</strong> (<em>int</em>) -- individual in generation</p></li>
+<li><p><strong>param3</strong> (<em>Genome</em>) -- genome to process</p></li>
+<li><p><strong>param4</strong> (<em>String</em>) -- path of current run</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>success (0), failure (-1)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="helper_files.genome_to_molecule.random">
+<code class="sig-prename descclassname">helper_files.genome_to_molecule.</code><code class="sig-name descname">random</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; x in the interval [0, 1).<a class="headerlink" href="#helper_files.genome_to_molecule.random" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="helper-files-jobgen-module">
+<h2>helper_files.jobgen module<a class="headerlink" href="#helper-files-jobgen-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-helper_files">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-helper_files" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">helper_files package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-helper_files.eval_fitness">helper_files.eval_fitness module</a></li>
+<li><a class="reference internal" href="#module-helper_files.eval_propagator">helper_files.eval_propagator module</a></li>
+<li><a class="reference internal" href="#module-helper_files.eval_stiffness">helper_files.eval_stiffness module</a></li>
+<li><a class="reference internal" href="#module-helper_files.genome_to_molecule">helper_files.genome_to_molecule module</a></li>
+<li><a class="reference internal" href="#helper-files-jobgen-module">helper_files.jobgen module</a></li>
+<li><a class="reference internal" href="#module-helper_files">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/helper_files.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Genetic Algorithm  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">helper_files package</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Matthias Blaschke.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+    </div>
+  </body>
+</html>

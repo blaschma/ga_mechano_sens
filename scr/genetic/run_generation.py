@@ -16,8 +16,6 @@ def run_generation(generation : int, config_path, calculation_path):
     		param1 (int) : number of generation
             param2 (String) : Path to config file
             param3 (String) : Path to calculation
-            
-            
 
     Returns:
             error codes (int)
@@ -100,10 +98,10 @@ def write_generation(population, generation, config_path, calculation_path):
     calculation_path/generation.dat which contains the current number of generations
 
     Args:
-    		param1 (Population) : population to write
-    		param2 (int) : Generation
-            param3 (String) : Path to config file
-            param4 (String) : Path to calculation              
+		param1 (Population) : population to write
+		param2 (int) : Generation
+		param3 (String) : Path to config file
+		param4 (String) : Path to calculation
     Returns:
             
     """

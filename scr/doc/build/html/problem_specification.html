@@ -1,0 +1,289 @@
+
+<!DOCTYPE html>
+
+<html lang="Python3">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>problem_specification package &#8212; Genetic Algorithm  documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Genetic Algorithm  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">problem_specification package</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="problem-specification-package">
+<h1>problem_specification package<a class="headerlink" href="#problem-specification-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="problem_specification.evaluation_methods.html">problem_specification.evaluation_methods package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="problem_specification.evaluation_methods.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="problem_specification.evaluation_methods.html#module-problem_specification.evaluation_methods.evaluation_methods">problem_specification.evaluation_methods.evaluation_methods module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="problem_specification.evaluation_methods.html#module-problem_specification.evaluation_methods">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-problem_specification.bbEV">
+<span id="problem-specification-bbev-module"></span><h2>problem_specification.bbEV module<a class="headerlink" href="#module-problem_specification.bbEV" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="problem_specification.bbEV.bbEv">
+<em class="property">class </em><code class="sig-prename descclassname">problem_specification.bbEV.</code><code class="sig-name descname">bbEv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">generation</span></em>, <em class="sig-param"><span class="n">individual</span></em><span class="sig-paren">)</span><a class="headerlink" href="#problem_specification.bbEV.bbEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="source/problem_specification.evaluation_methods.html#problem_specification.evaluation_methods.evaluation_methods.Evaluation" title="problem_specification.evaluation_methods.evaluation_methods.Evaluation"><code class="xref py py-class docutils literal notranslate"><span class="pre">problem_specification.evaluation_methods.evaluation_methods.Evaluation</span></code></a></p>
+<dl class="py attribute">
+<dt id="problem_specification.bbEV.bbEv.CrossoverFunc">
+<code class="sig-name descname">CrossoverFunc</code><a class="headerlink" href="#problem_specification.bbEV.bbEv.CrossoverFunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code>[[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]], <code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="problem_specification.bbEV.bbEv.FitnessFunc">
+<code class="sig-name descname">FitnessFunc</code><a class="headerlink" href="#problem_specification.bbEV.bbEv.FitnessFunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code>[[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="problem_specification.bbEV.bbEv.Genome">
+<code class="sig-name descname">Genome</code><a class="headerlink" href="#problem_specification.bbEV.bbEv.Genome" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="problem_specification.bbEV.bbEv.MutationFunc">
+<code class="sig-name descname">MutationFunc</code><a class="headerlink" href="#problem_specification.bbEV.bbEv.MutationFunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="problem_specification.bbEV.bbEv.PopulateFunc">
+<code class="sig-name descname">PopulateFunc</code><a class="headerlink" href="#problem_specification.bbEV.bbEv.PopulateFunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="problem_specification.bbEV.bbEv.Population">
+<code class="sig-name descname">Population</code><a class="headerlink" href="#problem_specification.bbEV.bbEv.Population" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="problem_specification.bbEV.bbEv.SelectionFunc">
+<code class="sig-name descname">SelectionFunc</code><a class="headerlink" href="#problem_specification.bbEV.bbEv.SelectionFunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code>[[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]], <code class="xref py py-class docutils literal notranslate"><span class="pre">Callable</span></code>[[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]], <code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV.bbEv.building_block_mutation">
+<code class="sig-name descname">building_block_mutation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">genome</span><span class="p">:</span> <span class="n">List<span class="p">[</span>int<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">probability</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.5</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>int<span class="p">]</span><a class="headerlink" href="#problem_specification.bbEV.bbEv.building_block_mutation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV.bbEv.coupling_mutation">
+<code class="sig-name descname">coupling_mutation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">genome</span><span class="p">:</span> <span class="n">List<span class="p">[</span>int<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">probability</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.5</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>int<span class="p">]</span><a class="headerlink" href="#problem_specification.bbEV.bbEv.coupling_mutation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV.bbEv.crossover">
+<code class="sig-name descname">crossover</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span><span class="p">:</span> <span class="n">List<span class="p">[</span>int<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">b</span><span class="p">:</span> <span class="n">List<span class="p">[</span>int<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>List<span class="p">[</span>int<span class="p">]</span><span class="p">, </span>List<span class="p">[</span>int<span class="p">]</span><span class="p">]</span><a class="headerlink" href="#problem_specification.bbEV.bbEv.crossover" title="Permalink to this definition">¶</a></dt>
+<dd><p>Crossover of genome a and b</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param1</strong> (<em>Genome</em>) -- genome a</p></li>
+<li><p><strong>param2</strong> (<em>Genome</em>) -- genome b</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(Genome,Genome)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV.bbEv.fitness">
+<code class="sig-name descname">fitness</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">genome</span><span class="p">:</span> <span class="n">List<span class="p">[</span>int<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">generation</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">individual</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; float<a class="headerlink" href="#problem_specification.bbEV.bbEv.fitness" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates finess</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param1</strong> (<em>Genome</em>) -- genome</p></li>
+<li><p><strong>param2</strong> (<em>int</em>) -- generation</p></li>
+<li><p><strong>param3</strong> (<em>int</em>) -- individual</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(float) fittness</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV.bbEv.generate_genome">
+<code class="sig-name descname">generate_genome</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">max_length</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>int<span class="p">]</span><a class="headerlink" href="#problem_specification.bbEV.bbEv.generate_genome" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates genome mit maximum lengt of max_lengt (-&gt; size random). Genome is generated from available couplings and building blocks</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>param1</strong> (<em>int</em>) -- maximum length of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Genome</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV.bbEv.generate_population">
+<code class="sig-name descname">generate_population</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">size</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">genome_length</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>List<span class="p">[</span>int<span class="p">]</span><span class="p">]</span><a class="headerlink" href="#problem_specification.bbEV.bbEv.generate_population" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates population of size size withm genomes of length genome_length</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param1</strong> (<em>int</em>) -- population size</p></li>
+<li><p><strong>param2</strong> (<em>int</em>) -- genome_length</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Genome</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV.bbEv.mutation">
+<code class="sig-name descname">mutation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">genome</span><span class="p">:</span> <span class="n">List<span class="p">[</span>int<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">num</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">probability</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.5</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>int<span class="p">]</span><a class="headerlink" href="#problem_specification.bbEV.bbEv.mutation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mutation of genome (num of mutations with given probability )</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param1</strong> (<em>Genome</em>) -- genome</p></li>
+<li><p><strong>param2</strong> (<em>int</em>) -- number of mutations</p></li>
+<li><p><strong>param3</strong> (<em>float</em>) -- probability of mutation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(Genome) population</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV.bbEv.selection_pair">
+<code class="sig-name descname">selection_pair</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">population</span><span class="p">:</span> <span class="n">List<span class="p">[</span>List<span class="p">[</span>int<span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">fitness_value</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>List<span class="p">[</span>int<span class="p">]</span><span class="p">]</span><a class="headerlink" href="#problem_specification.bbEV.bbEv.selection_pair" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select pair of population</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param1</strong> (<em>Population</em>) -- Population</p></li>
+<li><p><strong>param2</strong> (<em>Callable</em>) -- fitness_function</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(Population) population</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV.bbEv.single_point_crossover">
+<code class="sig-name descname">single_point_crossover</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span><span class="p">:</span> <span class="n">List<span class="p">[</span>int<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">b</span><span class="p">:</span> <span class="n">List<span class="p">[</span>int<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>List<span class="p">[</span>int<span class="p">]</span><span class="p">, </span>List<span class="p">[</span>int<span class="p">]</span><span class="p">]</span><a class="headerlink" href="#problem_specification.bbEV.bbEv.single_point_crossover" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="problem_specification.bbEV.random">
+<code class="sig-prename descclassname">problem_specification.bbEV.</code><code class="sig-name descname">random</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; x in the interval [0, 1).<a class="headerlink" href="#problem_specification.bbEV.random" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-problem_specification">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-problem_specification" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">problem_specification package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-problem_specification.bbEV">problem_specification.bbEV module</a></li>
+<li><a class="reference internal" href="#module-problem_specification">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/problem_specification.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Genetic Algorithm  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">problem_specification package</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Matthias Blaschke.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+    </div>
+  </body>
+</html>
