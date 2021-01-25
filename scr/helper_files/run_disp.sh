@@ -105,8 +105,16 @@ if test -f "$file"; then
     if test -f "$file"; then
         echo "now evaluate everything"
         #all the evaluation scripts
+
+        #stiffness evaluation
         GRANDDADDY="$(cd ../; pwd)"
         . $helper_files/eval_stiffness.sh $GRANDDADDY $filename $config_file
+
+        #T estimation
+        #take number of occupied orbital from 0000/ridft.out
+        line=$(grep -o " number of occupied orbitals : .*" ./0000/ridft.out)
+        homo=${line//$"number of occupied orbitals :"}
+        python3 $helper_files/eval_propagator.py ../ $filename $homo $config_file
 
 
         #now everything is done
@@ -119,8 +127,10 @@ fi
 num_finished=$(ls ../../ -1f | grep _DONE | wc -l) 
 if [ "$num_finished" -eq "$population_size" ]; then
     echo "Everybody seems to be ready"
-    #/alcc/gpfs2/home/u/blaschma/Master_Code/genetic_algorithm/scr/genetic/invoke_next_generation.py
+    #eval fitness
     python3 $genetic_algorithm_path/scr/helper_files/eval_fitness.py "/alcc/gpfs2/home/u/blaschma/test/generation_data/"$(basename ${PWD%/*/*})
+
+    #invoke next generation
     python3 $genetic_algorithm_path/scr/genetic/invoke_next_generation.py $config_file "/alcc/gpfs2/home/u/blaschma/test/"
 fi
 
