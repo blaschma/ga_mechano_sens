@@ -47,28 +47,34 @@ def load_and_plot(molecule_name,n_atoms):
 		print("Fit to wrong model")
 		fit = [-100,-100,-100]
 		std = [1000,1000,1000]
-	fit_normalized = popt_normalized
-	fit = popt
-	fitted_data_normalized = fit_normalized[0] * (disp-fit_normalized[1])**2+fit_normalized[2]
-	std_normalized = np.sqrt(np.diag(pcov_normalized))
-	std=np.sqrt(np.diag(pcov))
-	print("a=" + str(fit_normalized[0]))
+		file = open(molecule_name + "_stiffness.dat", "w")
+		file.write("a b c std(a) std(b) std(c)  -> a(x-b)**2+c (first line:normalized, second line: not normalized)" + "\n")
+		file.write(str(fit[0]) + "	" + str(fit[1]) + "	" + str(fit[2]) + "	" + str(std[0]) + "	" + str(std[1]) + "	" + str(std[2]) + "\n")
+		file.write(str(fit[0]) + "	" + str(fit[1]) + "	" + str(fit[2]) + "	" + str(std[0]) + "	" + str(std[1]) + "	" + str(std[2]))
+		file.close()
+	else:
+		fit_normalized = popt_normalized
+		fit = popt
+		fitted_data_normalized = fit_normalized[0] * (disp-fit_normalized[1])**2+fit_normalized[2]
+		std_normalized = np.sqrt(np.diag(pcov_normalized))
+		std=np.sqrt(np.diag(pcov))
+		print("a=" + str(fit_normalized[0]))
 
-	#write fit data to file
-	file = open(molecule_name + "_stiffness.dat", "w")
-	file.write("a b c std(a) std(b) std(c)  -> a(x-b)**2+c (first line:normalized, second line: not normalized)" + "\n")
-	file.write(str(fit_normalized[0]) + "	" + str(fit_normalized[1]) + "	" + str(fit_normalized[2]) + "	" + str(std_normalized[0]) + "	" + str(std_normalized[1]) + "	" + str(std_normalized[2]) + "\n")
-	file.write(str(fit[0]) + "	" + str(fit[1]) + "	" + str(fit[2]) + "	" + str(std[0]) + "	" + str(std[1]) + "	" + str(std[2]))
-	file.close()
+		#write fit data to file
+		file = open(molecule_name + "_stiffness.dat", "w")
+		file.write("a b c std(a) std(b) std(c)  -> a(x-b)**2+c (first line:normalized, second line: not normalized)" + "\n")
+		file.write(str(fit_normalized[0]) + "	" + str(fit_normalized[1]) + "	" + str(fit_normalized[2]) + "	" + str(std_normalized[0]) + "	" + str(std_normalized[1]) + "	" + str(std_normalized[2]) + "\n")
+		file.write(str(fit[0]) + "	" + str(fit[1]) + "	" + str(fit[2]) + "	" + str(std[0]) + "	" + str(std[1]) + "	" + str(std[2]))
+		file.close()
 
-	plt.plot(disp, energy_normalized)
-	plt.plot(disp, fitted_data_normalized, '--')
-	
-	plt.title("a=" + str(fit_normalized[0]) + " std=" + str(std))
-	plt.ylabel('($(E-E_0)/N$) [H]',fontsize=20)
-	plt.xlabel('Displacement [$\mathrm{\AA}$]',fontsize=20)
-	plt.savefig(molecule_name + "_totalEnergy.pdf", bbox_inches='tight')
-	plt.savefig(molecule_name + "_totalEnergy.svg", bbox_inches='tight')
+		plt.plot(disp, energy_normalized)
+		plt.plot(disp, fitted_data_normalized, '--')
+		
+		plt.title("a=" + str(fit_normalized[0]) + " std=" + str(std))
+		plt.ylabel('($(E-E_0)/N$) [H]',fontsize=20)
+		plt.xlabel('Displacement [$\mathrm{\AA}$]',fontsize=20)
+		plt.savefig(molecule_name + "_totalEnergy.pdf", bbox_inches='tight')
+		plt.savefig(molecule_name + "_totalEnergy.svg", bbox_inches='tight')
 
 if __name__ == '__main__':
 	#sys.argv[1]: path/moleculename
