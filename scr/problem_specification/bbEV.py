@@ -52,7 +52,7 @@ class bbEv(evaluation_methods.Evaluation):
 			Genome
 	        """
 	    #coupling must contain at least one block and two couplings
-		print("max_length " + str(max_length))
+		#print("max_length " + str(max_length))
 		if(max_length <= 1):
 			print("sorry max_length too small")
 			return -1
@@ -72,7 +72,7 @@ class bbEv(evaluation_methods.Evaluation):
 			genome.append(selected_building_blocks[i])
 			
 			genome.append(selected_couplings[i+1])
-			print("genome " + str(genome))
+			#print("genome " + str(genome))
 		return genome
 
 		
@@ -82,7 +82,7 @@ class bbEv(evaluation_methods.Evaluation):
 
 	def fitness(self, genome: Genome, generation: int, individual: int) -> float:
 		genome_copy = copy.deepcopy(genome)
-		gtm.process_genome(generation,individual,genome_copy,"/alcc/gpfs2/home/u/blaschma/test/")
+		gtm.process_genome(generation,individual,genome_copy,"/alcc/gpfs2/home/u/blaschma/genetic_run/")
 		return random()
 
 
@@ -99,12 +99,13 @@ class bbEv(evaluation_methods.Evaluation):
 		#return (a,b)
 		return self.single_point_crossover(a,b)
 
-	def single_point_crossover(self, a:Genome, b:Genome) -> Tuple[Genome, Genome]:
+	def single_point_crossover_old(self, a:Genome, b:Genome) -> Tuple[Genome, Genome]:
 		
 		length_a = len(a)
 		length_b = len(b)
 		if(length_a<=1 or length_b<=1):
 			return a, b
+
 		#ensure that coupling and blocks alter
 		cut_a = randrange(length_a)	
 		if(cut_a%2 == 0):
@@ -116,7 +117,19 @@ class bbEv(evaluation_methods.Evaluation):
 
 		return a[0:cut_a] + b[cut_b:length_b], b[0:cut_b] + a[cut_a:length_a]
 
-	def mutation(self, genome: Genome, num: int=1, probability: float = 0.5) -> Genome:
+	def single_point_crossover(self, a:Genome, b:Genome) -> Tuple[Genome, Genome]:
+		
+		length_a = len(a)
+		length_b = len(b)
+		minimim_length = np.min((length_a, length_b))
+		if(length_a<=1 or length_b<=1):
+			return a, b
+			
+		cut = randrange(minimim_length)			
+
+		return a[0:cut] + b[cut:length_b], b[0:cut] + a[cut:length_a]
+
+	def mutation(self, genome: Genome, num: int=2, probability: float = 0.5) -> Genome:
 		for _ in range(num):
 			method = randrange(2)
 			if(method == 0):

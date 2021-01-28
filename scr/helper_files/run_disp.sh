@@ -19,7 +19,11 @@ INTEL=$intel_path
 
 
 
+
 export PARA_ARCH=SMP
+
+#export SMPCPUS=$cpus_per_task
+cpus_per_task=$(head -n 1 ../complexity)
 export SMPCPUS=$cpus_per_task
 
 ulimit -s unlimited
@@ -131,7 +135,7 @@ if [ "$num_finished" -eq "$population_size" ]; then
     python3 $genetic_algorithm_path/scr/helper_files/eval_fitness.py "/alcc/gpfs2/home/u/blaschma/test/generation_data/"$(basename ${PWD%/*/*})
 
     #invoke next generation
-    python3 $genetic_algorithm_path/scr/genetic/invoke_next_generation.py $config_file "/alcc/gpfs2/home/u/blaschma/test/"
+    python3 $genetic_algorithm_path/scr/genetic/invoke_next_generation.py $config_file "/alcc/gpfs2/home/u/blaschma/genetic_run/"
 fi
 
 

@@ -28,7 +28,12 @@ def eval_T(disp_index, para):
 
 	directory = directories[disp_index+min_displacement]
 	#print("index " + str())
-	eigenvalues, eigenvectors = top.read_mos_file(directory + "/mos")
+	try:
+		eigenvalues, eigenvectors = top.read_mos_file(directory + "/mos")
+	except ValueError as e: 
+		print("error " + str(e))
+		return 0.0, float(disp_index)
+
 	s_range = top.find_c_range_atom("s", 1, directory + "/coord")
 	r_range = top.find_c_range_atom("s", 2, directory + "/coord")
 
@@ -242,6 +247,7 @@ def plot_energy_levels(calc_path, molecule_name, n_occupied, config_path):
 	
 	ax.set_xlabel('Displacement ($\mathrm{\AA}$)',fontsize=20)
 	ax.set_ylabel('Energy (eV)',fontsize=20)
+	ax.set_yscale('log')
 	ax.legend()
 	plt.savefig(calc_path + "/" + molecule_name + "_energy_levels.pdf", bbox_inches='tight')
 	plt.savefig(calc_path + "/" + molecule_name + "_energy_levels.svg", bbox_inches='tight')

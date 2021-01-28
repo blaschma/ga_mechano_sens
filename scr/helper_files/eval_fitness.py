@@ -69,7 +69,7 @@ def process_T_estimate_data(T_est, gen_path):
 	"""	
 	fig, ax = plt.subplots(1)
 	NUM_COLORS = len(T_est)
-	cm = plt.get_cmap('tab20')
+	cm = plt.get_cmap('nipy_spectral')
 	ax.set_prop_cycle('color', [cm(1.*i/NUM_COLORS) for i in range(NUM_COLORS)])
 	f = open(gen_path + "/T_est_data.dat", "w")
 	for i in range(len(T_est)):
@@ -173,13 +173,14 @@ def eval_fittness(stiffness, std_stiffness, T_est, T_estimates_params):
 	mean = 0
 	counter = 0
 	for i in range(len(stiffness)):
-		#negative stiffness is not possible -> set values to low fittness
-		print(stiffness[i])
 
-		if(stiffness[i]<0.0 and False):
+		#negative stiffness is not possible -> set values to low fittness
+		print(str(i) + "   " + str(stiffness[i]))
+
+		if(stiffness[i]<0.0):
 			print("negative!")
 			stiffness[i] = 100.0
-		elif(np.abs(std_stiffness[i]/stiffness[i])>0.25 and False):
+		elif(np.abs(std_stiffness[i]/stiffness[i])>0.25):
 			print("std to big!")
 			stiffness[i] = 100.0
 		else:
@@ -199,14 +200,26 @@ def eval_fittness(stiffness, std_stiffness, T_est, T_estimates_params):
 	fit_param = list()
 	min_T_est = list()
 	for i in range(len(T_estimates_params)):
-		fit_param.append(T_estimates_params[i][0])
-		min_T_est.append(T_estimates_params[i][2])
-		if(T_estimates_params[i][2] < min_min_T_est):
-			min_min_T_est = T_estimates_params[i][2]
-	fittness_T_est = np.asarray(fit_param)/(np.asarray(min_T_est)+min_min_T_est)
+		dx = 1
+		dy = np.diff(T_est[i][1,:])/dx
+		max_deriv = np.max(np.abs(dy))
+		amplitude = np.abs(np.max(T_estimates_params[i][:])-np.min(T_estimates_params[i][:]))
+		#print(str(i) + " amplitude " + str(amplitude) + " max deriv " + str(max_deriv))
+		if(np.isfinite(float(T_estimates_params[i][0]))==True and T_estimates_params[i][2] !=0):
+			#print(str(i) + " mediane " + str(np.median(T_est[i][1])/np.min(T_est[i][1])))
+			fit_param.append(T_estimates_params[i][0]*(np.median(T_est[i][1])/np.min(T_est[i][1])))
+			min_T_est.append(T_estimates_params[i][2])
+			if(T_estimates_params[i][2] < min_min_T_est):
+				min_min_T_est = T_estimates_params[i][2]
+		else:
+			fit_param.append(0)
+			min_T_est.append(1)
+		
+	fittness_T_est = np.asarray(fit_param)/(np.asarray(min_T_est))
 	print("fittness_T_est")
 	print(fittness_T_est)
-	print()
+	
+	
 	return fittness_stiffness*fittness_T_est
 
 def write_fittness(fittness, path):

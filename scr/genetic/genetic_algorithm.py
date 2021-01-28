@@ -126,14 +126,32 @@ def run_generation(
 		#select parent according to selection function
 		parents = selection_func(population, fitness_value)#->todo too inefficent
 		#combine features of parents to generate offspring
-
+		print("parents[0] " + str(parents[0]) + " parents[1] " + str(parents[1]))
 		offspring_a, offspring_b = crossover_func(parents[0], parents[1])
 		#mutate offspring
+		print("before mutation " + str(offspring_a))
+		print("before mutation " + str(offspring_b))
 		offspring_a = mutation_func(offspring_a)
 		offspring_b = mutation_func(offspring_b)
+		print("after mutation " + str(offspring_a))
+		print("after mutation " + str(offspring_b))
 		#add offspring to generation
 		next_generation += [offspring_a, offspring_b]
 	population = next_generation
+
+	individuals = list()
+	for i in range(len(population)):
+		if((population[i] in individuals)==False):
+			print(str(population[i]) + " was not in ")
+			individuals.append(population[i])
+	unique_individuals = len(individuals)
+	print("individuals " + str(individuals))
+	missing_individuals = population_size-unique_individuals
+	individuals_to_add = populate_func()[0:missing_individuals]
+	print("missing " + str(unique_individuals))
+	print(len(individuals_to_add))
+	population = individuals
+	population+=individuals_to_add
 
 	#invoke evaluation of  new population
 	population_for_fitness_eval = copy.deepcopy(population)

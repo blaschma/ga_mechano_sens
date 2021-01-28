@@ -12,7 +12,7 @@ import subprocess
 Genome = List[int]
 Point = namedtuple("Point", ['x','y', 'z'])
 Angle = float
-Building_Block = namedtuple('Building_Block', ['abbrev', 'num_atoms','origin', 'para_pos','para_angle', 'meta_pos','meta_angle', 'ortho_pos','ortho_angle','fixed_left', 'path'])
+Building_Block = namedtuple('Building_Block', ['abbrev', 'num_atoms','origin', 'para_pos','para_angle', 'meta_pos','meta_angle', 'ortho_pos','ortho_angle','fixed_left','complexity', 'path'])
 Coupling = namedtuple('Coupling', ['abbrev'])
 
 
@@ -92,7 +92,7 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 			(int,float): corresponding line in xyz file of building block refered in genome[index], coupling angle
 
 		"""
-		print("genome " +str(genome) + " index " + str(index))
+		#print("genome " +str(genome) + " index " + str(index))
 		if(index > len(genome)-2 or index < 0):
 			raise ValueError("index is out of proper range")
 
@@ -115,15 +115,17 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 			raise ValueError("coupling seems to be funny")
 		return coupling_index, coupling_angle
 
-	def write_file_parts_to_file(xyz_file_parts, path, fixed_beginning, fixed_end, config_path):
+	def write_file_parts_to_file(xyz_file_parts, path, fixed_beginning, fixed_end,complexity, config_path):
 		"""
-		write xyz file parts to proper xyz file and turbomole coord file 
+		write xyz file parts to proper xyz file and turbomole coord file. Complexity is written to file 
 
 		Args:
 			param1 (List of np.ndarray): List of xyz files
 			param2 (String): path
 			param3 (int): fixed_beginning (index of atom in first block which should be fixed)
 			param4 (int): fixed_end (index of atom in last block which should be fixed)
+			param5 (int): complexity of whole molecule
+			param6 (String): path to config file
 		Returns:
 			
 
@@ -132,6 +134,11 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 		cfg = configparser.ConfigParser()
 		cfg.read(config_path)
 		ang2Bohr = float(cfg.get('Building Procedure', 'ang2Bohr'))
+
+		#write complexity to file
+		file_complexity = open(path+"/complexity", "w")
+		file_complexity.write(str(complexity))
+		file_complexity.close()
 
 		file_xyz = open(path+"/coord.xyz", "w")
 		file_coord = open(path + "/coord", "w")
@@ -152,10 +159,12 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 			if(j == 0):
 				z_coords = [float(datContent[3,u]) for u in range(0,len(datContent[3,:]))]
 				lower_limit = np.min(z_coords)+0.1
+				#print("lower_limit " + str(lower_limit))
 			#find upper limit. only last block is considered
 			if(j == len(xyz_file_parts)-1):
 				z_coords = [float(datContent[3,u]) for u in range(0,len(datContent[3,:]))]
 				upper_limit = np.max(z_coords)-0.1
+				#print("upper_limit " + str(upper_limit))
 				
 			for i in range(0,len(datContent[1,:])):
 				file_xyz.write(str(datContent[0,i]) + "	" + str(datContent[1,i]) + "	" + str(datContent[2,i]) + "	" + str(datContent[3,i]) + "\n")
@@ -198,7 +207,7 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 				distance = (float(datContent[1,i])-float(datContent[1,coupling_index]))**2+(float(datContent[2,i])-float(datContent[2,coupling_index]))**2+(float(datContent[3,i])-float(datContent[3,coupling_index]))**2			
 				intersting_atoms_distance.append(distance)
 		intersting_atoms = [x for _,x in sorted(zip(intersting_atoms_distance,intersting_atoms))]
-		print("interesting neighbour " + str(intersting_atoms[0]))
+		#print("interesting neighbour " + str(intersting_atoms[0]))
 		return intersting_atoms[0]
 
 	def align_z_along_fixed_ends(xyz_file_parts, fixed_beginning, fixed_end):
@@ -212,43 +221,43 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 		Returns:
 			int : (List of np.ndarray): List of xyz file
 		"""
-		print("len xyz " + str(len(xyz_file_parts)))
-		print("xyz parts " + str(xyz_file_parts))
+		#print("len xyz " + str(len(xyz_file_parts)))
+		#print("xyz parts " + str(xyz_file_parts))
 		#calculate vec(fixed_beginning->fixed_end)
 		molecule_axis = [round(float(xyz_file_parts[-1][1,fixed_end]),5),round(float(xyz_file_parts[-1][2,fixed_end]),5),round(float(xyz_file_parts[-1][3,fixed_end]),5)]
-		print("molecule_axis " + str(molecule_axis))
+		#print("molecule_axis " + str(molecule_axis))
 		#calculate rotation angel
 
 		angle = np.arccos(molecule_axis[2]/np.linalg.norm(molecule_axis))
 		theta = angle
 		
-		print("angle " + str(angle))
+		#print("angle " + str(angle))
 		if(angle != 0):
 			#calculate rotation axis
 			rotation_axis = np.cross(molecule_axis, [0.0,0.0,1.0])
 			rotation_axis = 1.0/np.linalg.norm(rotation_axis)*rotation_axis
 			u = rotation_axis
-			print("rotation axis " + str(rotation_axis))
+			#print("rotation axis " + str(rotation_axis))
 
 			#calculate rotation_matrix
 			rotation_matrix = [[np.cos(theta) + u[0]**2 * (1-np.cos(theta)), u[0] * u[1] * (1-np.cos(theta)) - u[2] * np.sin(theta), u[0] * u[2] * (1 - np.cos(theta)) + u[1] * np.sin(theta)],
 	            [u[0] * u[1] * (1-np.cos(theta)) + u[2] * np.sin(theta), np.cos(theta) + u[1]**2 * (1-np.cos(theta)), u[1] * u[2] * (1 - np.cos(theta)) - u[0] * np.sin(theta)],
 	            [u[0] * u[2] * (1-np.cos(theta)) - u[1] * np.sin(theta), u[1] * u[2] * (1-np.cos(theta)) + u[0] * np.sin(theta), np.cos(theta) + u[2]**2 * (1-np.cos(theta))]]
-			print("determinat " + str(np.linalg.det(rotation_matrix)))
-			print("matrix " + str(rotation_matrix))
+			#print("determinat " + str(np.linalg.det(rotation_matrix)))
+			#print("matrix " + str(rotation_matrix))
 
 
 			for j in range(0, len(xyz_file_parts)):
-				print("j  " + str(j))
-				print(xyz_file_parts[j])
+				#print("j  " + str(j))
+				#print(xyz_file_parts[j])
 				for i in range(0, len(xyz_file_parts[j][1,:])):
 					 
 					vector_to_rotate = [round(float(xyz_file_parts[j][1,i]),5),round(float(xyz_file_parts[j][2,i]),5),round(float(xyz_file_parts[j][3,i]),5)]
-					print("atom " + str(xyz_file_parts[j][0,i]))
-					print("vector_to_rotate " + str(vector_to_rotate))
+					#print("atom " + str(xyz_file_parts[j][0,i]))
+					#print("vector_to_rotate " + str(vector_to_rotate))
 					rotated_vector = np.asmatrix(rotation_matrix)*np.asmatrix(vector_to_rotate).T
-					print("rotated vector " + str(rotated_vector))
-					print("----------------------")
+					#print("rotated vector " + str(rotated_vector))
+					#print("----------------------")
 					xyz_file_parts[j][1,i] = round(rotated_vector[0,0],5)
 					xyz_file_parts[j][2,i] = round(rotated_vector[1,0],5)
 					xyz_file_parts[j][3,i] = round(rotated_vector[2,0],5)
@@ -271,7 +280,7 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 		print("Genome was emtpy")
 		# TODO: proper treatment
 
-	print(genome)
+	#print(genome)
 	
 	#add anchor to end -> couplings are missing 
 	#add left anchor
@@ -286,7 +295,7 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 	#genome.append(0)
 	genome.append(len(building_blocks)-1)
 	
-	print(genome)
+	#print(genome)
 	#data content of every part of xyz file is stored in this list	
 	xyz_file_parts = list()
 
@@ -301,8 +310,10 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 	fixed_beginning = 0
 	fixed_end = 0
 
+	#complexity measure of molecule
+	complexity = 0
 	for i in range(0, len(genome)):
-
+		complexity += building_blocks[genome[i]].complexity
 		#odd index -> coupling
 		if(i%2==1):		
 			#conclude coupling point
@@ -392,7 +403,7 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 	xyz_file_parts= align_z_along_fixed_ends(xyz_file_parts, fixed_beginning, fixed_end)
 
 	#write xyz_file_parts to xyz file
-	write_file_parts_to_file(xyz_file_parts, xyz_file_path, fixed_beginning, fixed_end, config_path)	
+	write_file_parts_to_file(xyz_file_parts, xyz_file_path, fixed_beginning, fixed_end, complexity, config_path)	
 
 		
 def load_building_blocks(path):
@@ -405,14 +416,15 @@ def load_building_blocks(path):
 		list(Building_Block)
 	"""		
 	#TODO : automatization
-	benzene = Building_Block(abbrev="B", num_atoms=6,origin=0, para_pos=3, para_angle=0, meta_pos=4 , meta_angle = -np.pi/3., ortho_pos=5, ortho_angle=-2.*np.pi/3, fixed_left = -1, path=path+"/benzene.xyz")
-	napthtalene = Building_Block(abbrev="N", num_atoms=18,origin=0, para_pos=12, para_angle=0., meta_pos=11 , meta_angle = -np.pi/3., ortho_pos=10, ortho_angle=-2.*np.pi/3, fixed_left = -1, path=path+"/naphtalene.xyz")
-	dbPc1 = Building_Block(abbrev="dbPc1", num_atoms=32,origin=13, para_pos=1, para_angle=0, meta_pos=0 , meta_angle = +np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1, path=path+"/dbPc1_block.xyz")
-	dbPc4 = Building_Block(abbrev="dbPc4", num_atoms=55,origin=22, para_pos=1, para_angle=0, meta_pos=0 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1, path=path+"/dbPc4.xyz")
-	dbPc6 = Building_Block(abbrev="dbPc6", num_atoms=52,origin=17, para_pos=0, para_angle=0, meta_pos=1 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1, path=path+"/dbPc6.xyz")
-	dbPc5 = Building_Block(abbrev="dbPc5", num_atoms=58,origin=12, para_pos=26, para_angle=0, meta_pos=20 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1, path=path+"/dbPc5.xyz")
-	line = Building_Block(abbrev="line", num_atoms=4,origin=0, para_pos=1, para_angle=0, meta_pos=1 , meta_angle = 0., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1, path=path+"/line.xyz")
-	building_blocks = [benzene,napthtalene,dbPc1,dbPc4,dbPc6, dbPc5, line]
+	benzene = Building_Block(abbrev="B", num_atoms=6,origin=0, para_pos=3, para_angle=0, meta_pos=4 , meta_angle = -np.pi/3., ortho_pos=5, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=1, path=path+"/benzene.xyz")
+	napthtalene = Building_Block(abbrev="N", num_atoms=18,origin=0, para_pos=12, para_angle=0., meta_pos=11 , meta_angle = -np.pi/3., ortho_pos=10, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=1, path=path+"/naphtalene.xyz")
+	dbPc1 = Building_Block(abbrev="dbPc1", num_atoms=32,origin=13, para_pos=1, para_angle=0, meta_pos=0 , meta_angle = +np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=2, path=path+"/dbPc1_block.xyz")
+	dbPc4 = Building_Block(abbrev="dbPc4", num_atoms=55,origin=22, para_pos=1, para_angle=0, meta_pos=0 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=4, path=path+"/dbPc4.xyz")
+	dbPc6 = Building_Block(abbrev="dbPc6", num_atoms=52,origin=17, para_pos=0, para_angle=0, meta_pos=1 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=4, path=path+"/dbPc6.xyz")
+	dbPc5 = Building_Block(abbrev="dbPc5", num_atoms=58,origin=12, para_pos=26, para_angle=0, meta_pos=20 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=4, path=path+"/dbPc5.xyz")
+	pseudo_para_naph_PCP = Building_Block(abbrev="pseudo-para_naph_PCP", num_atoms=44,origin=0, para_pos=18, para_angle=0, meta_pos=16 , meta_angle = -np.pi/3, ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=3, path=path+"/pseudo-para_naph_PCP.xyz")
+	line =Building_Block(abbrev="line", num_atoms=4,origin=0, para_pos=1, para_angle=0, meta_pos=1 , meta_angle = 0., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=1, path=path+"/line.xyz")
+	building_blocks = [benzene,napthtalene,dbPc1,dbPc4,dbPc6, dbPc5,pseudo_para_naph_PCP, line]
 	#building_blocks = [benzene,napthtalene]
 
 	return building_blocks
@@ -427,8 +439,8 @@ def load_anchors_blocks(path):
 		list(Building_Block)
 	"""		
 	#TODO : automatization
-	left = Building_Block(abbrev="l", num_atoms=12,origin=6, para_pos=0, para_angle=0, meta_pos=1 , meta_angle = np.pi/3., ortho_pos=2, ortho_angle=-2.*np.pi/3, fixed_left = 6, path=path+"/anchor_left.xyz")
-	right = Building_Block(abbrev="r", num_atoms=12,origin=0, para_pos=6, para_angle=0., meta_pos=11 , meta_angle = -np.pi/3., ortho_pos=10, ortho_angle=-2.*np.pi/3, fixed_left = -1, path=path+"/anchor_right.xyz")
+	left = Building_Block(abbrev="l", num_atoms=12,origin=6, para_pos=0, para_angle=0, meta_pos=1 , meta_angle = np.pi/3., ortho_pos=2, ortho_angle=-2.*np.pi/3, fixed_left = 6,complexity=1, path=path+"/anchor_left.xyz")
+	right = Building_Block(abbrev="r", num_atoms=12,origin=0, para_pos=6, para_angle=0., meta_pos=11 , meta_angle = -np.pi/3., ortho_pos=10, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=1, path=path+"/anchor_right.xyz")
 	
 	anchors = [left,right]
 
@@ -458,8 +470,8 @@ def process_genome(generation : int, individual: int, genome:Genome, run_path):
 	#TODO: set up correctly
 	building_block_path = cfg.get('Building Procedure', 'building_block_path')
 	generation_data_path = run_path + "/" + cfg.get('Building Procedure', 'generation_data_path')
-	print("-.-.-.-.-.-.-.-.-")
-	print(generation_data_path)
+	#print("-.-.-.-.-.-.-.-.-")
+	#print(generation_data_path)
 
 	#create directories for calculations  
 	calc_path = generation_data_path + "/" + str(generation)
@@ -497,7 +509,7 @@ if __name__ == '__main__':
 
 	#construction_loop(genome, building_blocks, "../config", "./output.xyz")
 
-	process_genome(0,13,[0,6,0,2,0,6,0],"/alcc/gpfs2/home/u/blaschma/test/")
+	process_genome(0,1,[0,6,1,3,0],"/alcc/gpfs2/home/u/blaschma/test/")
 
 
 	"""

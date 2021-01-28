@@ -12,6 +12,10 @@ source $config_file
 #set path
 path=$1
 
+#set cpus per task
+cpus_per_task=$(head -n 1 $path/complexity)
+echo $cpus_per_task
+
 #load turbomole
 . $turbopath
 
