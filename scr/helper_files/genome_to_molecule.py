@@ -512,7 +512,7 @@ def process_genome(generation : int, individual: int, genome:Genome, run_path):
 
 
 
-
+	#genome has not been calculated -> init calcs 
 	#create directories for calculations  
 	calc_path = generation_data_path + "/" + str(generation)
 	try:
@@ -533,8 +533,8 @@ def process_genome(generation : int, individual: int, genome:Genome, run_path):
 	construction_loop(genome, building_blocks, config_path, calc_path)
 
 	#run next step -> invoke turbomole calculations
-	#set_up_turbo_calculations_path = cfg.get('Basics', 'helper_files') + "/set_up_turbo_calculations.sh"		
-	#os.system(set_up_turbo_calculations_path+" "+calc_path+" "+config_path + " " + str(generation) + " " + str(individual))
+	set_up_turbo_calculations_path = cfg.get('Basics', 'helper_files') + "/set_up_turbo_calculations.sh"		
+	os.system(set_up_turbo_calculations_path+" "+calc_path+" "+config_path + " " + str(generation) + " " + str(individual))
 
 
 
