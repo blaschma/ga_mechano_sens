@@ -8,6 +8,7 @@ from turbomoleOutputProcessing import turbomoleOutputProcessing as top
 import matplotlib
 matplotlib.use('Agg') # Must be before importing matplotlib.pyplot or pylab!
 import matplotlib.pyplot as plt
+import configparser
 
 def load_transmission_data(gen_dir):
 	"""
@@ -244,12 +245,17 @@ def write_fittness(fittness, path):
 
 
 
-
 if __name__ == '__main__':
-	
+	# sys.argv[1] path to process
+	# sys.argv[2] config path
 	path = sys.argv[1]
 	print(path)
-	
+	population = list()
+	population.append([0])
+	population.append([1,2,3])
+	population.append([1,2,3,4])
+	write_genome_to_archive(population, path, sys.argv[2])
+	"""
 	#load all data
 	stiffness, std_stiffness = load_stiffness_data(path)
 	T_est, T_estimates_params_list = load_transmission_data(path)
@@ -261,6 +267,7 @@ if __name__ == '__main__':
 	fitness = eval_fittness(stiffness, std_stiffness, T_est, T_estimates_params_list)
 	write_fittness(fitness,path)
 
+	"""
 	"""
 	file = open(path + "/T_est_params", "w")
 	for i in range(len(T_estimates_params_list)):

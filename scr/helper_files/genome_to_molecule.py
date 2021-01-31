@@ -8,6 +8,7 @@ import os
 import os.path
 from os import path
 import subprocess
+import shutil
 
 Genome = List[int]
 Point = namedtuple("Point", ['x','y', 'z'])
@@ -450,7 +451,7 @@ def load_anchors_blocks(path):
 		
 def process_genome(generation : int, individual: int, genome:Genome, run_path):
 	"""
-	translates genome to xyz file. xyz file will be stored in $data/generation/individual and stretching and other calculations will be invoked
+	translates genome to xyz file. xyz file will be stored in $data/generation/individual and stretching and other calculations will be invoked. If geome has been processed in a previous generation, the data will be copied from the archive
 
 	Args:
 		param1 (int): generation
@@ -473,6 +474,45 @@ def process_genome(generation : int, individual: int, genome:Genome, run_path):
 	#print("-.-.-.-.-.-.-.-.-")
 	#print(generation_data_path)
 
+
+	#check if genome has been processed alreaddy 
+	cfg = configparser.ConfigParser()
+	cfg.read(config_path)
+	archive_path = cfg.get('Basics', 'archive_archive_path')
+	print(archive_path)
+	if(os.path.exists(archive_path)==False):
+		print("No archive found")
+	else:
+		#read existing archinve
+		archive_file = open(archive_path, "r")
+		archive_population = list()
+		archive_paths = list()
+		for line in archive_file:
+			line = line.strip().split("	")
+			tmp = line[0].replace("[", "").replace("]", "")
+			tmp = tmp.split(",")
+			tmp = [int(tmp[i]) for i in range(0,len(tmp))]
+			archive_population.append(tmp)
+			archive_paths.append(line[1])
+		archive_file.close()
+
+		#genome was procesed
+		if (genome in archive_population)==True:
+			print("copying existing genome")
+			index = archive_population.index(genome)
+			scr_dir = archive_paths[index] + "/."
+			print("scr_dir " + str(scr_dir))
+			dst_dir = generation_data_path + "/" + str(generation)+ "/" +str(individual) + "/"
+			print("dst_dir " + str(dst_dir))
+			os.system("mkdir " + str(dst_dir))
+			dst_dir += "."
+			os.system("cp -R " + scr_dir + " " + dst_dir)
+			return 0
+
+
+
+
+
 	#create directories for calculations  
 	calc_path = generation_data_path + "/" + str(generation)
 	try:
@@ -493,8 +533,8 @@ def process_genome(generation : int, individual: int, genome:Genome, run_path):
 	construction_loop(genome, building_blocks, config_path, calc_path)
 
 	#run next step -> invoke turbomole calculations
-	set_up_turbo_calculations_path = cfg.get('Basics', 'helper_files') + "/set_up_turbo_calculations.sh"		
-	os.system(set_up_turbo_calculations_path+" "+calc_path+" "+config_path + " " + str(generation) + " " + str(individual))
+	#set_up_turbo_calculations_path = cfg.get('Basics', 'helper_files') + "/set_up_turbo_calculations.sh"		
+	#os.system(set_up_turbo_calculations_path+" "+calc_path+" "+config_path + " " + str(generation) + " " + str(individual))
 
 
 

@@ -90,6 +90,59 @@ def run_generation(generation : int, config_path, calculation_path):
 		#print(fitness_value)
 	print("after run " + str(population))
 	write_generation(population,generation, config_path, calculation_path)
+	write_genomes_to_archive(population, generation, calculation_path, config_path)
+
+
+def write_genomes_to_archive(population, generation, calculation_path, config_path):
+	"""
+	Writes genomes to archive. First of all it is checked if genome is already in archige
+
+	Args:
+		param1 (Polulation): population
+		param2 (int): generation
+		param3 (String): path to population
+		param4 (String): path to config file
+
+	Returns:
+		
+
+	"""
+	#find existing archive
+	cfg = configparser.ConfigParser()
+	cfg.read(config_path)
+	archive_path = cfg.get('Basics', 'archive_archive_path')
+	print(archive_path)
+	if(os.path.exists(archive_path)==False):
+		print("create file")
+		f = open(archive_path, "w")
+		f.close()
+
+	#read existing archinve
+	archive_file = open(archive_path, "r")
+	archive_population = list()
+	archive_paths = list()
+	for line in archive_file:
+		line = line.strip().split("	")
+		tmp = line[0].replace("[", "").replace("]", "")
+		tmp = tmp.split(",")
+		tmp = [int(tmp[i]) for i in range(0,len(tmp))]
+		archive_population.append(tmp)
+		archive_paths.append(line[1])
+	archive_file.close()
+
+
+	#check which file to add and add the file
+	archive_file = open(archive_path, "a")
+	for i in range(len(population)):
+		print(population[i])
+		print(archive_population)
+		if (population[i] in archive_population) == False:
+			print("adding to archive " + str(population[i]))
+			path_of_individual = calculation_path + "/generation_data/"+ str(generation) + "/" + str(i)
+			archive_file.write(str(population[i]) + "	" + path_of_individual + "\n")
+
+	archive_file.close()
+
 
 def write_generation(population, generation, config_path, calculation_path):
 	"""
