@@ -1,4 +1,4 @@
-
+import configparser
 from problem_specification.evaluation_methods import evaluation_methods
 import numpy as np
 from random import choices, randint, randrange, random
@@ -16,7 +16,7 @@ class bbEv(evaluation_methods.Evaluation):
 	CrossoverFunc = Callable[[Genome,Genome], Tuple[Genome, Genome]]
 	MutationFunc = Callable[[Genome], Genome]
 
-	def __init__(self, generation, individual):
+	def __init__(self, generation, individual, config_path):
 		super().__init__(generation, individual)
 		self.Building_Block = namedtuple('Building_Block', ['abbrev', 'num_atoms', 'para_pos', 'meta_pos', 'ortho_pos', 'path'])
 		self.Coupling = namedtuple('Coupling', ['abbrev'])
@@ -36,6 +36,7 @@ class bbEv(evaluation_methods.Evaluation):
 		#self.ortho = self.Coupling(abbrev="o")
 		self.couplings = [self.para, self.meta]
 
+		self.config_path = config_path
 		hamiltionians = 0
 
 
@@ -129,16 +130,21 @@ class bbEv(evaluation_methods.Evaluation):
 
 		return a[0:cut] + b[cut:length_b], b[0:cut] + a[cut:length_a]
 
-	def mutation(self, genome: Genome, num: int=2, probability: float = 0.5) -> Genome:
-		for _ in range(num):
-			method = randrange(2)
-			if(method == 0):
-				return self.building_block_mutation(genome, probability)
-			elif(method == 1):
-				return self.coupling_mutation(genome, probability)
+	def mutation(self, genome: Genome, num: int=2, probability: float = 0.5) -> Genome:		
+		method = randrange(3)
+		if(method == 0):
+			return self.building_block_mutation(genome, probability)
+		elif(method == 1):
+			return self.coupling_mutation(genome, probability)
+		elif(method == 2):
+			return self.insert_mutation(genome, probability)
 		return genome
 
 	def building_block_mutation(self, genome: Genome, probability: float = 0.5) -> Genome:	
+		cfg = configparser.ConfigParser()
+		cfg.read(self.config_path)
+		probability = float(cfg.get('Genetic Algorithm', 'block_mutation_prob'))
+
 		mutated_genome = list()
 		if(random()<probability and len(genome)>=3):
 			new_block = randrange(len(self.building_blocks))
@@ -151,11 +157,15 @@ class bbEv(evaluation_methods.Evaluation):
 			mutated_genome.extend(genome[0:block_to_mutate-1])
 			mutated_genome.append(new_block)
 			mutated_genome.extend(genome[block_to_mutate:len(genome)])
-			
+			print("block mutation!" + str(mutated_genome))
 			return mutated_genome
 		return genome
 
 	def coupling_mutation(self, genome: Genome, probability: float = 0.5) -> Genome:	
+		cfg = configparser.ConfigParser()
+		cfg.read(self.config_path)
+		probability = float(cfg.get('Genetic Algorithm', 'coupling_mutation_prob'))
+
 		mutated_genome = list()
 		if(random()<probability and len(genome)>=3):
 			new_coupling = randrange(len(self.couplings))
@@ -169,5 +179,30 @@ class bbEv(evaluation_methods.Evaluation):
 			mutated_genome.extend(genome[0:coupling_to_mutate-1])
 			mutated_genome.append(new_coupling)
 			mutated_genome.extend(genome[coupling_to_mutate:len(genome)])
+			print("coupling mutation! " + str(mutated_genome))
 			return mutated_genome
+		return genome
+
+	def insert_mutation(self, genome: Genome, probability: float = 0.5):
+		cfg = configparser.ConfigParser()
+		cfg.read(self.config_path)
+		probability = float(cfg.get('Genetic Algorithm', 'insert_mutation_prob'))
+		genome_length = float(cfg.get('Genetic Algorithm', 'genome_length'))
+
+		mutated_genome = list()
+		if(random()<probability and len(genome) < genome_length):
+
+			new_coupling = randrange(len(self.couplings))
+			new_block = new_block = randrange(len(self.building_blocks))
+
+			insert_coupling=randrange(0,int((len(genome)+1)/2))
+			insert_coupling=insert_coupling+insert_coupling+1
+			to_add_at_end = genome[insert_coupling:len(genome)]
+			mutated_genome.extend(genome[0:insert_coupling])
+			mutated_genome.append(new_block)
+			mutated_genome.append(new_coupling)
+			mutated_genome.extend(to_add_at_end)
+			print("insert mutation! " + str(mutated_genome))
+			return mutated_genome
+
 		return genome

@@ -129,12 +129,10 @@ def run_generation(
 		print("parents[0] " + str(parents[0]) + " parents[1] " + str(parents[1]))
 		offspring_a, offspring_b = crossover_func(parents[0], parents[1])
 		#mutate offspring
-		print("before mutation " + str(offspring_a))
-		print("before mutation " + str(offspring_b))
+		print("offspring_a " + str(offspring_a))
+		print("offspring_b " + str(offspring_b))
 		offspring_a = mutation_func(offspring_a)
 		offspring_b = mutation_func(offspring_b)
-		print("after mutation " + str(offspring_a))
-		print("after mutation " + str(offspring_b))
 		#add offspring to generation
 		next_generation += [offspring_a, offspring_b]
 	population = next_generation
@@ -148,7 +146,7 @@ def run_generation(
 	print("individuals " + str(individuals))
 	missing_individuals = population_size-unique_individuals
 	individuals_to_add = populate_func()[0:missing_individuals]
-	print("missing " + str(unique_individuals))
+	print("unique_individuals " + str(unique_individuals))
 	print(len(individuals_to_add))
 	population = individuals
 	population+=individuals_to_add

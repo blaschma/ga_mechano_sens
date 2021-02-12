@@ -471,9 +471,16 @@ def process_genome(generation : int, individual: int, genome:Genome, run_path):
 	#TODO: set up correctly
 	building_block_path = cfg.get('Building Procedure', 'building_block_path')
 	generation_data_path = run_path + "/" + cfg.get('Building Procedure', 'generation_data_path')
-	#print("-.-.-.-.-.-.-.-.-")
-	#print(generation_data_path)
 
+	#create generation directory
+	calc_path = generation_data_path + "/" + str(generation)
+	try:
+		#create generation dir
+		if(path.exists(calc_path) == False):
+			os.mkdir(calc_path)
+	except OSError:
+		print ("Creation of the directory %s failed" % calc_path)
+		return -1
 
 	#check if genome has been processed alreaddy 
 	cfg = configparser.ConfigParser()
@@ -488,6 +495,8 @@ def process_genome(generation : int, individual: int, genome:Genome, run_path):
 		archive_population = list()
 		archive_paths = list()
 		for line in archive_file:
+			if(len(line)<3):
+				continue
 			line = line.strip().split("	")
 			tmp = line[0].replace("[", "").replace("]", "")
 			tmp = tmp.split(",")
@@ -507,6 +516,9 @@ def process_genome(generation : int, individual: int, genome:Genome, run_path):
 			os.system("mkdir " + str(dst_dir))
 			dst_dir += "."
 			os.system("cp -R " + scr_dir + " " + dst_dir)
+			#create DONE file
+			DONE_file = generation_data_path + "/" + str(generation)+ "/" + str(generation)+ "_" +str(individual) + "_DONE"
+			os.system("touch " + DONE_file)
 			return 0
 
 

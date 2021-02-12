@@ -114,7 +114,8 @@ def load_stiffness_data(gen_dir):
 
 	"""
 	#load list of dirs and ensure it is a dir. Sort them 
-	print("load fitness data")
+	print("load fitness data ")
+	print(gen_dir)
 	dirs = os.listdir(gen_dir)
 	dirs = [int(i) for i in dirs if os.path.isdir(gen_dir + "/" + i)]
 	dirs = sorted(dirs)
@@ -248,18 +249,12 @@ def write_fittness(fittness, path):
 if __name__ == '__main__':
 	# sys.argv[1] path to process
 	# sys.argv[2] config path
-	path = sys.argv[1]
-	print(path)
-	population = list()
-	population.append([0])
-	population.append([1,2,3])
-	population.append([1,2,3,4])
-	write_genome_to_archive(population, path, sys.argv[2])
-	"""
+
+	#"""
 	#load all data
+	path=sys.argv[1]
 	stiffness, std_stiffness = load_stiffness_data(path)
 	T_est, T_estimates_params_list = load_transmission_data(path)
-
 	process_T_estimate_data(T_est, path)
 	
 
@@ -273,7 +268,7 @@ if __name__ == '__main__':
 	for i in range(len(T_estimates_params_list)):
 		file.write(str(T_estimates_params_list[i][0]).replace(".", ",")+"	"+str(T_estimates_params_list[i][1]).replace(".", ",")+"	"+str(T_estimates_params_list[i][2]).replace(".", ",")+"	"+str(T_estimates_params_list[i][3]).replace(".", ",") + "\n")
 	file.close()
-	"""
+	#"""
 	#plot all T estimates
 	#"""
 	#print(T_est)

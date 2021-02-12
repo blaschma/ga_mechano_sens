@@ -254,6 +254,11 @@ def plot_energy_levels(calc_path, molecule_name, n_occupied, config_path):
 	top.write_plot_data(calc_path + "/" + molecule_name + "_energy_levels.dat", (np.round(displacement,2), homo_list_m4, homo_list_m3,homo_list_m2,homo_list_m1,homo_list, lumo_list,lumo_list_p1,lumo_list_p2,lumo_list_p3,lumo_list_p4), "displacement, homo-4 (eV) , ... , lumo +4")
 
 if __name__ == '__main__':
-	print(sys.argv[1], sys.argv[2], int(sys.argv[3]), sys.argv[4])
+	
+	#argv[1] : calc path: where disp_pos and disp_neg is located
+	#argv[2] : moleculename (prefix of plot files)
+	#argv[3] : occupied orbitals (e_f = (E_homo+E_lumo)/2)
+	#argv[4] : config_path
+	#print(sys.argv[1], sys.argv[2], int(sys.argv[3]), sys.argv[4])
 	plot_T_vs_d(sys.argv[1], sys.argv[2], int(sys.argv[3]), sys.argv[4])
-	#plot_energy_levels(sys.argv[1], sys.argv[2], int(sys.argv[3]), sys.argv[4])
+	plot_energy_levels(sys.argv[1], sys.argv[2], int(sys.argv[3]), sys.argv[4])

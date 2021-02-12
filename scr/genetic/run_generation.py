@@ -36,7 +36,7 @@ def run_generation(generation : int, config_path, calculation_path):
 		sys.path.append(os.path.realpath(genetic_algorithm_path + "/scr/"))
 		sys.path.append(os.path.realpath('..'))
 		from problem_specification import bbEV 
-		ev = bbEV.bbEv(generation, 0) #-> todo individual processing
+		ev = bbEV.bbEv(generation, 0, config_path) #-> todo individual processing
 		pass
 		
 	#load specific evaluation methods
@@ -122,6 +122,8 @@ def write_genomes_to_archive(population, generation, calculation_path, config_pa
 	archive_population = list()
 	archive_paths = list()
 	for line in archive_file:
+		if(len(line)<3):
+			continue
 		line = line.strip().split("	")
 		tmp = line[0].replace("[", "").replace("]", "")
 		tmp = tmp.split(",")
