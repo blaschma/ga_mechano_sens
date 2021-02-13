@@ -193,7 +193,8 @@ def eval_fittness(stiffness, std_stiffness, T_est, T_estimates_params):
 	print(stiffness)
 	stiffness = np.asarray(stiffness)
 	print("mean " + str(mean))
-	fittness_stiffness = 1/(stiffness+mean)
+	#fittness_stiffness = 1/(stiffness+mean)
+	fittness_stiffness = 1/(stiffness)
 	print("fittness_stiffness")
 	print(fittness_stiffness)
 

@@ -420,10 +420,10 @@ def load_building_blocks(path):
 	benzene = Building_Block(abbrev="B", num_atoms=6,origin=0, para_pos=3, para_angle=0, meta_pos=4 , meta_angle = -np.pi/3., ortho_pos=5, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=1, path=path+"/benzene.xyz")
 	napthtalene = Building_Block(abbrev="N", num_atoms=18,origin=0, para_pos=12, para_angle=0., meta_pos=11 , meta_angle = -np.pi/3., ortho_pos=10, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=1, path=path+"/naphtalene.xyz")
 	dbPc1 = Building_Block(abbrev="dbPc1", num_atoms=32,origin=13, para_pos=1, para_angle=0, meta_pos=0 , meta_angle = +np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=2, path=path+"/dbPc1_block.xyz")
-	dbPc4 = Building_Block(abbrev="dbPc4", num_atoms=55,origin=22, para_pos=1, para_angle=0, meta_pos=0 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=4, path=path+"/dbPc4.xyz")
-	dbPc6 = Building_Block(abbrev="dbPc6", num_atoms=52,origin=17, para_pos=0, para_angle=0, meta_pos=1 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=4, path=path+"/dbPc6.xyz")
-	dbPc5 = Building_Block(abbrev="dbPc5", num_atoms=58,origin=12, para_pos=26, para_angle=0, meta_pos=20 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=4, path=path+"/dbPc5.xyz")
-	pseudo_para_naph_PCP = Building_Block(abbrev="pseudo-para_naph_PCP", num_atoms=44,origin=0, para_pos=18, para_angle=0, meta_pos=16 , meta_angle = -np.pi/3, ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=3, path=path+"/pseudo-para_naph_PCP.xyz")
+	dbPc4 = Building_Block(abbrev="dbPc4", num_atoms=55,origin=22, para_pos=1, para_angle=0, meta_pos=0 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=3, path=path+"/dbPc4.xyz")
+	dbPc6 = Building_Block(abbrev="dbPc6", num_atoms=52,origin=17, para_pos=0, para_angle=0, meta_pos=1 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=3, path=path+"/dbPc6.xyz")
+	dbPc5 = Building_Block(abbrev="dbPc5", num_atoms=58,origin=12, para_pos=26, para_angle=0, meta_pos=20 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=3, path=path+"/dbPc5.xyz")
+	pseudo_para_naph_PCP = Building_Block(abbrev="pseudo-para_naph_PCP", num_atoms=44,origin=0, para_pos=18, para_angle=0, meta_pos=16 , meta_angle = -np.pi/3, ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=2, path=path+"/pseudo-para_naph_PCP.xyz")
 	line =Building_Block(abbrev="line", num_atoms=4,origin=0, para_pos=1, para_angle=0, meta_pos=1 , meta_angle = 0., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=1, path=path+"/line.xyz")
 	building_blocks = [benzene,napthtalene,dbPc1,dbPc4,dbPc6, dbPc5,pseudo_para_naph_PCP, line]
 	#building_blocks = [benzene,napthtalene]

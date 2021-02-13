@@ -47,7 +47,7 @@ def run_generation(generation : int, config_path, calculation_path):
 
 	#first generation
 	if(generation == 0):
-		population = ga.run_generation(
+		population, family_register = ga.run_generation(
 		populate_func=partial(
 			ev.generate_population, size=population_size, genome_length=genome_length
 			),
@@ -69,7 +69,8 @@ def run_generation(generation : int, config_path, calculation_path):
 		#generation-1 because prevois generation should be read
 		population, fitness_value = read_population(generation-1,config_path, calculation_path)
 		print(fitness_value)
-		population = ga.run_generation(
+
+		population, family_register = ga.run_generation(
 		populate_func=partial(
 			ev.generate_population, size=population_size, genome_length=genome_length
 			),
@@ -91,6 +92,7 @@ def run_generation(generation : int, config_path, calculation_path):
 	print("after run " + str(population))
 	write_generation(population,generation, config_path, calculation_path)
 	write_genomes_to_archive(population, generation, calculation_path, config_path)
+	write_family_register(family_register, generation, calculation_path)
 
 
 def write_genomes_to_archive(population, generation, calculation_path, config_path):
@@ -153,10 +155,10 @@ def write_generation(population, generation, config_path, calculation_path):
     calculation_path/generation.dat which contains the current number of generations
 
     Args:
-		param1 (Population) : population to write
-		param2 (int) : Generation
-		param3 (String) : Path to config file
-		param4 (String) : Path to calculation
+		param1 (Population): population to write
+		param2 (int): Generation
+		param3 (String): Path to config file
+		param4 (String): Path to calculation
     Returns:
             
     """
@@ -189,9 +191,9 @@ def read_population(generation, config_path, calculation_path):
     read current generation individuals and their fitness from calculation path
 
     Args:
-    	param1 (int) : number of generation which should be read
-		param2 (String) : Path to config file
-		param3 (String) : Path to calculation              
+    	param1 (int): number of generation which should be read
+		param2 (String): Path to config file
+		param3 (String): Path to calculation              
     Returns:
     	(population, fitness_values)
             
@@ -227,13 +229,35 @@ def read_population(generation, config_path, calculation_path):
 
 	return population, fitness_value
 
+def write_family_register(family_register, generation, calculation_path):
+	"""
+    Invokes the next generation. The number of generation is read from calculation_path/generation.dat
+
+    Args:
+    	param1 (String): family_register (created during evolution)
+		param2 (int): generation    
+		param3 (String): Path to calculation         
+    Returns:
+            
+    """
+	family_register_path = calculation_path + "/generation_data/" + str(generation) + "/" + str(generation) + "_family_register.dat"
+	try:
+		family_register_file = open(family_register_path, "w")
+		family_register_file.write(family_register)
+		family_register_file.close()
+	except OSError as e:
+		print("Cannot open file " + str(e))
+
+
+
 def next_generation(config_path, calculation_path):
 	"""
     Invokes the next generation. The number of generation is read from calculation_path/generation.dat
 
     Args:
-    	param1 (String) : Path to config file
-		param2 (String) : Path to calculation              
+    	param1 (String): Path to config file
+		param2 (String): Path to calculation       
+
     Returns:
             
     """

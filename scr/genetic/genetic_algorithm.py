@@ -102,7 +102,7 @@ def run_generation(
 		for i in range(0, population_size):
 			fitness_func(population_for_fitness_eval[i],generation,i)
 		print("population after fitness_func " +str(population))
-		return population
+		return population, ""
 
 
 	#sort population
@@ -117,9 +117,13 @@ def run_generation(
 	if fitness_func(population[0]) >= fitness_limit:
 		break
 	"""
+	#family register
+	family_register=""
 
 	#take best individuals of generation and..
 	next_generation = population[0:2]
+	family_register += str(population[0]) + "\n"
+	family_register += str(population[1]) + "\n"
 
 	#...fill generation with mutated and cross over children
 	for j in range(int(len(population)/2)-1):
@@ -128,25 +132,42 @@ def run_generation(
 		#combine features of parents to generate offspring
 		print("parents[0] " + str(parents[0]) + " parents[1] " + str(parents[1]))
 		offspring_a, offspring_b = crossover_func(parents[0], parents[1])
+		offspring_a_save = str(offspring_a)
+		offspring_b_save = str(offspring_b)
+
 		#mutate offspring
 		print("offspring_a " + str(offspring_a))
-		print("offspring_b " + str(offspring_b))
+		print("offspring_b " + str(offspring_b))		
 		offspring_a = mutation_func(offspring_a)
 		offspring_b = mutation_func(offspring_b)
+
+		#handle family register
+		offspring_a_mutation=""
+		if(str(offspring_a)!=offspring_a_save):
+			offspring_a_mutation=str(offspring_a)
+		offspring_b_mutation=""
+		if(str(offspring_b)!=offspring_b_save):
+			offspring_b_mutation=str(offspring_b)
+		family_register+=offspring_a_save + " parents " + str(parents[0]) + "&" +  str(parents[1]) + " mutation " + str(offspring_a_mutation) + "\n"
+		family_register+=offspring_b_save + " parents " + str(parents[0]) + "&" +  str(parents[1]) + " mutation " + str(offspring_b_mutation) + "\n"
+
 		#add offspring to generation
 		next_generation += [offspring_a, offspring_b]
 	population = next_generation
 
+	#find unique individuals
 	individuals = list()
 	for i in range(len(population)):
 		if((population[i] in individuals)==False):
-			print(str(population[i]) + " was not in ")
 			individuals.append(population[i])
 	unique_individuals = len(individuals)
 	print("individuals " + str(individuals))
+
+	#fill rest of generation randomly
 	missing_individuals = population_size-unique_individuals
 	individuals_to_add = populate_func()[0:missing_individuals]
 	print("unique_individuals " + str(unique_individuals))
+	family_register += "unique_individuals " + str(unique_individuals) + "\n"
 	print(len(individuals_to_add))
 	population = individuals
 	population+=individuals_to_add
@@ -156,5 +177,5 @@ def run_generation(
 	for i in range(0, population_size):
 		fitness_func(population_for_fitness_eval[i],generation,i)
 	
-	return population
+	return population, family_register
 

@@ -83,7 +83,7 @@ class bbEv(evaluation_methods.Evaluation):
 
 	def fitness(self, genome: Genome, generation: int, individual: int) -> float:
 		genome_copy = copy.deepcopy(genome)
-		gtm.process_genome(generation,individual,genome_copy,"/alcc/gpfs2/home/u/blaschma/genetic_run/")
+		gtm.process_genome(generation,individual,genome_copy,"/alcc/gpfs2/home/u/blaschma/genetic_run_2/")
 		return random()
 
 

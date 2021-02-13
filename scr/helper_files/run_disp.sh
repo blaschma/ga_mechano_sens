@@ -132,10 +132,10 @@ num_finished=$(ls ../../ -1f | grep _DONE | wc -l)
 if [ "$num_finished" -eq "$population_size" ]; then
     echo "Everybody seems to be ready"
     #eval fitness
-    python3 $genetic_algorithm_path/scr/helper_files/eval_fitness.py "/alcc/gpfs2/home/u/blaschma/test/generation_data/"$(basename ${PWD%/*/*})
+    python3 $genetic_algorithm_path/scr/helper_files/eval_fitness.py $calculation_path"/generation_data/"$(basename ${PWD%/*/*}) $config_file
 
     #invoke next generation
-    python3 $genetic_algorithm_path/scr/genetic/invoke_next_generation.py $config_file "/alcc/gpfs2/home/u/blaschma/genetic_run/"
+    python3 $genetic_algorithm_path/scr/genetic/invoke_next_generation.py $config_file $calculation_path
 fi
 
 
