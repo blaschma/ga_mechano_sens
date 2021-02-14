@@ -131,13 +131,15 @@ class bbEv(evaluation_methods.Evaluation):
 		return a[0:cut] + b[cut:length_b], b[0:cut] + a[cut:length_a]
 
 	def mutation(self, genome: Genome, num: int=2, probability: float = 0.5) -> Genome:		
-		method = randrange(3)
+		method = randrange(4)
 		if(method == 0):
 			return self.building_block_mutation(genome, probability)
 		elif(method == 1):
 			return self.coupling_mutation(genome, probability)
 		elif(method == 2):
 			return self.insert_mutation(genome, probability)
+		elif(method == 3):
+			return self.truncate_mutation(genome, probability)
 		return genome
 
 	def building_block_mutation(self, genome: Genome, probability: float = 0.5) -> Genome:	
@@ -203,6 +205,25 @@ class bbEv(evaluation_methods.Evaluation):
 			mutated_genome.append(new_coupling)
 			mutated_genome.extend(to_add_at_end)
 			print("insert mutation! " + str(mutated_genome))
+			return mutated_genome
+
+		return genome
+
+	def truncate_mutation(self, genome: Genome, probability: float = 0.5):
+		cfg = configparser.ConfigParser()
+		cfg.read(self.config_path)
+		probability = float(cfg.get('Genetic Algorithm', 'truncate_mutation_prob'))
+		genome_length = float(cfg.get('Genetic Algorithm', 'genome_length'))
+
+		mutated_genome = list()
+		if(random()<probability and len(genome) > 3):
+
+			block_to_truncate = randrange(int((len(genome)-1)/2))	
+			block_to_truncate = block_to_truncate+block_to_truncate+2
+
+			mutated_genome.extend(genome[0:block_to_truncate-1])
+			mutated_genome.extend(genome[block_to_truncate+1:len(genome)])
+			print("truncate mutation!" + str(mutated_genome))
 			return mutated_genome
 
 		return genome
