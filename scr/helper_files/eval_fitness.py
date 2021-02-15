@@ -37,7 +37,6 @@ def load_transmission_data(gen_dir):
 		if(i==8):
 			#continue
 			pass
-		print("checking " + str(dirs[i]))
 		for file in os.listdir(gen_dir + "/" + dirs[i]):
 			if fnmatch.fnmatch(file, '*T_estimate.dat'):
 				transmission_file = file
@@ -97,7 +96,7 @@ def process_T_estimate_data(T_est, gen_path):
 	#ax.set_ylim(-0.0000001,0.00004)
 	ax.set_xlabel('Displacement ($\mathrm{\AA}$)',fontsize=20)
 	ax.set_ylabel('$\mathrm{T}_{\mathrm{estimate}}$',fontsize=20)
-	ax.legend()
+	ax.legend(loc='lower left', ncol = 6, bbox_to_anchor=(0.,1.02,1.,.102), mode="expand", borderaxespad=0., fontsize=10)
 	plt.savefig(gen_path + "/T_estimates_summary.pdf", bbox_inches='tight')
 
 
@@ -129,9 +128,9 @@ def load_stiffness_data(gen_dir):
 		try:
 			print("open " + str(dirs[i]))
 			for file in os.listdir(gen_dir + "/" + dirs[i]):
-				print("searching ... " + file)
+				
 				if fnmatch.fnmatch(file, '*_stiffness.dat'):
-					print("Found!")
+					
 					stiffness_file = file
 					stiffness_file = open(gen_dir + "/" + dirs[i] + "/" + stiffness_file)
 			
@@ -210,7 +209,8 @@ def eval_fittness(stiffness, std_stiffness, T_est, T_estimates_params):
 		#print(str(i) + " amplitude " + str(amplitude) + " max deriv " + str(max_deriv))
 		if(np.isfinite(float(T_estimates_params[i][0]))==True and T_estimates_params[i][2] !=0):
 			#print(str(i) + " mediane " + str(np.median(T_est[i][1])/np.min(T_est[i][1])))
-			fit_param.append(T_estimates_params[i][0]*(np.median(T_est[i][1])/np.min(T_est[i][1])))
+			#fit_param.append(T_estimates_params[i][0]*(np.median(T_est[i][1])/np.min(T_est[i][1])))
+			fit_param.append(T_estimates_params[i][0]*(np.median(T_est[i][1])))
 			min_T_est.append(T_estimates_params[i][2])
 			if(T_estimates_params[i][2] < min_min_T_est):
 				min_min_T_est = T_estimates_params[i][2]
