@@ -118,6 +118,6 @@ if __name__ == '__main__':
 	ax.set_xlabel('Generation',fontsize=20)
 	ax.set_ylabel('Fitness values',fontsize=20)
 	ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-
+	ax.set_yscale('symlog')
 
 	plt.savefig( sys.argv[3] + "/fitness_values.pdf", bbox_inches='tight')
