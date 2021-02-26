@@ -171,7 +171,7 @@ def eval_fittness(stiffness, std_stiffness, T_est, T_estimates_params):
 	"""
 	print("eval fitness")
 	#evaluate stiffness part
-	mean = 0
+	#mean = 0
 	counter = 0
 	for i in range(len(stiffness)):
 
@@ -181,17 +181,17 @@ def eval_fittness(stiffness, std_stiffness, T_est, T_estimates_params):
 		if(stiffness[i]<0.0):
 			print("negative!")
 			stiffness[i] = 100.0
-		elif(np.abs(std_stiffness[i]/stiffness[i])>0.25):
+		elif(np.abs(std_stiffness[i]/stiffness[i])>0.20):
 			print("std to big!")
 			stiffness[i] = 100.0
 		else:
-			mean+=stiffness[i]
+			#mean+=stiffness[i]
 			counter+=1.
-	mean = mean/counter
+	#mean = mean/counter
 	print("stiffness")
 	print(stiffness)
 	stiffness = np.asarray(stiffness)
-	print("mean " + str(mean))
+	#print("mean " + str(mean))
 	#fittness_stiffness = 1/(stiffness+mean)
 	fittness_stiffness = 1/(stiffness)
 	print("fittness_stiffness")
@@ -211,6 +211,8 @@ def eval_fittness(stiffness, std_stiffness, T_est, T_estimates_params):
 			#print(str(i) + " mediane " + str(np.median(T_est[i][1])/np.min(T_est[i][1])))
 			#fit_param.append(T_estimates_params[i][0]*(np.median(T_est[i][1])/np.min(T_est[i][1])))
 			fit_param.append(T_estimates_params[i][0]*(np.median(T_est[i][1])))
+			#fit_param.append(T_estimates_params[i][0]*(-np.log(np.median(T_est[i][1]))))
+			#fit_param.append(T_estimates_params[i][0])
 			min_T_est.append(T_estimates_params[i][2])
 			if(T_estimates_params[i][2] < min_min_T_est):
 				min_min_T_est = T_estimates_params[i][2]

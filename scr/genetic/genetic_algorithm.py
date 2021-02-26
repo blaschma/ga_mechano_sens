@@ -155,6 +155,13 @@ def run_generation(
 		next_generation += [offspring_a, offspring_b]
 	population = next_generation
 
+	#reduce overlap by symmetry (no difference in 7-1 and 7-0 or small anchor)
+	for i in range(len(population)):
+		for j in range(len(population[i])-1):
+			if(population[i][j] == 7):
+				population[i][j+1] = 0
+		population[i][0] = 0
+
 	#find unique individuals
 	individuals = list()
 	for i in range(len(population)):

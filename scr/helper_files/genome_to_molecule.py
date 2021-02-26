@@ -419,11 +419,11 @@ def load_building_blocks(path):
 	#TODO : automatization
 	benzene = Building_Block(abbrev="B", num_atoms=6,origin=0, para_pos=3, para_angle=0, meta_pos=4 , meta_angle = -np.pi/3., ortho_pos=5, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=1, path=path+"/benzene.xyz")
 	napthtalene = Building_Block(abbrev="N", num_atoms=18,origin=0, para_pos=12, para_angle=0., meta_pos=11 , meta_angle = -np.pi/3., ortho_pos=10, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=1, path=path+"/naphtalene.xyz")
-	dbPc1 = Building_Block(abbrev="dbPc1", num_atoms=32,origin=13, para_pos=1, para_angle=0, meta_pos=0 , meta_angle = +np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=2, path=path+"/dbPc1_block.xyz")
-	dbPc4 = Building_Block(abbrev="dbPc4", num_atoms=55,origin=22, para_pos=1, para_angle=0, meta_pos=0 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=3, path=path+"/dbPc4.xyz")
-	dbPc6 = Building_Block(abbrev="dbPc6", num_atoms=52,origin=17, para_pos=0, para_angle=0, meta_pos=1 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=3, path=path+"/dbPc6.xyz")
-	dbPc5 = Building_Block(abbrev="dbPc5", num_atoms=58,origin=12, para_pos=26, para_angle=0, meta_pos=20 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=3, path=path+"/dbPc5.xyz")
-	pseudo_para_naph_PCP = Building_Block(abbrev="pseudo-para_naph_PCP", num_atoms=44,origin=0, para_pos=18, para_angle=0, meta_pos=16 , meta_angle = -np.pi/3, ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=2, path=path+"/pseudo-para_naph_PCP.xyz")
+	dbPc1 = Building_Block(abbrev="dbPc1", num_atoms=32,origin=13, para_pos=1, para_angle=0, meta_pos=0 , meta_angle = +np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=1, path=path+"/dbPc1_block.xyz")
+	dbPc4 = Building_Block(abbrev="dbPc4", num_atoms=55,origin=22, para_pos=1, para_angle=0, meta_pos=0 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=1, path=path+"/dbPc4.xyz")
+	dbPc6 = Building_Block(abbrev="dbPc6", num_atoms=52,origin=17, para_pos=0, para_angle=0, meta_pos=1 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=1, path=path+"/dbPc6.xyz")
+	dbPc5 = Building_Block(abbrev="dbPc5", num_atoms=58,origin=12, para_pos=26, para_angle=0, meta_pos=20 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=1, path=path+"/dbPc5.xyz")
+	pseudo_para_naph_PCP = Building_Block(abbrev="pseudo-para_naph_PCP", num_atoms=44,origin=0, para_pos=18, para_angle=0, meta_pos=16 , meta_angle = -np.pi/3, ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=1, path=path+"/pseudo-para_naph_PCP.xyz")
 	line =Building_Block(abbrev="line", num_atoms=4,origin=0, para_pos=1, para_angle=0, meta_pos=1 , meta_angle = 0., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=1, path=path+"/line.xyz")
 	building_blocks = [benzene,napthtalene,dbPc1,dbPc4,dbPc6, dbPc5,pseudo_para_naph_PCP, line]
 	#building_blocks = [benzene,napthtalene]
@@ -440,8 +440,10 @@ def load_anchors_blocks(path):
 		list(Building_Block)
 	"""		
 	#TODO : automatization
-	left = Building_Block(abbrev="l", num_atoms=12,origin=6, para_pos=0, para_angle=0, meta_pos=1 , meta_angle = np.pi/3., ortho_pos=2, ortho_angle=-2.*np.pi/3, fixed_left = 6,complexity=1, path=path+"/anchor_left.xyz")
-	right = Building_Block(abbrev="r", num_atoms=12,origin=0, para_pos=6, para_angle=0., meta_pos=11 , meta_angle = -np.pi/3., ortho_pos=10, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=1, path=path+"/anchor_right.xyz")
+	#left = Building_Block(abbrev="l", num_atoms=12,origin=6, para_pos=0, para_angle=0, meta_pos=1 , meta_angle = np.pi/3., ortho_pos=2, ortho_angle=-2.*np.pi/3, fixed_left = 6,complexity=1, path=path+"/anchor_left.xyz")
+	#right = Building_Block(abbrev="r", num_atoms=12,origin=0, para_pos=6, para_angle=0., meta_pos=11 , meta_angle = -np.pi/3., ortho_pos=10, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=1, path=path+"/anchor_right.xyz")
+	left = Building_Block(abbrev="l", num_atoms=2,origin=0, para_pos=0, para_angle=0, meta_pos=0 , meta_angle = 0., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = 0,complexity=1, path=path+"/anchor_small_left.xyz")
+	right = Building_Block(abbrev="r", num_atoms=2,origin=0, para_pos=0, para_angle=0., meta_pos=0 , meta_angle = 0., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=1, path=path+"/anchor_small_right.xyz")
 	
 	anchors = [left,right]
 
@@ -552,16 +554,22 @@ def process_genome(generation : int, individual: int, genome:Genome, run_path):
 
 
 if __name__ == '__main__':
-	benzene = Building_Block(abbrev="B", num_atoms=6,origin=0, para_pos=3, para_angle=0, meta_pos=4 , meta_angle = -np.pi/3., ortho_pos=5, ortho_angle=-2.*np.pi/3, fixed_left=-1, path="../building_blocks_xyz/benzene.xyz")
-	napthtalene = Building_Block(abbrev="N", num_atoms=18,origin=0, para_pos=12, para_angle=0., meta_pos=11 , meta_angle = -np.pi/3., ortho_pos=10, ortho_angle=-2.*np.pi/3, fixed_left=-1, path="../building_blocks_xyz/naphtalene.xyz")
-	dbPc1 = Building_Block(abbrev="dbPc1", num_atoms=32,origin=13, para_pos=1, para_angle=0, meta_pos=0 , meta_angle = np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left=-1, path="../building_blocks_xyz/dbPc1_block.xyz")
-	building_blocks = [benzene,napthtalene,dbPc1]
+	path_xyz="/alcc/gpfs2/home/u/blaschma/Master_Code/genetic_algorithm/building_blocks_xyz/"
+	benzene = Building_Block(abbrev="B", num_atoms=6,origin=0, para_pos=3, para_angle=0, meta_pos=4 , meta_angle = -np.pi/3., ortho_pos=5, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=1, path=path_xyz+"/benzene.xyz")
+	napthtalene = Building_Block(abbrev="N", num_atoms=18,origin=0, para_pos=12, para_angle=0., meta_pos=11 , meta_angle = -np.pi/3., ortho_pos=10, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=1, path=path_xyz+"/naphtalene.xyz")
+	dbPc1 = Building_Block(abbrev="dbPc1", num_atoms=32,origin=13, para_pos=1, para_angle=0, meta_pos=0 , meta_angle = +np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=2, path=path_xyz+"/dbPc1_block.xyz")
+	dbPc4 = Building_Block(abbrev="dbPc4", num_atoms=55,origin=22, para_pos=1, para_angle=0, meta_pos=0 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=2, path=path_xyz+"/dbPc4.xyz")
+	dbPc6 = Building_Block(abbrev="dbPc6", num_atoms=52,origin=17, para_pos=0, para_angle=0, meta_pos=1 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=2, path=path_xyz+"/dbPc6.xyz")
+	dbPc5 = Building_Block(abbrev="dbPc5", num_atoms=58,origin=12, para_pos=26, para_angle=0, meta_pos=20 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=2, path=path_xyz+"/dbPc5.xyz")
+	pseudo_para_naph_PCP = Building_Block(abbrev="pseudo-para_naph_PCP", num_atoms=44,origin=0, para_pos=18, para_angle=0, meta_pos=16 , meta_angle = -np.pi/3, ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=2, path=path_xyz+"/pseudo-para_naph_PCP.xyz")
+	line =Building_Block(abbrev="line", num_atoms=4,origin=0, para_pos=1, para_angle=0, meta_pos=1 , meta_angle = 0., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=1, path=path_xyz+"/line.xyz")
+	building_blocks = [benzene,napthtalene,dbPc1,dbPc4,dbPc6, dbPc5,pseudo_para_naph_PCP, line]
 	genome = [0,0,0]
 
 
 	#construction_loop(genome, building_blocks, "../config", "./output.xyz")
 
-	process_genome(0,1,[0,6,1,3,0],"/alcc/gpfs2/home/u/blaschma/test/")
+	process_genome(0,9,[0,0,0,7,0,2,0,7,0,0,0],"/alcc/gpfs2/home/u/blaschma/genetic_run_5/")
 
 
 	"""

@@ -36,7 +36,7 @@ def run_generation(generation : int, config_path, calculation_path):
 		sys.path.append(os.path.realpath(genetic_algorithm_path + "/scr/"))
 		sys.path.append(os.path.realpath('..'))
 		from problem_specification import bbEV 
-		ev = bbEV.bbEv(generation, 0, config_path) #-> todo individual processing
+		ev = bbEV.bbEv(generation, 0, config_path, calculation_path) #-> todo individual processing
 		pass
 		
 	#load specific evaluation methods

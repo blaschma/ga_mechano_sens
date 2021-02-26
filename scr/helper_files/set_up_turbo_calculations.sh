@@ -33,7 +33,7 @@ cp ../../coord ./
 cp ../../limits ./
 define < $helper_files/build_calc > define.out
 cd ..
-sbatch --job-name=gen$3id$4p --mem-per-cpu=$mem_per_cpu --partition=$partition --time=$max_time --ntasks=1 --cpus-per-task=$cpus_per_task run_disp.sh 0 $num_stretching_steps $displacement_per_step $config_file
+sbatch --job-name=gen$3id$4p --mem-per-cpu=$mem_per_cpu --partition=$partition --time=$max_time --ntasks=1 --cpus-per-task=$cpus_per_task --signal=B:SIGUSR1@$kill_time run_disp.sh 0 $num_stretching_steps $displacement_per_step $config_file
 cd ..
 
 mkdir disp_neg
@@ -47,7 +47,7 @@ cp ../../coord ./
 cp ../../limits ./
 define < $helper_files/build_calc > define.out
 cd ..
-sbatch --job-name=gen$3id$4n --mem-per-cpu=$mem_per_cpu --partition=$partition --time=$max_time --ntasks=1 --cpus-per-task=$cpus_per_task run_disp.sh 0 $num_stretching_steps -$displacement_per_step $config_file
+sbatch --job-name=gen$3id$4n --mem-per-cpu=$mem_per_cpu --partition=$partition --time=$max_time --ntasks=1 --cpus-per-task=$cpus_per_task --signal=B:SIGUSR1@$kill_time  run_disp.sh 0 $num_stretching_steps -$displacement_per_step $config_file
 #sbatch run_disp-sh #all the variables
 cd ..
 

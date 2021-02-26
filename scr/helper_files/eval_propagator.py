@@ -125,6 +125,12 @@ def plot_T_vs_d(calc_path, molecule_name, n_occupied, config_path):
 	try:
 		popt, pcov = curve_fit(func, disp, T_est)
 		print(pcov)
+		print(disp)
+		print("minimum " + str(disp[minimum]))
+		if(minimum==len(disp)-1 or minimum==0):
+			print("min T_value at at the edge")
+			print(disp)
+			popt[0] = 0
 
 	except RuntimeError:
 		print("Fit to wrong model")

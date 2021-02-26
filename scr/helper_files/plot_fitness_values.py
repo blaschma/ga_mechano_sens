@@ -98,10 +98,12 @@ if __name__ == '__main__':
 	#load fitness values
 	fitness_values = list()
 	fitness_means=list()
+	std_deviation=list()
 	for i in generations_to_check:
 		fitness_value = read_population(i, config_path, calculation_path)
 		fitness_values.append(fitness_value[1])
 		fitness_means.append(np.mean(fitness_value[1]))
+		std_deviation.append(np.std(np.asarray(fitness_value[1])))
 	fig, ax = plt.subplots(1)
 	num_individuals = len(fitness_value[1])
 	#color & plotting stuff
@@ -114,7 +116,9 @@ if __name__ == '__main__':
 	for xe, ye in zip(generations_to_check, fitness_values):
 		ax.scatter([xe] * len(ye), ye, c=rgb_cycle, s=num_individuals, marker="x")
 
-	ax.plot(generations_to_check, fitness_means)
+	ax.plot(generations_to_check, fitness_means, color="blue")
+	ax.plot(generations_to_check, fitness_means-np.asarray(std_deviation), color="blue",linestyle='dashed')
+	ax.plot(generations_to_check, fitness_means+np.asarray(std_deviation), color="blue",linestyle='dashed')
 	ax.set_xlabel('Generation',fontsize=20)
 	ax.set_ylabel('Fitness values',fontsize=20)
 	ax.xaxis.set_major_locator(MaxNLocator(integer=True))

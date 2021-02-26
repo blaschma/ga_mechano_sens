@@ -16,13 +16,13 @@ class bbEv(evaluation_methods.Evaluation):
 	CrossoverFunc = Callable[[Genome,Genome], Tuple[Genome, Genome]]
 	MutationFunc = Callable[[Genome], Genome]
 
-	def __init__(self, generation, individual, config_path):
+	def __init__(self, generation, individual, config_path, calculation_path):
 		super().__init__(generation, individual)
 		self.Building_Block = namedtuple('Building_Block', ['abbrev', 'num_atoms', 'para_pos', 'meta_pos', 'ortho_pos', 'path'])
 		self.Coupling = namedtuple('Coupling', ['abbrev'])
 		self.generation = generation
 		self.individual = individual
-
+		self.calculation_path = calculation_path
 		#self.benzene = Building_Block(abbrev="B", num_atoms=6, para_pos=3, meta_pos=4 ,ortho_pos=5, path="./hamiltionians/benzene.txt")
 		#self.naphthalene = Building_Block(abbrev="N", num_atoms=10, para_pos=7, meta_pos=8 ,ortho_pos=9, path="./hamiltionians/naphthalene.txt")
 		#self.anthracen = Building_Block(abbrev="A", num_atoms=14, para_pos=11, meta_pos=12 ,ortho_pos=13, path="./hamiltionians/anthracen.txt")
@@ -74,6 +74,12 @@ class bbEv(evaluation_methods.Evaluation):
 			
 			genome.append(selected_couplings[i+1])
 			#print("genome " + str(genome))
+
+		#reduce overlap by symmetry (no difference in 7-1 and 7-0 small anchors)
+		for i in range(len(genome)-1):
+			if(genome[i]==7):
+				genome[i+1] = 0
+		genome[0]=0
 		return genome
 
 		
@@ -83,7 +89,7 @@ class bbEv(evaluation_methods.Evaluation):
 
 	def fitness(self, genome: Genome, generation: int, individual: int) -> float:
 		genome_copy = copy.deepcopy(genome)
-		gtm.process_genome(generation,individual,genome_copy,"/alcc/gpfs2/home/u/blaschma/genetic_run_2/")
+		gtm.process_genome(generation,individual,genome_copy,self.calculation_path)
 		return random()
 
 
