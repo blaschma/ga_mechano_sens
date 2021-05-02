@@ -31,7 +31,20 @@ def read_population(generation, config_path, calculation_path):
 		file_fitness = open(filename_fitness)
 	except OSError as e:
 		print("Cannot open file " + str(e))
-		return -1,-1
+		return -1,-1, -1
+	#read n_unique
+	unique_file = -1
+	for file in os.listdir(calculation_path + "/generation_data/" + str(generation)):
+			if fnmatch.fnmatch(file, '*n_unique.dat'):
+				unique_file = file
+				print("unique_file " + str(unique_file))
+	
+	if(unique_file != -1):
+		unique_file = calculation_path + "/generation_data/" + str(generation) + "/" +unique_file
+		unique_file = open(unique_file, "r")
+		for line in unique_file:
+			unique_line = line
+		n_unique = int(line)
 
 	#read population
 	population = list()
@@ -52,8 +65,10 @@ def read_population(generation, config_path, calculation_path):
 			return -1,-1
 		fitness_value.append(tmp)
 		
-
-	return population, fitness_value
+	if(unique_file != -1):
+		return population, fitness_value, n_unique
+	else:
+		return population, fitness_value, -1
 
 
 def read_generation(config_path, calculation_path):
@@ -99,11 +114,20 @@ if __name__ == '__main__':
 	fitness_values = list()
 	fitness_means=list()
 	std_deviation=list()
+	n_unique = list()
 	for i in generations_to_check:
 		fitness_value = read_population(i, config_path, calculation_path)
 		fitness_values.append(fitness_value[1])
-		fitness_means.append(np.mean(fitness_value[1]))
-		std_deviation.append(np.std(np.asarray(fitness_value[1])))
+		n_unique.append(fitness_value[2])
+		if(fitness_value[2]==-1):			
+			fitness_means.append(np.mean(fitness_value[1]))
+			std_deviation.append(np.std(np.asarray(fitness_value[1])))			
+		else:
+			print("else")
+			fitness_means.append(np.mean(fitness_value[1][0:fitness_value[2]]))
+			std_deviation.append(np.std(np.asarray(fitness_value[1][0:fitness_value[2]])))	
+	print(fitness_means)
+	print(std_deviation)
 	fig, ax = plt.subplots(1)
 	num_individuals = len(fitness_value[1])
 	#color & plotting stuff
@@ -112,13 +136,25 @@ if __name__ == '__main__':
     .5*(1.+np.cos(phi          )), # scaled to [0,1]
     .5*(1.+np.cos(phi+2*np.pi/3)), # 120° phase shifted.
     .5*(1.+np.cos(phi-2*np.pi/3)))).T # Shape = (60,3)
-
+	#print(rgb_cycle)
+	
 	for xe, ye in zip(generations_to_check, fitness_values):
-		ax.scatter([xe] * len(ye), ye, c=rgb_cycle, s=num_individuals, marker="x")
-
+		if(n_unique[xe] == -1):
+			for i in range(0, len(ye)):
+				ax.scatter([xe], ye[i], c=rgb_cycle[i], s=num_individuals, marker="x")
+		else:
+			for i in range(0, n_unique[xe]):
+				ax.scatter([xe], ye[i], c=rgb_cycle[i], s=num_individuals, marker="x")
+			for i in range(n_unique[xe], len(ye)):
+				ax.scatter([xe], ye[i], c=rgb_cycle[i], s=num_individuals, marker="o")
+		#ax.scatter([xe] * len(ye), ye, c=rgb_cycle, s=num_individuals, marker="x")
+		
+	#print(generations_to_check)
+	#print(fitness_means)
+	#print(std_deviation)
 	ax.plot(generations_to_check, fitness_means, color="blue")
-	ax.plot(generations_to_check, fitness_means-np.asarray(std_deviation), color="blue",linestyle='dashed')
-	ax.plot(generations_to_check, fitness_means+np.asarray(std_deviation), color="blue",linestyle='dashed')
+	#ax.plot(generations_to_check, fitness_means-np.asarray(std_deviation), color="blue",linestyle='dashed')
+	#ax.plot(generations_to_check, fitness_means+np.asarray(std_deviation), color="blue",linestyle='dashed')
 	ax.set_xlabel('Generation',fontsize=20)
 	ax.set_ylabel('Fitness values',fontsize=20)
 	ax.xaxis.set_major_locator(MaxNLocator(integer=True))

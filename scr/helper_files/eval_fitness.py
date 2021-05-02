@@ -193,7 +193,7 @@ def eval_fittness(stiffness, std_stiffness, T_est, T_estimates_params):
 	stiffness = np.asarray(stiffness)
 	#print("mean " + str(mean))
 	#fittness_stiffness = 1/(stiffness+mean)
-	fittness_stiffness = 1/(stiffness)
+	fittness_stiffness = 1/(stiffness+0.005)
 	print("fittness_stiffness")
 	print(fittness_stiffness)
 
@@ -210,7 +210,18 @@ def eval_fittness(stiffness, std_stiffness, T_est, T_estimates_params):
 		if(np.isfinite(float(T_estimates_params[i][0]))==True and T_estimates_params[i][2] !=0):
 			#print(str(i) + " mediane " + str(np.median(T_est[i][1])/np.min(T_est[i][1])))
 			#fit_param.append(T_estimates_params[i][0]*(np.median(T_est[i][1])/np.min(T_est[i][1])))
-			fit_param.append(T_estimates_params[i][0]*(np.median(T_est[i][1])))
+			if(np.abs(T_estimates_params[i][1]/(T_estimates_params[i][0]+1E-12)) > 1.0):
+				fit_param.append(0)
+			else:
+				if(np.median(T_est[i][1])<1):
+					#fit_param.append(T_estimates_params[i][0]*(np.median(T_est[i][1])))
+					#fit_param.append(T_estimates_params[i][0]*(10**(0.1*np.log(np.median(T_est[i][1]))))*np.median(T_est[i][1])/np.min(T_est[i][1]))
+					#fit_param.append(((T_estimates_params[i][0])**0.8)*(-1/(np.log(np.median(T_est[i][1]))))*((np.median(T_est[i][1]))**0.6)/(np.min(T_est[i][1]))**1.3)
+					#fit_param.append((T_estimates_params[i][0])*(-1/(np.log(np.median(T_est[i][1]))))*((np.median(T_est[i][1])))/(np.min(T_est[i][1])))
+					median_penalty = 1/(1+np.exp(2.2*(-np.log(np.median(T_est[i][1])))-1.2))
+					fit_param.append((np.sqrt(T_estimates_params[i][0]))/(np.min(T_est[i][1]))*(((np.median(T_est[i][1])))/(np.min(T_est[i][1])))**1.5*median_penalty)
+				else:
+					fit_param.append(T_estimates_params[i][0])
 			#fit_param.append(T_estimates_params[i][0]*(-np.log(np.median(T_est[i][1]))))
 			#fit_param.append(T_estimates_params[i][0])
 			min_T_est.append(T_estimates_params[i][2])
@@ -220,7 +231,7 @@ def eval_fittness(stiffness, std_stiffness, T_est, T_estimates_params):
 			fit_param.append(0)
 			min_T_est.append(1)
 		
-	fittness_T_est = np.asarray(fit_param)/(np.asarray(min_T_est))
+	fittness_T_est = np.asarray(fit_param)
 	print("fittness_T_est")
 	print(fittness_T_est)
 	

@@ -569,7 +569,7 @@ if __name__ == '__main__':
 
 	#construction_loop(genome, building_blocks, "../config", "./output.xyz")
 
-	process_genome(0,9,[0,0,0,7,0,2,0,7,0,0,0],"/alcc/gpfs2/home/u/blaschma/genetic_run_5/")
+	process_genome(0,6,[0,6,1],"/alcc/gpfs2/home/u/blaschma/manipulated/")
 
 
 	"""

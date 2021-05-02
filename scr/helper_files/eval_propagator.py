@@ -27,6 +27,7 @@ def eval_T(disp_index, para):
 	n_occupied = para[2]
 
 	directory = directories[disp_index+min_displacement]
+	print("directory " + str(directory))
 	#print("index " + str())
 	try:
 		eigenvalues, eigenvectors = top.read_mos_file(directory + "/mos")
@@ -116,12 +117,14 @@ def plot_T_vs_d(calc_path, molecule_name, n_occupied, config_path):
 	    disp.append(float(y)*displacement)
 
 	#fit data
-	minimum = np.argmin(T_est)
+	minimum = np.argmin(T_est)	
 	min_disp = disp[minimum]
 	min_T_est = T_est[minimum]
+	#max_T_est = np.max(T_est)
+	max_T_est = 1
 
 	def func(x, a):
-		return (1-np.exp(-a*np.abs(x-min_disp)+np.log(1-min_T_est)))
+		return (max_T_est-np.exp(-a*np.abs(x-min_disp)+np.log(max_T_est-min_T_est)))
 	try:
 		popt, pcov = curve_fit(func, disp, T_est)
 		print(pcov)
@@ -177,6 +180,7 @@ def plot_energy_levels(calc_path, molecule_name, n_occupied, config_path):
 	Returns:
 		
 	"""	
+	print("plot energy levels")
 	number_occupied = n_occupied
 
 	#process disp_neg
@@ -250,11 +254,12 @@ def plot_energy_levels(calc_path, molecule_name, n_occupied, config_path):
 	ax.plot(displacement, homo_list_m2, label="$E_{homo-2}$")
 	ax.plot(displacement, homo_list_m3, label="$E_{homo-3}$")
 	ax.plot(displacement, homo_list_m4, label="$E_{homo-4}$")	
-	
+	print(displacement)
+	print(homo_list_m4)
 	ax.set_xlabel('Displacement ($\mathrm{\AA}$)',fontsize=20)
 	ax.set_ylabel('Energy (eV)',fontsize=20)
-	ax.set_yscale('log')
-	ax.legend()
+	#ax.set_yscale('log')
+	ax.legend(loc=2)
 	plt.savefig(calc_path + "/" + molecule_name + "_energy_levels.pdf", bbox_inches='tight')
 	plt.savefig(calc_path + "/" + molecule_name + "_energy_levels.svg", bbox_inches='tight')
 	top.write_plot_data(calc_path + "/" + molecule_name + "_energy_levels.dat", (np.round(displacement,2), homo_list_m4, homo_list_m3,homo_list_m2,homo_list_m1,homo_list, lumo_list,lumo_list_p1,lumo_list_p2,lumo_list_p3,lumo_list_p4), "displacement, homo-4 (eV) , ... , lumo +4")

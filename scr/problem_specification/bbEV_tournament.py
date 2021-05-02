@@ -7,7 +7,7 @@ from typing import List, Callable, Tuple
 from helper_files import genome_to_molecule as gtm
 import copy
 
-class bbEv(evaluation_methods.Evaluation):
+class bbEv_tournament(evaluation_methods.Evaluation):
 	Genome = List[int]
 	Population = List[Genome]
 	FitnessFunc = Callable[[Genome, int, int], int]
@@ -85,6 +85,7 @@ class bbEv(evaluation_methods.Evaluation):
 		
 
 	def generate_population(self, size: int, genome_length: int) -> Population:
+		print("tournament")
 		return [self.generate_genome(genome_length) for _ in range(size)]
 
 	def fitness(self, genome: Genome, generation: int, individual: int) -> float:
@@ -95,10 +96,26 @@ class bbEv(evaluation_methods.Evaluation):
 
 
 
-	def selection_pair(self, population: Population, fitness_value) -> Population:		
+	def selection_pair(self, population: Population, fitness_value) -> Population:	
+
+		cfg = configparser.ConfigParser()
+		cfg.read(self.config_path)
+		k = int(cfg.get('Genetic Algorithm', 'n_tournament_selection'))
+		if(k<=2 or k >= len(population)):
+			print("No suitable choice. Setting to 2")
+			k = 2
+		zipped_lists = zip(fitness_value, population) 
+		sorted_pairs = sorted(zipped_lists)
+		tuples = zip(*sorted_pairs)
+		fitness_value, population = [ list(tuple) for tuple in  tuples]
+		population.reverse()
+
+		
+		print("the chosen one " +str(population[0:k]))
+		
+
 		return choices(
-			population=population,
-			weights=fitness_value,
+			population=population[0:k],			
 			k=2
 		)
 

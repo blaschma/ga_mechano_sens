@@ -41,9 +41,12 @@ def run_generation(generation : int, config_path, calculation_path):
 		
 	#load specific evaluation methods
 	else:
-		#load methods for genetic algorithm
-		sys.path.append(evaluation_methods_path)
-		import evaluation_methods as evaluation_methods
+		#make sure problem_specification path is found
+		sys.path.append(os.path.realpath(genetic_algorithm_path + "/scr/"))
+		sys.path.append(os.path.realpath('..'))
+		from problem_specification import bbEV_tournament
+		ev = bbEV_tournament.bbEv_tournament(generation, 0, config_path, calculation_path) #-> todo individual processing
+		pass
 
 	#first generation
 	if(generation == 0):
@@ -141,7 +144,7 @@ def write_genomes_to_archive(population, generation, calculation_path, config_pa
 		print(population[i])
 		print(archive_population)
 		if (population[i] in archive_population) == False:
-			print("adding to archive " + str(population[i]))
+			#print("adding to archive " + str(population[i]))
 			path_of_individual = calculation_path + "/generation_data/"+ str(generation) + "/" + str(i)
 			archive_file.write(str(population[i]) + "	" + path_of_individual + "\n")
 
@@ -240,7 +243,26 @@ def write_family_register(family_register, generation, calculation_path):
     Returns:
             
     """
+    #find number of unique individuals and write to file if possible
+	n_unique = -1
+	try:
+		index = family_register.find("individuals")
+		print("individuals")
+		print(family_register[index+len("individuals"): len(family_register)-1])
+		n_unique = int(family_register[index+len("individuals"): len(family_register)-1])
+	except ValueError as e:
+		print("Can not find or cast number of unique_individuals " + str(e))
+	if(n_unique != -1):
+		unique_individuals_path = calculation_path + "/generation_data/" + str(generation) + "/" + str(generation) + "_n_unique.dat"
+		try:
+			unique_individuals_file = open(unique_individuals_path, "w")
+			unique_individuals_file.write(str(n_unique))
+			unique_individuals_file.close()
+		except OSError as e:
+			print("Cannot open file " + str(e))
+
 	family_register_path = calculation_path + "/generation_data/" + str(generation) + "/" + str(generation) + "_family_register.dat"
+	
 	try:
 		family_register_file = open(family_register_path, "w")
 		family_register_file.write(family_register)

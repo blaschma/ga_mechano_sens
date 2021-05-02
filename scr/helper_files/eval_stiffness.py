@@ -84,7 +84,7 @@ def load_and_plot(molecule_name,n_atoms):
 			plt.plot(disp, energy_normalized)
 			plt.plot(disp, fitted_data_normalized, '--')
 			
-			plt.title("a=" + str(fit_normalized[0]) + " std=" + str(std))
+			plt.title("a=" + str(fit_normalized[0]) + " std=" + str(std_normalized))
 			plt.ylabel('($(E-E_0)/N$) [H]',fontsize=20)
 			plt.xlabel('Displacement [$\mathrm{\AA}$]',fontsize=20)
 			plt.savefig(molecule_name + "_totalEnergy.pdf", bbox_inches='tight')
