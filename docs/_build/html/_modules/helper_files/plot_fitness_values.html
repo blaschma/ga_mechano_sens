@@ -1,0 +1,260 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>helper_files.plot_fitness_values &#8212; Master thesis  documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for helper_files.plot_fitness_values</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">fnmatch</span>
+<span class="kn">import</span> <span class="nn">os.path</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">turbomoleOutputProcessing</span> <span class="kn">import</span> <span class="n">turbomoleOutputProcessing</span> <span class="k">as</span> <span class="n">top</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="n">matplotlib</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;Agg&#39;</span><span class="p">)</span> <span class="c1"># Must be before importing matplotlib.pyplot or pylab!</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">configparser</span>
+<span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">MaxNLocator</span>
+
+
+<div class="viewcode-block" id="read_population"><a class="viewcode-back" href="../../helper_files.html#helper_files.plot_fitness_values.read_population">[docs]</a><span class="k">def</span> <span class="nf">read_population</span><span class="p">(</span><span class="n">generation</span><span class="p">,</span> <span class="n">config_path</span><span class="p">,</span> <span class="n">calculation_path</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    read current generation individuals and their fitness from calculation path</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">    	param1 (int): number of generation which should be read</span>
+<span class="sd">		param2 (String): Path to config file</span>
+<span class="sd">		param3 (String): Path to calculation              </span>
+<span class="sd">    Returns:</span>
+<span class="sd">    	(population, fitness_values)</span>
+<span class="sd">            </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="n">filename_population</span> <span class="o">=</span> <span class="n">calculation_path</span> <span class="o">+</span> <span class="s2">&quot;/curr_population.dat&quot;</span>	
+		<span class="n">file_population</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename_population</span><span class="p">)</span>
+		<span class="n">filename_fitness</span> <span class="o">=</span> <span class="n">calculation_path</span> <span class="o">+</span> <span class="s2">&quot;/generation_data/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">generation</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/fitness.dat&quot;</span>	
+		<span class="n">file_fitness</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename_fitness</span><span class="p">)</span>
+	<span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cannot open file &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+		<span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+	<span class="c1">#read n_unique</span>
+	<span class="n">unique_file</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+	<span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">calculation_path</span> <span class="o">+</span> <span class="s2">&quot;/generation_data/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">generation</span><span class="p">)):</span>
+			<span class="k">if</span> <span class="n">fnmatch</span><span class="o">.</span><span class="n">fnmatch</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;*n_unique.dat&#39;</span><span class="p">):</span>
+				<span class="n">unique_file</span> <span class="o">=</span> <span class="n">file</span>
+				<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;unique_file &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">unique_file</span><span class="p">))</span>
+	
+	<span class="k">if</span><span class="p">(</span><span class="n">unique_file</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+		<span class="n">unique_file</span> <span class="o">=</span> <span class="n">calculation_path</span> <span class="o">+</span> <span class="s2">&quot;/generation_data/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">generation</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span><span class="n">unique_file</span>
+		<span class="n">unique_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">unique_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">unique_file</span><span class="p">:</span>
+			<span class="n">unique_line</span> <span class="o">=</span> <span class="n">line</span>
+		<span class="n">n_unique</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+	<span class="c1">#read population</span>
+	<span class="n">population</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+	<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">file_population</span><span class="p">:</span>
+		<span class="c1">#print(line)</span>
+		<span class="n">tmp</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="p">)</span>
+		<span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">tmp</span><span class="p">))]</span>
+		<span class="n">population</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+
+	<span class="c1">#read fitness values</span>
+	<span class="n">fitness_value</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+	<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">file_fitness</span><span class="p">:</span>
+		<span class="c1">#print(line)</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">tmp</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+		<span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Faulty fitness file &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+			<span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span>
+		<span class="n">fitness_value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+		
+	<span class="k">if</span><span class="p">(</span><span class="n">unique_file</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">population</span><span class="p">,</span> <span class="n">fitness_value</span><span class="p">,</span> <span class="n">n_unique</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">population</span><span class="p">,</span> <span class="n">fitness_value</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="read_generation"><a class="viewcode-back" href="../../helper_files.html#helper_files.plot_fitness_values.read_generation">[docs]</a><span class="k">def</span> <span class="nf">read_generation</span><span class="p">(</span><span class="n">config_path</span><span class="p">,</span> <span class="n">calculation_path</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Invokes the next generation. The number of generation is read from calculation_path/generation.dat</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">    	param1 (String): Path to config file</span>
+<span class="sd">		param2 (String): Path to calculation       </span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">            </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="n">filename</span> <span class="o">=</span> <span class="n">calculation_path</span> <span class="o">+</span> <span class="s2">&quot;/generation.dat&quot;</span>	
+		<span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
+			<span class="n">generation</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+	<span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span><span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;generation file cannot be found or generation file is faulty &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+	<span class="k">return</span> <span class="n">generation</span></div>
+
+
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+	<span class="c1"># sys.argv[1] path to process</span>
+	<span class="c1"># sys.argv[2] config path</span>
+	<span class="c1"># sys.argv[3] figure path</span>
+	<span class="n">calculation_path</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+	<span class="n">config_path</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+	<span class="c1">#how many generations have been calculated</span>
+	<span class="n">generation</span> <span class="o">=</span> <span class="n">read_generation</span><span class="p">(</span><span class="n">config_path</span><span class="p">,</span> <span class="n">calculation_path</span><span class="p">)</span>
+	<span class="k">if</span><span class="p">(</span><span class="n">generation</span> <span class="o">==</span> <span class="kc">None</span><span class="p">):</span>
+		<span class="n">exit</span><span class="p">()</span>
+	
+	<span class="n">generations_to_check</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">generation</span><span class="p">)</span>
+
+	<span class="c1">#load fitness values</span>
+	<span class="n">fitness_values</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+	<span class="n">fitness_means</span><span class="o">=</span><span class="nb">list</span><span class="p">()</span>
+	<span class="n">std_deviation</span><span class="o">=</span><span class="nb">list</span><span class="p">()</span>
+	<span class="n">n_unique</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">generations_to_check</span><span class="p">:</span>
+		<span class="n">fitness_value</span> <span class="o">=</span> <span class="n">read_population</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">config_path</span><span class="p">,</span> <span class="n">calculation_path</span><span class="p">)</span>
+		<span class="n">fitness_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fitness_value</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+		<span class="n">n_unique</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fitness_value</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">fitness_value</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">==-</span><span class="mi">1</span><span class="p">):</span>			
+			<span class="n">fitness_means</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">fitness_value</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+			<span class="n">std_deviation</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">fitness_value</span><span class="p">[</span><span class="mi">1</span><span class="p">])))</span>			
+		<span class="k">else</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;else&quot;</span><span class="p">)</span>
+			<span class="n">fitness_means</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">fitness_value</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">fitness_value</span><span class="p">[</span><span class="mi">2</span><span class="p">]]))</span>
+			<span class="n">std_deviation</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">fitness_value</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">fitness_value</span><span class="p">[</span><span class="mi">2</span><span class="p">]])))</span>	
+	<span class="nb">print</span><span class="p">(</span><span class="n">fitness_means</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="n">std_deviation</span><span class="p">)</span>
+	<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+	<span class="n">num_individuals</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">fitness_value</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+	<span class="c1">#color &amp; plotting stuff</span>
+	<span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">num_individuals</span><span class="p">)</span>
+	<span class="n">rgb_cycle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span>            <span class="c1"># Three sinusoids</span>
+    <span class="mf">.5</span><span class="o">*</span><span class="p">(</span><span class="mf">1.</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span>          <span class="p">)),</span> <span class="c1"># scaled to [0,1]</span>
+    <span class="mf">.5</span><span class="o">*</span><span class="p">(</span><span class="mf">1.</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">3</span><span class="p">)),</span> <span class="c1"># 120° phase shifted.</span>
+    <span class="mf">.5</span><span class="o">*</span><span class="p">(</span><span class="mf">1.</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">3</span><span class="p">))))</span><span class="o">.</span><span class="n">T</span> <span class="c1"># Shape = (60,3)</span>
+	<span class="c1">#print(rgb_cycle)</span>
+	
+	<span class="k">for</span> <span class="n">xe</span><span class="p">,</span> <span class="n">ye</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">generations_to_check</span><span class="p">,</span> <span class="n">fitness_values</span><span class="p">):</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">n_unique</span><span class="p">[</span><span class="n">xe</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ye</span><span class="p">)):</span>
+				<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="n">xe</span><span class="p">],</span> <span class="n">ye</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">rgb_cycle</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="n">num_individuals</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_unique</span><span class="p">[</span><span class="n">xe</span><span class="p">]):</span>
+				<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="n">xe</span><span class="p">],</span> <span class="n">ye</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">rgb_cycle</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="n">num_individuals</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_unique</span><span class="p">[</span><span class="n">xe</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">ye</span><span class="p">)):</span>
+				<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="n">xe</span><span class="p">],</span> <span class="n">ye</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">rgb_cycle</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="n">num_individuals</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">)</span>
+		<span class="c1">#ax.scatter([xe] * len(ye), ye, c=rgb_cycle, s=num_individuals, marker=&quot;x&quot;)</span>
+		
+	<span class="c1">#print(generations_to_check)</span>
+	<span class="c1">#print(fitness_means)</span>
+	<span class="c1">#print(std_deviation)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">generations_to_check</span><span class="p">,</span> <span class="n">fitness_means</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+	<span class="c1">#ax.plot(generations_to_check, fitness_means-np.asarray(std_deviation), color=&quot;blue&quot;,linestyle=&#39;dashed&#39;)</span>
+	<span class="c1">#ax.plot(generations_to_check, fitness_means+np.asarray(std_deviation), color=&quot;blue&quot;,linestyle=&#39;dashed&#39;)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Generation&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Fitness values&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">MaxNLocator</span><span class="p">(</span><span class="n">integer</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s1">&#39;symlog&#39;</span><span class="p">)</span>
+	<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">((</span><span class="mf">0.0</span><span class="p">,</span><span class="kc">None</span><span class="p">))</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;/fitness_values.pdf&quot;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Master thesis</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Matthias Blaschke.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
