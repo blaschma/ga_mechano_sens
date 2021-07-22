@@ -1,0 +1,17 @@
+[Basics]
+genetic_algortim_path=/alcc/gpfs2/home/u/blaschma/Master_Code/genetic_algorithm 
+turbopath=/alcc/gpfs2/home/u/blaschma/programs/turbo.V7.5_backup/loadTurbo7_5.sh
+helper_files=genetic_algorithm_path + /scr/helper_files/
+
+[Building Procedure]
+CC_bond_lengt=1.54
+conjugation_angle=0.45
+building_block_path=../building_blocks_xyz
+generation_data_path=../generation_data
+ang2Bohr=1.889725989
+
+[Turbomole Calculations]
+partition=0
+num_cores=0
+displacement_per_step=0
+num_stretching_steps=0

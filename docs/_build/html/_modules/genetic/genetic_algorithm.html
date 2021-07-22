@@ -1,0 +1,285 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>genetic.genetic_algorithm &#8212; Master thesis  documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for genetic.genetic_algorithm</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">choices</span><span class="p">,</span> <span class="n">randint</span><span class="p">,</span> <span class="n">randrange</span><span class="p">,</span> <span class="n">random</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="c1">#matplotlib.use(&#39;Agg&#39;) # Must be before importing matplotlib.pyplot or pylab!</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+
+
+<span class="n">Genome</span> <span class="o">=</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+<span class="n">Population</span> <span class="o">=</span> <span class="n">List</span><span class="p">[</span><span class="n">Genome</span><span class="p">]</span>
+<span class="n">FitnessFunc</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Genome</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="nb">float</span><span class="p">]</span>
+<span class="n">PopulateFunc</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Population</span><span class="p">]</span>
+<span class="n">SelectionFunc</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Population</span><span class="p">,</span> <span class="n">FitnessFunc</span><span class="p">],</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Genome</span><span class="p">,</span> <span class="n">Genome</span><span class="p">]]</span>
+<span class="n">CrossoverFunc</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Genome</span><span class="p">,</span><span class="n">Genome</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Genome</span><span class="p">,</span> <span class="n">Genome</span><span class="p">]]</span>
+<span class="n">MutationFunc</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Genome</span><span class="p">],</span> <span class="n">Genome</span><span class="p">]</span>
+
+
+<span class="c1">#&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="run_evolution"><a class="viewcode-back" href="../../genetic.html#genetic.genetic_algorithm.run_evolution">[docs]</a><span class="k">def</span> <span class="nf">run_evolution</span><span class="p">(</span>
+		<span class="n">populate_func</span><span class="p">:</span> <span class="n">PopulateFunc</span><span class="p">,</span>
+		<span class="n">fitness_func</span><span class="p">:</span> <span class="n">FitnessFunc</span><span class="p">,</span>
+		<span class="n">fitness_limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+		<span class="n">selection_func</span> <span class="p">:</span> <span class="n">SelectionFunc</span><span class="p">,</span>
+		<span class="n">crossover_func</span> <span class="p">:</span> <span class="n">CrossoverFunc</span><span class="p">,</span>
+		<span class="n">mutation_func</span><span class="p">:</span> <span class="n">MutationFunc</span><span class="p">,</span>
+		<span class="n">generation_limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span>
+	<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Population</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+	<span class="c1">#list of fitness_values</span>
+	<span class="n">fitness_value</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+	<span class="c1">#initialize first population</span>
+	<span class="n">population</span> <span class="o">=</span> <span class="n">populate_func</span><span class="p">()</span>
+
+	<span class="c1">#geration loop</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">generation_limit</span><span class="p">):</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;generation &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+
+		<span class="c1">#evaluate pupulation</span>
+		<span class="n">population</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+			<span class="n">population</span><span class="p">,</span>
+			<span class="n">key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">genome</span><span class="p">:</span> <span class="n">fitness_func</span><span class="p">(</span><span class="n">genome</span><span class="p">)</span>			
+			<span class="p">)</span>
+		<span class="n">fitness_value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fitness_func</span><span class="p">(</span><span class="n">population</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+		<span class="c1">#check if fittness_limit is exceeded</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		if fitness_func(population[0]) &gt;= fitness_limit:</span>
+<span class="sd">			break</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="c1">#take best individuals of generation and..</span>
+		<span class="n">next_generation</span> <span class="o">=</span> <span class="n">population</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+
+		<span class="c1">#...fill generation with mutated and cross over children</span>
+		<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">population</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+			<span class="c1">#select parent according to selection function</span>
+			<span class="n">parents</span> <span class="o">=</span> <span class="n">selection_func</span><span class="p">(</span><span class="n">population</span><span class="p">,</span> <span class="n">fitness_func</span><span class="p">)</span>
+			<span class="c1">#combine features of parents to generate offspring</span>
+			<span class="n">offspring_a</span><span class="p">,</span> <span class="n">offspring_b</span> <span class="o">=</span> <span class="n">crossover_func</span><span class="p">(</span><span class="n">parents</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">parents</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+			<span class="c1">#mutate offspring</span>
+			<span class="n">offspring_a</span> <span class="o">=</span> <span class="n">mutation_func</span><span class="p">(</span><span class="n">offspring_a</span><span class="p">)</span>
+			<span class="n">offspring_b</span> <span class="o">=</span> <span class="n">mutation_func</span><span class="p">(</span><span class="n">offspring_b</span><span class="p">)</span>
+			<span class="c1">#add offspring to generation</span>
+			<span class="n">next_generation</span> <span class="o">+=</span> <span class="p">[</span><span class="n">offspring_a</span><span class="p">,</span> <span class="n">offspring_b</span><span class="p">]</span>
+		<span class="n">population</span> <span class="o">=</span> <span class="n">next_generation</span>
+
+	<span class="c1">#sort final population </span>
+	<span class="n">population</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+			<span class="n">population</span><span class="p">,</span>
+			<span class="n">key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">genome</span><span class="p">:</span> <span class="n">fitness_func</span><span class="p">(</span><span class="n">genome</span><span class="p">)</span>
+			<span class="p">)</span>
+	<span class="k">return</span> <span class="n">population</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span><span class="n">fitness_value</span></div>
+
+
+
+<div class="viewcode-block" id="run_generation"><a class="viewcode-back" href="../../genetic.html#genetic.genetic_algorithm.run_generation">[docs]</a><span class="k">def</span> <span class="nf">run_generation</span><span class="p">(</span>
+		<span class="n">populate_func</span><span class="p">:</span> <span class="n">PopulateFunc</span><span class="p">,</span>
+		<span class="n">fitness_func</span><span class="p">:</span> <span class="n">FitnessFunc</span><span class="p">,</span>		
+		<span class="n">selection_func</span> <span class="p">:</span> <span class="n">SelectionFunc</span><span class="p">,</span>
+		<span class="n">crossover_func</span> <span class="p">:</span> <span class="n">CrossoverFunc</span><span class="p">,</span>
+		<span class="n">mutation_func</span><span class="p">:</span> <span class="n">MutationFunc</span><span class="p">,</span>
+		<span class="n">population</span> <span class="p">:</span> <span class="n">Population</span><span class="p">,</span>
+		<span class="n">fitness_limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+		<span class="n">generation_limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+		<span class="n">population_size</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span>
+		<span class="n">generation</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+		<span class="n">fitness_value</span>
+	<span class="p">)</span> <span class="p">:</span>
+	<span class="c1">#list of fitness_values</span>
+
+	
+
+	<span class="c1">#initialize first population</span>
+	<span class="k">if</span><span class="p">(</span><span class="n">generation</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+		<span class="n">population</span> <span class="o">=</span> <span class="n">populate_func</span><span class="p">()</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;populated population &quot;</span> <span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">population</span><span class="p">))</span>
+		<span class="c1">#invoke fitness evaluation</span>
+		<span class="n">population_for_fitness_eval</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">population</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">population_size</span><span class="p">):</span>
+			<span class="n">fitness_func</span><span class="p">(</span><span class="n">population_for_fitness_eval</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">generation</span><span class="p">,</span><span class="n">i</span><span class="p">)</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;population after fitness_func &quot;</span> <span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">population</span><span class="p">))</span>
+		<span class="k">return</span> <span class="n">population</span><span class="p">,</span> <span class="s2">&quot;&quot;</span>
+
+
+	<span class="c1">#sort population</span>
+	<span class="n">zipped_lists</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">fitness_value</span><span class="p">,</span> <span class="n">population</span><span class="p">)</span>
+	<span class="n">sorted_pairs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">zipped_lists</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">tuples</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">sorted_pairs</span><span class="p">)</span>
+	<span class="n">fitness_value</span><span class="p">,</span> <span class="n">population</span> <span class="o">=</span> <span class="p">[</span> <span class="nb">list</span><span class="p">(</span><span class="nb">tuple</span><span class="p">)</span> <span class="k">for</span> <span class="nb">tuple</span> <span class="ow">in</span>  <span class="n">tuples</span><span class="p">]</span>
+
+
+	<span class="c1">#check if fittness_limit is exceeded</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	if fitness_func(population[0]) &gt;= fitness_limit:</span>
+<span class="sd">		break</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1">#family register</span>
+	<span class="n">family_register</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+
+	<span class="c1">#take best individuals of generation and..</span>
+	<span class="n">next_generation</span> <span class="o">=</span> <span class="n">population</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+	<span class="n">family_register</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">population</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+	<span class="n">family_register</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">population</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+	<span class="c1">#...fill generation with mutated and cross over children</span>
+	<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">population</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+		<span class="c1">#select parent according to selection function</span>
+		<span class="n">parents</span> <span class="o">=</span> <span class="n">selection_func</span><span class="p">(</span><span class="n">population</span><span class="p">,</span> <span class="n">fitness_value</span><span class="p">)</span><span class="c1">#-&gt;todo too inefficent</span>
+		<span class="c1">#combine features of parents to generate offspring</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;parents[0] &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">parents</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot; parents[1] &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">parents</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+		<span class="n">offspring_a</span><span class="p">,</span> <span class="n">offspring_b</span> <span class="o">=</span> <span class="n">crossover_func</span><span class="p">(</span><span class="n">parents</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">parents</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+		<span class="n">offspring_a_save</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">offspring_a</span><span class="p">)</span>
+		<span class="n">offspring_b_save</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">offspring_b</span><span class="p">)</span>
+
+		<span class="c1">#mutate offspring</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;offspring_a &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">offspring_a</span><span class="p">))</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;offspring_b &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">offspring_b</span><span class="p">))</span>		
+		<span class="n">offspring_a</span> <span class="o">=</span> <span class="n">mutation_func</span><span class="p">(</span><span class="n">offspring_a</span><span class="p">)</span>
+		<span class="n">offspring_b</span> <span class="o">=</span> <span class="n">mutation_func</span><span class="p">(</span><span class="n">offspring_b</span><span class="p">)</span>
+
+		<span class="c1">#handle family register</span>
+		<span class="n">offspring_a_mutation</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+		<span class="k">if</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">offspring_a</span><span class="p">)</span><span class="o">!=</span><span class="n">offspring_a_save</span><span class="p">):</span>
+			<span class="n">offspring_a_mutation</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">offspring_a</span><span class="p">)</span>
+		<span class="n">offspring_b_mutation</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+		<span class="k">if</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">offspring_b</span><span class="p">)</span><span class="o">!=</span><span class="n">offspring_b_save</span><span class="p">):</span>
+			<span class="n">offspring_b_mutation</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">offspring_b</span><span class="p">)</span>
+		<span class="n">family_register</span><span class="o">+=</span><span class="n">offspring_a_save</span> <span class="o">+</span> <span class="s2">&quot; parents &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">parents</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;&amp;&quot;</span> <span class="o">+</span>  <span class="nb">str</span><span class="p">(</span><span class="n">parents</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot; mutation &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">offspring_a_mutation</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+		<span class="n">family_register</span><span class="o">+=</span><span class="n">offspring_b_save</span> <span class="o">+</span> <span class="s2">&quot; parents &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">parents</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;&amp;&quot;</span> <span class="o">+</span>  <span class="nb">str</span><span class="p">(</span><span class="n">parents</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot; mutation &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">offspring_b_mutation</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+		<span class="c1">#add offspring to generation</span>
+		<span class="n">next_generation</span> <span class="o">+=</span> <span class="p">[</span><span class="n">offspring_a</span><span class="p">,</span> <span class="n">offspring_b</span><span class="p">]</span>
+	<span class="n">population</span> <span class="o">=</span> <span class="n">next_generation</span>
+
+	<span class="c1">#reduce overlap by symmetry (no difference in 7-1 and 7-0 or small anchor)</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">population</span><span class="p">)):</span>
+		<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">population</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">population</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">7</span><span class="p">):</span>
+				<span class="n">population</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="n">population</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+	<span class="c1">#find unique individuals</span>
+	<span class="n">individuals</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">population</span><span class="p">)):</span>
+		<span class="k">if</span><span class="p">((</span><span class="n">population</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">individuals</span><span class="p">)</span><span class="o">==</span><span class="kc">False</span><span class="p">):</span>
+			<span class="n">individuals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">population</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+	<span class="n">unique_individuals</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">individuals</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;individuals &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">individuals</span><span class="p">))</span>
+
+	<span class="c1">#fill rest of generation randomly</span>
+	<span class="n">missing_individuals</span> <span class="o">=</span> <span class="n">population_size</span><span class="o">-</span><span class="n">unique_individuals</span>
+	<span class="n">individuals_to_add</span> <span class="o">=</span> <span class="n">populate_func</span><span class="p">()[</span><span class="mi">0</span><span class="p">:</span><span class="n">missing_individuals</span><span class="p">]</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;unique_individuals &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">unique_individuals</span><span class="p">))</span>
+	<span class="n">family_register</span> <span class="o">+=</span> <span class="s2">&quot;unique_individuals &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">unique_individuals</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+	<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">individuals_to_add</span><span class="p">))</span>
+	<span class="n">population</span> <span class="o">=</span> <span class="n">individuals</span>
+	<span class="n">population</span><span class="o">+=</span><span class="n">individuals_to_add</span>
+
+	<span class="c1">#invoke evaluation of  new population</span>
+	<span class="n">population_for_fitness_eval</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">population</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">population_size</span><span class="p">):</span>
+		<span class="n">fitness_func</span><span class="p">(</span><span class="n">population_for_fitness_eval</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">generation</span><span class="p">,</span><span class="n">i</span><span class="p">)</span>
+	
+	<span class="k">return</span> <span class="n">population</span><span class="p">,</span> <span class="n">family_register</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Master thesis</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Matthias Blaschke.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

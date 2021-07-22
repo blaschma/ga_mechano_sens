@@ -1,0 +1,214 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>problem_specification.evaluation_methods.evaluation_methods &#8212; Master thesis  documentation</title>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for problem_specification.evaluation_methods.evaluation_methods</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">os.path</span>
+<span class="c1">#sys.path.append(os.path.realpath(&#39;..&#39;))</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<div class="viewcode-block" id="Evaluation"><a class="viewcode-back" href="../../../problem_specification.evaluation_methods.html#problem_specification.evaluation_methods.evaluation_methods.Evaluation">[docs]</a><span class="k">class</span> <span class="nc">Evaluation</span><span class="p">:</span>
+	<span class="n">Genome</span> <span class="o">=</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+	<span class="n">Population</span> <span class="o">=</span> <span class="n">List</span><span class="p">[</span><span class="n">Genome</span><span class="p">]</span>
+	<span class="n">FitnessFunc</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Genome</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">]</span>
+	<span class="n">PopulateFunc</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Population</span><span class="p">]</span>
+	<span class="n">SelectionFunc</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Population</span><span class="p">,</span> <span class="n">FitnessFunc</span><span class="p">],</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Genome</span><span class="p">,</span> <span class="n">Genome</span><span class="p">]]</span>
+	<span class="n">CrossoverFunc</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Genome</span><span class="p">,</span><span class="n">Genome</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Genome</span><span class="p">,</span> <span class="n">Genome</span><span class="p">]]</span>
+	<span class="n">MutationFunc</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Genome</span><span class="p">],</span> <span class="n">Genome</span><span class="p">]</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">generation</span><span class="p">,</span> <span class="n">individual</span><span class="p">):</span>
+		<span class="k">pass</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">generation</span> <span class="o">=</span> <span class="n">generation</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">individual</span> <span class="o">=</span> <span class="n">individual</span>
+
+
+<div class="viewcode-block" id="Evaluation.generate_genome"><a class="viewcode-back" href="../../../problem_specification.evaluation_methods.html#problem_specification.evaluation_methods.evaluation_methods.Evaluation.generate_genome">[docs]</a>	<span class="k">def</span> <span class="nf">generate_genome</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_length</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Genome</span><span class="p">:</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Generates genome mit maximum lengt of max_lengt (-&gt; size random). Genome is generated from available couplings and building blocks</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			param1 (int) : maximum length of </span>
+<span class="sd">	                </span>
+<span class="sd">	                </span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			Genome</span>
+<span class="sd">	        &quot;&quot;&quot;</span>
+		
+		<span class="k">return</span> <span class="n">genome</span></div>
+
+		
+
+<div class="viewcode-block" id="Evaluation.generate_population"><a class="viewcode-back" href="../../../problem_specification.evaluation_methods.html#problem_specification.evaluation_methods.evaluation_methods.Evaluation.generate_population">[docs]</a>	<span class="k">def</span> <span class="nf">generate_population</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">genome_length</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Population</span><span class="p">:</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Generates population of size size withm genomes of length genome_length</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			param1 (int) : population size</span>
+<span class="sd">			param2 (int) : genome_length </span>
+<span class="sd">	                </span>
+<span class="sd">	                </span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			Genome</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="Evaluation.fitness"><a class="viewcode-back" href="../../../problem_specification.evaluation_methods.html#problem_specification.evaluation_methods.evaluation_methods.Evaluation.fitness">[docs]</a>	<span class="k">def</span> <span class="nf">fitness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">genome</span><span class="p">:</span> <span class="n">Genome</span><span class="p">,</span> <span class="n">generation</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">individual</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Evaluates finess</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			param1 (Genome) : genome</span>
+<span class="sd">			param2 (int) : generation</span>
+<span class="sd">			param3 (int) : individual</span>
+<span class="sd">	                </span>
+<span class="sd">	                </span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			(float) fittness</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		
+		<span class="k">return</span> <span class="mf">0.0</span></div>
+
+
+
+
+<div class="viewcode-block" id="Evaluation.selection_pair"><a class="viewcode-back" href="../../../problem_specification.evaluation_methods.html#problem_specification.evaluation_methods.evaluation_methods.Evaluation.selection_pair">[docs]</a>	<span class="k">def</span> <span class="nf">selection_pair</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">population</span><span class="p">:</span> <span class="n">Population</span><span class="p">,</span> <span class="n">fitness_value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Population</span><span class="p">:</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Select pair of population</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			param1 (Population) : Population</span>
+<span class="sd">			param2 (Callable) : fitness_function</span>
+<span class="sd">			</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			(Population) population</span>
+<span class="sd">		&quot;&quot;&quot;</span>		
+		<span class="k">return</span> <span class="mi">0</span></div>
+
+
+
+<div class="viewcode-block" id="Evaluation.mutation"><a class="viewcode-back" href="../../../problem_specification.evaluation_methods.html#problem_specification.evaluation_methods.evaluation_methods.Evaluation.mutation">[docs]</a>	<span class="k">def</span> <span class="nf">mutation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">genome</span><span class="p">:</span> <span class="n">Genome</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">probability</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Genome</span><span class="p">:</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Mutation of genome (num of mutations with given probability )</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			param1 (Genome) : genome</span>
+<span class="sd">			param2 (int) : number of mutations</span>
+<span class="sd">			param3 (float) : probability of mutation           </span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			(Genome) population</span>
+<span class="sd">		&quot;&quot;&quot;</span>		
+		<span class="k">return</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="Evaluation.crossover"><a class="viewcode-back" href="../../../problem_specification.evaluation_methods.html#problem_specification.evaluation_methods.evaluation_methods.Evaluation.crossover">[docs]</a>	<span class="k">def</span> <span class="nf">crossover</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span><span class="n">Genome</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span><span class="n">Genome</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Genome</span><span class="p">,</span> <span class="n">Genome</span><span class="p">]:</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Crossover of genome a and b</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			param1 (Genome) : genome a</span>
+<span class="sd">			param2 (Genome) : genome b       </span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			(Genome,Genome) </span>
+<span class="sd">		&quot;&quot;&quot;</span>		
+		<span class="k">return</span> <span class="p">([</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">])</span></div></div>
+
+
+	
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Master thesis</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Matthias Blaschke.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

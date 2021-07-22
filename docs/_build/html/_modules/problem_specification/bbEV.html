@@ -1,0 +1,332 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>problem_specification.bbEV &#8212; Master thesis  documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for problem_specification.bbEV</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">configparser</span>
+<span class="kn">from</span> <span class="nn">problem_specification.evaluation_methods</span> <span class="kn">import</span> <span class="n">evaluation_methods</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">choices</span><span class="p">,</span> <span class="n">randint</span><span class="p">,</span> <span class="n">randrange</span><span class="p">,</span> <span class="n">random</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">helper_files</span> <span class="kn">import</span> <span class="n">genome_to_molecule</span> <span class="k">as</span> <span class="n">gtm</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+
+<div class="viewcode-block" id="bbEv"><a class="viewcode-back" href="../../problem_specification.html#problem_specification.bbEV.bbEv">[docs]</a><span class="k">class</span> <span class="nc">bbEv</span><span class="p">(</span><span class="n">evaluation_methods</span><span class="o">.</span><span class="n">Evaluation</span><span class="p">):</span>
+	<span class="n">Genome</span> <span class="o">=</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+	<span class="n">Population</span> <span class="o">=</span> <span class="n">List</span><span class="p">[</span><span class="n">Genome</span><span class="p">]</span>
+	<span class="n">FitnessFunc</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Genome</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">]</span>
+	<span class="n">PopulateFunc</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Population</span><span class="p">]</span>
+	<span class="n">SelectionFunc</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Population</span><span class="p">,</span> <span class="n">FitnessFunc</span><span class="p">],</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Genome</span><span class="p">,</span> <span class="n">Genome</span><span class="p">]]</span>
+	<span class="n">CrossoverFunc</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Genome</span><span class="p">,</span><span class="n">Genome</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Genome</span><span class="p">,</span> <span class="n">Genome</span><span class="p">]]</span>
+	<span class="n">MutationFunc</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Genome</span><span class="p">],</span> <span class="n">Genome</span><span class="p">]</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">generation</span><span class="p">,</span> <span class="n">individual</span><span class="p">,</span> <span class="n">config_path</span><span class="p">,</span> <span class="n">calculation_path</span><span class="p">):</span>
+		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">generation</span><span class="p">,</span> <span class="n">individual</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Building_Block</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Building_Block&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;abbrev&#39;</span><span class="p">,</span> <span class="s1">&#39;num_atoms&#39;</span><span class="p">,</span> <span class="s1">&#39;para_pos&#39;</span><span class="p">,</span> <span class="s1">&#39;meta_pos&#39;</span><span class="p">,</span> <span class="s1">&#39;ortho_pos&#39;</span><span class="p">,</span> <span class="s1">&#39;path&#39;</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">Coupling</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Coupling&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;abbrev&#39;</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">generation</span> <span class="o">=</span> <span class="n">generation</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">individual</span> <span class="o">=</span> <span class="n">individual</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">calculation_path</span> <span class="o">=</span> <span class="n">calculation_path</span>
+		<span class="c1">#self.benzene = Building_Block(abbrev=&quot;B&quot;, num_atoms=6, para_pos=3, meta_pos=4 ,ortho_pos=5, path=&quot;./hamiltionians/benzene.txt&quot;)</span>
+		<span class="c1">#self.naphthalene = Building_Block(abbrev=&quot;N&quot;, num_atoms=10, para_pos=7, meta_pos=8 ,ortho_pos=9, path=&quot;./hamiltionians/naphthalene.txt&quot;)</span>
+		<span class="c1">#self.anthracen = Building_Block(abbrev=&quot;A&quot;, num_atoms=14, para_pos=11, meta_pos=12 ,ortho_pos=13, path=&quot;./hamiltionians/anthracen.txt&quot;)</span>
+		<span class="c1">#self.building_blocks = [benzene,naphthalene,anthracen]</span>
+
+		<span class="c1">#todo : dependency on interchangeable module not good</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">building_blocks</span><span class="o">=</span><span class="n">gtm</span><span class="o">.</span><span class="n">load_building_blocks</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">para</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Coupling</span><span class="p">(</span><span class="n">abbrev</span><span class="o">=</span><span class="s2">&quot;p&quot;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Coupling</span><span class="p">(</span><span class="n">abbrev</span><span class="o">=</span><span class="s2">&quot;m&quot;</span><span class="p">)</span>
+		<span class="c1">#self.ortho = self.Coupling(abbrev=&quot;o&quot;)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">couplings</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">para</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">]</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">config_path</span> <span class="o">=</span> <span class="n">config_path</span>
+		<span class="n">hamiltionians</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+<div class="viewcode-block" id="bbEv.generate_genome"><a class="viewcode-back" href="../../problem_specification.html#problem_specification.bbEV.bbEv.generate_genome">[docs]</a>	<span class="k">def</span> <span class="nf">generate_genome</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_length</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Genome</span><span class="p">:</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Generates genome mit maximum lengt of max_lengt (-&gt; size random). Genome is generated from available couplings and building blocks</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			param1 (int) : maximum length of </span>
+<span class="sd">	                </span>
+<span class="sd">	                </span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			Genome</span>
+<span class="sd">	        &quot;&quot;&quot;</span>
+	    <span class="c1">#coupling must contain at least one block and two couplings</span>
+		<span class="c1">#print(&quot;max_length &quot; + str(max_length))</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">max_length</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">):</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;sorry max_length too small&quot;</span><span class="p">)</span>
+			<span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+		<span class="n">num_building_blocks</span> <span class="o">=</span> <span class="n">randrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">max_length</span><span class="p">)</span>
+		
+		<span class="n">indices_building_blocks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">building_blocks</span><span class="p">),</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">building_blocks</span><span class="p">),</span><span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>   
+		<span class="n">indices_couplings</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">couplings</span><span class="p">),</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">couplings</span><span class="p">),</span><span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>   
+		<span class="n">selected_building_blocks</span> <span class="o">=</span> <span class="n">choices</span><span class="p">(</span><span class="n">indices_building_blocks</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">num_building_blocks</span><span class="p">)</span>
+		<span class="n">selected_couplings</span> <span class="o">=</span> <span class="n">choices</span><span class="p">(</span><span class="n">indices_couplings</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">num_building_blocks</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span>
+
+		<span class="n">genome</span><span class="o">=</span><span class="nb">list</span><span class="p">()</span>
+
+		<span class="c1">#add coupling to anchor</span>
+		<span class="n">genome</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">selected_couplings</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_building_blocks</span><span class="p">):</span>
+			
+			<span class="n">genome</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">selected_building_blocks</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+			
+			<span class="n">genome</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">selected_couplings</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+			<span class="c1">#print(&quot;genome &quot; + str(genome))</span>
+
+		<span class="c1">#reduce overlap by symmetry (no difference in 7-1 and 7-0 small anchors)</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">genome</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">genome</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="mi">7</span><span class="p">):</span>
+				<span class="n">genome</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="n">genome</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>
+		<span class="k">return</span> <span class="n">genome</span></div>
+
+		
+
+<div class="viewcode-block" id="bbEv.generate_population"><a class="viewcode-back" href="../../problem_specification.html#problem_specification.bbEV.bbEv.generate_population">[docs]</a>	<span class="k">def</span> <span class="nf">generate_population</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">genome_length</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Population</span><span class="p">:</span>
+		<span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">generate_genome</span><span class="p">(</span><span class="n">genome_length</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">)]</span></div>
+
+<div class="viewcode-block" id="bbEv.fitness"><a class="viewcode-back" href="../../problem_specification.html#problem_specification.bbEV.bbEv.fitness">[docs]</a>	<span class="k">def</span> <span class="nf">fitness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">genome</span><span class="p">:</span> <span class="n">Genome</span><span class="p">,</span> <span class="n">generation</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">individual</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+		<span class="n">genome_copy</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">genome</span><span class="p">)</span>
+		<span class="n">gtm</span><span class="o">.</span><span class="n">process_genome</span><span class="p">(</span><span class="n">generation</span><span class="p">,</span><span class="n">individual</span><span class="p">,</span><span class="n">genome_copy</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">calculation_path</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">random</span><span class="p">()</span></div>
+
+
+
+
+<div class="viewcode-block" id="bbEv.selection_pair"><a class="viewcode-back" href="../../problem_specification.html#problem_specification.bbEV.bbEv.selection_pair">[docs]</a>	<span class="k">def</span> <span class="nf">selection_pair</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">population</span><span class="p">:</span> <span class="n">Population</span><span class="p">,</span> <span class="n">fitness_value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Population</span><span class="p">:</span>		
+		<span class="k">return</span> <span class="n">choices</span><span class="p">(</span>
+			<span class="n">population</span><span class="o">=</span><span class="n">population</span><span class="p">,</span>
+			<span class="n">weights</span><span class="o">=</span><span class="n">fitness_value</span><span class="p">,</span>
+			<span class="n">k</span><span class="o">=</span><span class="mi">2</span>
+		<span class="p">)</span></div>
+
+<div class="viewcode-block" id="bbEv.crossover"><a class="viewcode-back" href="../../problem_specification.html#problem_specification.bbEV.bbEv.crossover">[docs]</a>	<span class="k">def</span> <span class="nf">crossover</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span><span class="n">Genome</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span><span class="n">Genome</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Genome</span><span class="p">,</span> <span class="n">Genome</span><span class="p">]:</span>
+		<span class="c1">#return (a,b)</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">single_point_crossover</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="bbEv.single_point_crossover_old"><a class="viewcode-back" href="../../problem_specification.html#problem_specification.bbEV.bbEv.single_point_crossover_old">[docs]</a>	<span class="k">def</span> <span class="nf">single_point_crossover_old</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span><span class="n">Genome</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span><span class="n">Genome</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Genome</span><span class="p">,</span> <span class="n">Genome</span><span class="p">]:</span>
+		
+		<span class="n">length_a</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+		<span class="n">length_b</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">length_a</span><span class="o">&lt;=</span><span class="mi">1</span> <span class="ow">or</span> <span class="n">length_b</span><span class="o">&lt;=</span><span class="mi">1</span><span class="p">):</span>
+			<span class="k">return</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span>
+
+		<span class="c1">#ensure that coupling and blocks alter</span>
+		<span class="n">cut_a</span> <span class="o">=</span> <span class="n">randrange</span><span class="p">(</span><span class="n">length_a</span><span class="p">)</span>	
+		<span class="k">if</span><span class="p">(</span><span class="n">cut_a</span><span class="o">%</span><span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+			<span class="n">cut_b</span> <span class="o">=</span> <span class="n">randrange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">length_b</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+			<span class="n">cut_b</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">cut_b</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">cut_b</span> <span class="o">=</span> <span class="n">randrange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">length_b</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+			<span class="n">cut_b</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">cut_b</span><span class="o">+</span><span class="mi">1</span>
+
+		<span class="k">return</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">cut_a</span><span class="p">]</span> <span class="o">+</span> <span class="n">b</span><span class="p">[</span><span class="n">cut_b</span><span class="p">:</span><span class="n">length_b</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">cut_b</span><span class="p">]</span> <span class="o">+</span> <span class="n">a</span><span class="p">[</span><span class="n">cut_a</span><span class="p">:</span><span class="n">length_a</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="bbEv.single_point_crossover"><a class="viewcode-back" href="../../problem_specification.html#problem_specification.bbEV.bbEv.single_point_crossover">[docs]</a>	<span class="k">def</span> <span class="nf">single_point_crossover</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span><span class="n">Genome</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span><span class="n">Genome</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Genome</span><span class="p">,</span> <span class="n">Genome</span><span class="p">]:</span>
+		
+		<span class="n">length_a</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+		<span class="n">length_b</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+		<span class="n">minimim_length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">((</span><span class="n">length_a</span><span class="p">,</span> <span class="n">length_b</span><span class="p">))</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">length_a</span><span class="o">&lt;=</span><span class="mi">1</span> <span class="ow">or</span> <span class="n">length_b</span><span class="o">&lt;=</span><span class="mi">1</span><span class="p">):</span>
+			<span class="k">return</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span>
+			
+		<span class="n">cut</span> <span class="o">=</span> <span class="n">randrange</span><span class="p">(</span><span class="n">minimim_length</span><span class="p">)</span>			
+
+		<span class="k">return</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">cut</span><span class="p">]</span> <span class="o">+</span> <span class="n">b</span><span class="p">[</span><span class="n">cut</span><span class="p">:</span><span class="n">length_b</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">cut</span><span class="p">]</span> <span class="o">+</span> <span class="n">a</span><span class="p">[</span><span class="n">cut</span><span class="p">:</span><span class="n">length_a</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="bbEv.mutation"><a class="viewcode-back" href="../../problem_specification.html#problem_specification.bbEV.bbEv.mutation">[docs]</a>	<span class="k">def</span> <span class="nf">mutation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">genome</span><span class="p">:</span> <span class="n">Genome</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">probability</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Genome</span><span class="p">:</span>		
+		<span class="n">method</span> <span class="o">=</span> <span class="n">randrange</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">method</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">building_block_mutation</span><span class="p">(</span><span class="n">genome</span><span class="p">,</span> <span class="n">probability</span><span class="p">)</span>
+		<span class="k">elif</span><span class="p">(</span><span class="n">method</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">coupling_mutation</span><span class="p">(</span><span class="n">genome</span><span class="p">,</span> <span class="n">probability</span><span class="p">)</span>
+		<span class="k">elif</span><span class="p">(</span><span class="n">method</span> <span class="o">==</span> <span class="mi">2</span><span class="p">):</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">insert_mutation</span><span class="p">(</span><span class="n">genome</span><span class="p">,</span> <span class="n">probability</span><span class="p">)</span>
+		<span class="k">elif</span><span class="p">(</span><span class="n">method</span> <span class="o">==</span> <span class="mi">3</span><span class="p">):</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">truncate_mutation</span><span class="p">(</span><span class="n">genome</span><span class="p">,</span> <span class="n">probability</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">genome</span></div>
+
+<div class="viewcode-block" id="bbEv.building_block_mutation"><a class="viewcode-back" href="../../problem_specification.html#problem_specification.bbEV.bbEv.building_block_mutation">[docs]</a>	<span class="k">def</span> <span class="nf">building_block_mutation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">genome</span><span class="p">:</span> <span class="n">Genome</span><span class="p">,</span> <span class="n">probability</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Genome</span><span class="p">:</span>	
+		<span class="n">cfg</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+		<span class="n">cfg</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_path</span><span class="p">)</span>
+		<span class="n">probability</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Genetic Algorithm&#39;</span><span class="p">,</span> <span class="s1">&#39;block_mutation_prob&#39;</span><span class="p">))</span>
+
+		<span class="n">mutated_genome</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">random</span><span class="p">()</span><span class="o">&lt;</span><span class="n">probability</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">genome</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">3</span><span class="p">):</span>
+			<span class="n">new_block</span> <span class="o">=</span> <span class="n">randrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">building_blocks</span><span class="p">))</span>
+			<span class="c1">#print(&quot;new block &quot; + str(new_block))</span>
+			<span class="n">block_to_mutate</span> <span class="o">=</span> <span class="n">randrange</span><span class="p">(</span><span class="nb">int</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">genome</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+			<span class="c1">#print(&quot;block to mutate &quot; + str(block_to_mutate))	</span>
+			<span class="n">block_to_mutate</span> <span class="o">=</span> <span class="n">block_to_mutate</span><span class="o">+</span><span class="n">block_to_mutate</span><span class="o">+</span><span class="mi">2</span>
+			
+			
+			<span class="n">mutated_genome</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">genome</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">block_to_mutate</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+			<span class="n">mutated_genome</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_block</span><span class="p">)</span>
+			<span class="n">mutated_genome</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">genome</span><span class="p">[</span><span class="n">block_to_mutate</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">genome</span><span class="p">)])</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;block mutation!&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mutated_genome</span><span class="p">))</span>
+			<span class="k">return</span> <span class="n">mutated_genome</span>
+		<span class="k">return</span> <span class="n">genome</span></div>
+
+<div class="viewcode-block" id="bbEv.coupling_mutation"><a class="viewcode-back" href="../../problem_specification.html#problem_specification.bbEV.bbEv.coupling_mutation">[docs]</a>	<span class="k">def</span> <span class="nf">coupling_mutation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">genome</span><span class="p">:</span> <span class="n">Genome</span><span class="p">,</span> <span class="n">probability</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Genome</span><span class="p">:</span>	
+		<span class="n">cfg</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+		<span class="n">cfg</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_path</span><span class="p">)</span>
+		<span class="n">probability</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Genetic Algorithm&#39;</span><span class="p">,</span> <span class="s1">&#39;coupling_mutation_prob&#39;</span><span class="p">))</span>
+
+		<span class="n">mutated_genome</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">random</span><span class="p">()</span><span class="o">&lt;</span><span class="n">probability</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">genome</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">3</span><span class="p">):</span>
+			<span class="n">new_coupling</span> <span class="o">=</span> <span class="n">randrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">couplings</span><span class="p">))</span>
+			<span class="c1">#print(&quot;new coupling &quot; + str(new_coupling))		</span>
+			<span class="n">coupling_to_mutate</span> <span class="o">=</span> <span class="n">randrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">int</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">genome</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+			<span class="c1">#print(&quot;coupling to mutate &quot; + str(coupling_to_mutate))			</span>
+			<span class="n">coupling_to_mutate</span> <span class="o">=</span> <span class="n">coupling_to_mutate</span><span class="o">+</span><span class="n">coupling_to_mutate</span><span class="o">+</span><span class="mi">1</span>
+			
+			<span class="c1">#genome = genome[0:coupling_to_mutate-1] + couplings[new_coupling].abbrev + genome[coupling_to_mutate:len(genome)]</span>
+			
+			<span class="n">mutated_genome</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">genome</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">coupling_to_mutate</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+			<span class="n">mutated_genome</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_coupling</span><span class="p">)</span>
+			<span class="n">mutated_genome</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">genome</span><span class="p">[</span><span class="n">coupling_to_mutate</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">genome</span><span class="p">)])</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;coupling mutation! &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mutated_genome</span><span class="p">))</span>
+			<span class="k">return</span> <span class="n">mutated_genome</span>
+		<span class="k">return</span> <span class="n">genome</span></div>
+
+<div class="viewcode-block" id="bbEv.insert_mutation"><a class="viewcode-back" href="../../problem_specification.html#problem_specification.bbEV.bbEv.insert_mutation">[docs]</a>	<span class="k">def</span> <span class="nf">insert_mutation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">genome</span><span class="p">:</span> <span class="n">Genome</span><span class="p">,</span> <span class="n">probability</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">):</span>
+		<span class="n">cfg</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+		<span class="n">cfg</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_path</span><span class="p">)</span>
+		<span class="n">probability</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Genetic Algorithm&#39;</span><span class="p">,</span> <span class="s1">&#39;insert_mutation_prob&#39;</span><span class="p">))</span>
+		<span class="n">genome_length</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Genetic Algorithm&#39;</span><span class="p">,</span> <span class="s1">&#39;genome_length&#39;</span><span class="p">))</span>
+
+		<span class="n">mutated_genome</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">random</span><span class="p">()</span><span class="o">&lt;</span><span class="n">probability</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">genome</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span> <span class="o">&lt;</span> <span class="n">genome_length</span><span class="p">):</span>
+
+			<span class="n">new_coupling</span> <span class="o">=</span> <span class="n">randrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">couplings</span><span class="p">))</span>
+			<span class="n">new_block</span> <span class="o">=</span> <span class="n">new_block</span> <span class="o">=</span> <span class="n">randrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">building_blocks</span><span class="p">))</span>
+
+			<span class="n">insert_coupling</span><span class="o">=</span><span class="n">randrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">int</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">genome</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+			<span class="n">insert_coupling</span><span class="o">=</span><span class="n">insert_coupling</span><span class="o">+</span><span class="n">insert_coupling</span><span class="o">+</span><span class="mi">1</span>
+			<span class="n">to_add_at_end</span> <span class="o">=</span> <span class="n">genome</span><span class="p">[</span><span class="n">insert_coupling</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">genome</span><span class="p">)]</span>
+			<span class="n">mutated_genome</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">genome</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">insert_coupling</span><span class="p">])</span>
+			<span class="n">mutated_genome</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_block</span><span class="p">)</span>
+			<span class="n">mutated_genome</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_coupling</span><span class="p">)</span>
+			<span class="n">mutated_genome</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">to_add_at_end</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;insert mutation! &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mutated_genome</span><span class="p">))</span>
+			<span class="k">return</span> <span class="n">mutated_genome</span>
+
+		<span class="k">return</span> <span class="n">genome</span></div>
+
+<div class="viewcode-block" id="bbEv.truncate_mutation"><a class="viewcode-back" href="../../problem_specification.html#problem_specification.bbEV.bbEv.truncate_mutation">[docs]</a>	<span class="k">def</span> <span class="nf">truncate_mutation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">genome</span><span class="p">:</span> <span class="n">Genome</span><span class="p">,</span> <span class="n">probability</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">):</span>
+		<span class="n">cfg</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+		<span class="n">cfg</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_path</span><span class="p">)</span>
+		<span class="n">probability</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Genetic Algorithm&#39;</span><span class="p">,</span> <span class="s1">&#39;truncate_mutation_prob&#39;</span><span class="p">))</span>
+		<span class="n">genome_length</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Genetic Algorithm&#39;</span><span class="p">,</span> <span class="s1">&#39;genome_length&#39;</span><span class="p">))</span>
+
+		<span class="n">mutated_genome</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">random</span><span class="p">()</span><span class="o">&lt;</span><span class="n">probability</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">genome</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">):</span>
+
+			<span class="n">block_to_truncate</span> <span class="o">=</span> <span class="n">randrange</span><span class="p">(</span><span class="nb">int</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">genome</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>	
+			<span class="n">block_to_truncate</span> <span class="o">=</span> <span class="n">block_to_truncate</span><span class="o">+</span><span class="n">block_to_truncate</span><span class="o">+</span><span class="mi">2</span>
+
+			<span class="n">mutated_genome</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">genome</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">block_to_truncate</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+			<span class="n">mutated_genome</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">genome</span><span class="p">[</span><span class="n">block_to_truncate</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">genome</span><span class="p">)])</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;truncate mutation!&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mutated_genome</span><span class="p">))</span>
+			<span class="k">return</span> <span class="n">mutated_genome</span>
+
+		<span class="k">return</span> <span class="n">genome</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Master thesis</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Matthias Blaschke.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

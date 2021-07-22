@@ -1,0 +1,493 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>problem_specification package &#8212; Master thesis  documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="problem-specification-package">
+<h1>problem_specification package<a class="headerlink" href="#problem-specification-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="problem_specification.evaluation_methods.html">problem_specification.evaluation_methods package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="problem_specification.evaluation_methods.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="problem_specification.evaluation_methods.html#module-problem_specification.evaluation_methods.evaluation_methods">problem_specification.evaluation_methods.evaluation_methods module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="problem_specification.evaluation_methods.html#module-problem_specification.evaluation_methods">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-problem_specification.bbEV">
+<span id="problem-specification-bbev-module"></span><h2>problem_specification.bbEV module<a class="headerlink" href="#module-problem_specification.bbEV" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="problem_specification.bbEV.bbEv">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">problem_specification.bbEV.</span></code><code class="sig-name descname"><span class="pre">bbEv</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">generation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">individual</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calculation_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/problem_specification/bbEV.html#bbEv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#problem_specification.bbEV.bbEv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="problem_specification.evaluation_methods.html#problem_specification.evaluation_methods.evaluation_methods.Evaluation" title="problem_specification.evaluation_methods.evaluation_methods.Evaluation"><code class="xref py py-class docutils literal notranslate"><span class="pre">problem_specification.evaluation_methods.evaluation_methods.Evaluation</span></code></a></p>
+<dl class="py attribute">
+<dt id="problem_specification.bbEV.bbEv.CrossoverFunc">
+<code class="sig-name descname"><span class="pre">CrossoverFunc</span></code><a class="headerlink" href="#problem_specification.bbEV.bbEv.CrossoverFunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of Callable[[List[int], List[int]], Tuple[List[int], List[int]]]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="problem_specification.bbEV.bbEv.FitnessFunc">
+<code class="sig-name descname"><span class="pre">FitnessFunc</span></code><a class="headerlink" href="#problem_specification.bbEV.bbEv.FitnessFunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of Callable[[List[int], int, int], int]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="problem_specification.bbEV.bbEv.Genome">
+<code class="sig-name descname"><span class="pre">Genome</span></code><a class="headerlink" href="#problem_specification.bbEV.bbEv.Genome" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of List[int]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="problem_specification.bbEV.bbEv.MutationFunc">
+<code class="sig-name descname"><span class="pre">MutationFunc</span></code><a class="headerlink" href="#problem_specification.bbEV.bbEv.MutationFunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of Callable[[List[int]], List[int]]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="problem_specification.bbEV.bbEv.PopulateFunc">
+<code class="sig-name descname"><span class="pre">PopulateFunc</span></code><a class="headerlink" href="#problem_specification.bbEV.bbEv.PopulateFunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of Callable[[], List[List[int]]]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="problem_specification.bbEV.bbEv.Population">
+<code class="sig-name descname"><span class="pre">Population</span></code><a class="headerlink" href="#problem_specification.bbEV.bbEv.Population" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of List[List[int]]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="problem_specification.bbEV.bbEv.SelectionFunc">
+<code class="sig-name descname"><span class="pre">SelectionFunc</span></code><a class="headerlink" href="#problem_specification.bbEV.bbEv.SelectionFunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of Callable[[List[List[int]], Callable[[List[int], int, int], int]], Tuple[List[int], List[int]]]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV.bbEv.building_block_mutation">
+<code class="sig-name descname"><span class="pre">building_block_mutation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genome</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probability</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/problem_specification/bbEV.html#bbEv.building_block_mutation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#problem_specification.bbEV.bbEv.building_block_mutation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV.bbEv.coupling_mutation">
+<code class="sig-name descname"><span class="pre">coupling_mutation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genome</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probability</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/problem_specification/bbEV.html#bbEv.coupling_mutation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#problem_specification.bbEV.bbEv.coupling_mutation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV.bbEv.crossover">
+<code class="sig-name descname"><span class="pre">crossover</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/problem_specification/bbEV.html#bbEv.crossover"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#problem_specification.bbEV.bbEv.crossover" title="Permalink to this definition">¶</a></dt>
+<dd><p>Crossover of genome a and b</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param1</strong> (<em>Genome</em>) – genome a</p></li>
+<li><p><strong>param2</strong> (<em>Genome</em>) – genome b</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(Genome,Genome)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV.bbEv.fitness">
+<code class="sig-name descname"><span class="pre">fitness</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genome</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">individual</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">float</span><a class="reference internal" href="_modules/problem_specification/bbEV.html#bbEv.fitness"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#problem_specification.bbEV.bbEv.fitness" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates finess</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param1</strong> (<em>Genome</em>) – genome</p></li>
+<li><p><strong>param2</strong> (<em>int</em>) – generation</p></li>
+<li><p><strong>param3</strong> (<em>int</em>) – individual</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(float) fittness</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV.bbEv.generate_genome">
+<code class="sig-name descname"><span class="pre">generate_genome</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_length</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/problem_specification/bbEV.html#bbEv.generate_genome"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#problem_specification.bbEV.bbEv.generate_genome" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates genome mit maximum lengt of max_lengt (-&gt; size random). Genome is generated from available couplings and building blocks</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>param1</strong> (<em>int</em>) – maximum length of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Genome</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV.bbEv.generate_population">
+<code class="sig-name descname"><span class="pre">generate_population</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">genome_length</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/problem_specification/bbEV.html#bbEv.generate_population"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#problem_specification.bbEV.bbEv.generate_population" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates population of size size withm genomes of length genome_length</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param1</strong> (<em>int</em>) – population size</p></li>
+<li><p><strong>param2</strong> (<em>int</em>) – genome_length</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Genome</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV.bbEv.insert_mutation">
+<code class="sig-name descname"><span class="pre">insert_mutation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genome</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probability</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/problem_specification/bbEV.html#bbEv.insert_mutation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#problem_specification.bbEV.bbEv.insert_mutation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV.bbEv.mutation">
+<code class="sig-name descname"><span class="pre">mutation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genome</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probability</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/problem_specification/bbEV.html#bbEv.mutation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#problem_specification.bbEV.bbEv.mutation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mutation of genome (num of mutations with given probability )</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param1</strong> (<em>Genome</em>) – genome</p></li>
+<li><p><strong>param2</strong> (<em>int</em>) – number of mutations</p></li>
+<li><p><strong>param3</strong> (<em>float</em>) – probability of mutation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(Genome) population</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV.bbEv.selection_pair">
+<code class="sig-name descname"><span class="pre">selection_pair</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">population</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fitness_value</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/problem_specification/bbEV.html#bbEv.selection_pair"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#problem_specification.bbEV.bbEv.selection_pair" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select pair of population</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param1</strong> (<em>Population</em>) – Population</p></li>
+<li><p><strong>param2</strong> (<em>Callable</em>) – fitness_function</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(Population) population</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV.bbEv.single_point_crossover">
+<code class="sig-name descname"><span class="pre">single_point_crossover</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/problem_specification/bbEV.html#bbEv.single_point_crossover"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#problem_specification.bbEV.bbEv.single_point_crossover" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV.bbEv.single_point_crossover_old">
+<code class="sig-name descname"><span class="pre">single_point_crossover_old</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/problem_specification/bbEV.html#bbEv.single_point_crossover_old"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#problem_specification.bbEV.bbEv.single_point_crossover_old" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV.bbEv.truncate_mutation">
+<code class="sig-name descname"><span class="pre">truncate_mutation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genome</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probability</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/problem_specification/bbEV.html#bbEv.truncate_mutation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#problem_specification.bbEV.bbEv.truncate_mutation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="problem_specification.bbEV.random">
+<code class="sig-prename descclassname"><span class="pre">problem_specification.bbEV.</span></code><code class="sig-name descname"><span class="pre">random</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">x</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">interval</span> <span class="pre">[0,</span> <span class="pre">1).</span><a class="headerlink" href="#problem_specification.bbEV.random" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-problem_specification.bbEV_tournament">
+<span id="problem-specification-bbev-tournament-module"></span><h2>problem_specification.bbEV_tournament module<a class="headerlink" href="#module-problem_specification.bbEV_tournament" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="problem_specification.bbEV_tournament.bbEv_tournament">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">problem_specification.bbEV_tournament.</span></code><code class="sig-name descname"><span class="pre">bbEv_tournament</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">generation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">individual</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calculation_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/problem_specification/bbEV_tournament.html#bbEv_tournament"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#problem_specification.bbEV_tournament.bbEv_tournament" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="problem_specification.evaluation_methods.html#problem_specification.evaluation_methods.evaluation_methods.Evaluation" title="problem_specification.evaluation_methods.evaluation_methods.Evaluation"><code class="xref py py-class docutils literal notranslate"><span class="pre">problem_specification.evaluation_methods.evaluation_methods.Evaluation</span></code></a></p>
+<dl class="py attribute">
+<dt id="problem_specification.bbEV_tournament.bbEv_tournament.CrossoverFunc">
+<code class="sig-name descname"><span class="pre">CrossoverFunc</span></code><a class="headerlink" href="#problem_specification.bbEV_tournament.bbEv_tournament.CrossoverFunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of Callable[[List[int], List[int]], Tuple[List[int], List[int]]]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="problem_specification.bbEV_tournament.bbEv_tournament.FitnessFunc">
+<code class="sig-name descname"><span class="pre">FitnessFunc</span></code><a class="headerlink" href="#problem_specification.bbEV_tournament.bbEv_tournament.FitnessFunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of Callable[[List[int], int, int], int]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="problem_specification.bbEV_tournament.bbEv_tournament.Genome">
+<code class="sig-name descname"><span class="pre">Genome</span></code><a class="headerlink" href="#problem_specification.bbEV_tournament.bbEv_tournament.Genome" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of List[int]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="problem_specification.bbEV_tournament.bbEv_tournament.MutationFunc">
+<code class="sig-name descname"><span class="pre">MutationFunc</span></code><a class="headerlink" href="#problem_specification.bbEV_tournament.bbEv_tournament.MutationFunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of Callable[[List[int]], List[int]]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="problem_specification.bbEV_tournament.bbEv_tournament.PopulateFunc">
+<code class="sig-name descname"><span class="pre">PopulateFunc</span></code><a class="headerlink" href="#problem_specification.bbEV_tournament.bbEv_tournament.PopulateFunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of Callable[[], List[List[int]]]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="problem_specification.bbEV_tournament.bbEv_tournament.Population">
+<code class="sig-name descname"><span class="pre">Population</span></code><a class="headerlink" href="#problem_specification.bbEV_tournament.bbEv_tournament.Population" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of List[List[int]]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="problem_specification.bbEV_tournament.bbEv_tournament.SelectionFunc">
+<code class="sig-name descname"><span class="pre">SelectionFunc</span></code><a class="headerlink" href="#problem_specification.bbEV_tournament.bbEv_tournament.SelectionFunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of Callable[[List[List[int]], Callable[[List[int], int, int], int]], Tuple[List[int], List[int]]]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV_tournament.bbEv_tournament.building_block_mutation">
+<code class="sig-name descname"><span class="pre">building_block_mutation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genome</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probability</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/problem_specification/bbEV_tournament.html#bbEv_tournament.building_block_mutation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#problem_specification.bbEV_tournament.bbEv_tournament.building_block_mutation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV_tournament.bbEv_tournament.coupling_mutation">
+<code class="sig-name descname"><span class="pre">coupling_mutation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genome</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probability</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/problem_specification/bbEV_tournament.html#bbEv_tournament.coupling_mutation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#problem_specification.bbEV_tournament.bbEv_tournament.coupling_mutation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV_tournament.bbEv_tournament.crossover">
+<code class="sig-name descname"><span class="pre">crossover</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/problem_specification/bbEV_tournament.html#bbEv_tournament.crossover"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#problem_specification.bbEV_tournament.bbEv_tournament.crossover" title="Permalink to this definition">¶</a></dt>
+<dd><p>Crossover of genome a and b</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param1</strong> (<em>Genome</em>) – genome a</p></li>
+<li><p><strong>param2</strong> (<em>Genome</em>) – genome b</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(Genome,Genome)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV_tournament.bbEv_tournament.fitness">
+<code class="sig-name descname"><span class="pre">fitness</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genome</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">individual</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">float</span><a class="reference internal" href="_modules/problem_specification/bbEV_tournament.html#bbEv_tournament.fitness"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#problem_specification.bbEV_tournament.bbEv_tournament.fitness" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates finess</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param1</strong> (<em>Genome</em>) – genome</p></li>
+<li><p><strong>param2</strong> (<em>int</em>) – generation</p></li>
+<li><p><strong>param3</strong> (<em>int</em>) – individual</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(float) fittness</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV_tournament.bbEv_tournament.generate_genome">
+<code class="sig-name descname"><span class="pre">generate_genome</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_length</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/problem_specification/bbEV_tournament.html#bbEv_tournament.generate_genome"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#problem_specification.bbEV_tournament.bbEv_tournament.generate_genome" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates genome mit maximum lengt of max_lengt (-&gt; size random). Genome is generated from available couplings and building blocks</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>param1</strong> (<em>int</em>) – maximum length of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Genome</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV_tournament.bbEv_tournament.generate_population">
+<code class="sig-name descname"><span class="pre">generate_population</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">genome_length</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/problem_specification/bbEV_tournament.html#bbEv_tournament.generate_population"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#problem_specification.bbEV_tournament.bbEv_tournament.generate_population" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates population of size size withm genomes of length genome_length</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param1</strong> (<em>int</em>) – population size</p></li>
+<li><p><strong>param2</strong> (<em>int</em>) – genome_length</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Genome</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV_tournament.bbEv_tournament.insert_mutation">
+<code class="sig-name descname"><span class="pre">insert_mutation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genome</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probability</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/problem_specification/bbEV_tournament.html#bbEv_tournament.insert_mutation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#problem_specification.bbEV_tournament.bbEv_tournament.insert_mutation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV_tournament.bbEv_tournament.mutation">
+<code class="sig-name descname"><span class="pre">mutation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genome</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probability</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/problem_specification/bbEV_tournament.html#bbEv_tournament.mutation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#problem_specification.bbEV_tournament.bbEv_tournament.mutation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mutation of genome (num of mutations with given probability )</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param1</strong> (<em>Genome</em>) – genome</p></li>
+<li><p><strong>param2</strong> (<em>int</em>) – number of mutations</p></li>
+<li><p><strong>param3</strong> (<em>float</em>) – probability of mutation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(Genome) population</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV_tournament.bbEv_tournament.selection_pair">
+<code class="sig-name descname"><span class="pre">selection_pair</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">population</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fitness_value</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/problem_specification/bbEV_tournament.html#bbEv_tournament.selection_pair"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#problem_specification.bbEV_tournament.bbEv_tournament.selection_pair" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select pair of population</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param1</strong> (<em>Population</em>) – Population</p></li>
+<li><p><strong>param2</strong> (<em>Callable</em>) – fitness_function</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(Population) population</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV_tournament.bbEv_tournament.single_point_crossover">
+<code class="sig-name descname"><span class="pre">single_point_crossover</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/problem_specification/bbEV_tournament.html#bbEv_tournament.single_point_crossover"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#problem_specification.bbEV_tournament.bbEv_tournament.single_point_crossover" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV_tournament.bbEv_tournament.single_point_crossover_old">
+<code class="sig-name descname"><span class="pre">single_point_crossover_old</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="_modules/problem_specification/bbEV_tournament.html#bbEv_tournament.single_point_crossover_old"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#problem_specification.bbEV_tournament.bbEv_tournament.single_point_crossover_old" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="problem_specification.bbEV_tournament.bbEv_tournament.truncate_mutation">
+<code class="sig-name descname"><span class="pre">truncate_mutation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">genome</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probability</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/problem_specification/bbEV_tournament.html#bbEv_tournament.truncate_mutation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#problem_specification.bbEV_tournament.bbEv_tournament.truncate_mutation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="problem_specification.bbEV_tournament.random">
+<code class="sig-prename descclassname"><span class="pre">problem_specification.bbEV_tournament.</span></code><code class="sig-name descname"><span class="pre">random</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">x</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">interval</span> <span class="pre">[0,</span> <span class="pre">1).</span><a class="headerlink" href="#problem_specification.bbEV_tournament.random" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-problem_specification">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-problem_specification" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Master thesis</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Matthias Blaschke.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/problem_specification.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,679 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>helper_files.genome_to_molecule &#8212; Master thesis  documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for helper_files.genome_to_molecule</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">choices</span><span class="p">,</span> <span class="n">randint</span><span class="p">,</span> <span class="n">randrange</span><span class="p">,</span> <span class="n">random</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">turbomoleOutputProcessing</span> <span class="kn">import</span> <span class="n">turbomoleOutputProcessing</span> <span class="k">as</span> <span class="n">top</span>
+<span class="kn">import</span> <span class="nn">configparser</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">os.path</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+
+<span class="n">Genome</span> <span class="o">=</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+<span class="n">Point</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;Point&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">])</span>
+<span class="n">Angle</span> <span class="o">=</span> <span class="nb">float</span>
+<span class="n">Building_Block</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Building_Block&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;abbrev&#39;</span><span class="p">,</span> <span class="s1">&#39;num_atoms&#39;</span><span class="p">,</span><span class="s1">&#39;origin&#39;</span><span class="p">,</span> <span class="s1">&#39;para_pos&#39;</span><span class="p">,</span><span class="s1">&#39;para_angle&#39;</span><span class="p">,</span> <span class="s1">&#39;meta_pos&#39;</span><span class="p">,</span><span class="s1">&#39;meta_angle&#39;</span><span class="p">,</span> <span class="s1">&#39;ortho_pos&#39;</span><span class="p">,</span><span class="s1">&#39;ortho_angle&#39;</span><span class="p">,</span><span class="s1">&#39;fixed_left&#39;</span><span class="p">,</span><span class="s1">&#39;complexity&#39;</span><span class="p">,</span> <span class="s1">&#39;path&#39;</span><span class="p">])</span>
+<span class="n">Coupling</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Coupling&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;abbrev&#39;</span><span class="p">])</span>
+
+
+<div class="viewcode-block" id="process_block_to_add"><a class="viewcode-back" href="../../helper_files.html#helper_files.genome_to_molecule.process_block_to_add">[docs]</a><span class="k">def</span> <span class="nf">process_block_to_add</span><span class="p">(</span><span class="n">coupling_point</span><span class="p">:</span> <span class="n">Point</span><span class="p">,</span> <span class="n">coupling_angle</span> <span class="p">:</span>  <span class="n">Angle</span><span class="p">,</span> <span class="n">conjugation_angle</span> <span class="p">:</span> <span class="n">Angle</span><span class="p">,</span> <span class="n">cc_bond_length</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">block_to_add</span><span class="p">:</span> <span class="n">Building_Block</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Adds block_to_add to left_block. Method takes care of right alignment, shifting and rotation of block_to_add.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		param1 (Point): coupling point</span>
+<span class="sd">		param2 (Angle): coupling angle</span>
+<span class="sd">		param3 (Angle): conjugation angle</span>
+<span class="sd">		param4 (float): c-c bond length (Angstrom)</span>
+<span class="sd">		param5 (Building_Block): block to be added</span>
+
+<span class="sd">	Returns:</span>
+<span class="sd">		np.ndarray: ([atom/x/y/z, line])</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="c1">#load data for block_to_add</span>
+	<span class="n">comment_line</span><span class="p">,</span> <span class="n">datContent</span> <span class="o">=</span> <span class="n">top</span><span class="o">.</span><span class="n">load_xyz_file</span><span class="p">(</span><span class="n">block_to_add</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+	<span class="n">datContent_save</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">datContent</span><span class="p">)</span>
+
+	
+
+	<span class="c1">#rotate around z axis for conjugation, rotate around y for right orientation,shift to coupling point and shift by c-c bond length in right direction</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">1</span><span class="p">,:])):</span>
+		
+		<span class="c1">#conjugation x&#39; = cos(phi)*x-sin(phi)*y</span>
+		<span class="n">datContent</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent_save</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">conjugation_angle</span><span class="p">)</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">conjugation_angle</span><span class="p">)</span><span class="o">*</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent_save</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="n">i</span><span class="p">]),</span><span class="mi">5</span><span class="p">)</span>
+		<span class="c1">#conjugation y&#39; = sin(phi)*x+cos(phi)*y</span>
+		<span class="n">datContent</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent_save</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">conjugation_angle</span><span class="p">)</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">conjugation_angle</span><span class="p">)</span><span class="o">*</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent_save</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="n">i</span><span class="p">]),</span><span class="mi">5</span><span class="p">)</span>
+
+		<span class="n">datContent_save</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">datContent</span><span class="p">)</span>
+
+		<span class="c1">#rotation around y: x&#39; = cos(phi)*x+sin(phi)*z</span>
+		<span class="n">datContent</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent_save</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">coupling_angle</span><span class="p">)</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">coupling_angle</span><span class="p">)</span><span class="o">*</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent_save</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="p">]),</span><span class="mi">5</span><span class="p">)</span>
+		<span class="c1">#rotation around y: z&#39; = cos(phi)*z-sin(phi)*x</span>
+		<span class="n">datContent</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent_save</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">coupling_angle</span><span class="p">)</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">coupling_angle</span><span class="p">)</span><span class="o">*</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent_save</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="p">]),</span><span class="mi">5</span><span class="p">)</span>
+
+		<span class="c1">#shift to coupling point x -&gt; x+x_c</span>
+		<span class="n">datContent</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">])</span><span class="o">+</span><span class="n">coupling_point</span><span class="o">.</span><span class="n">x</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+		<span class="c1">#shift to coupling point y -&gt; y+y_c</span>
+		<span class="n">datContent</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="n">i</span><span class="p">])</span><span class="o">+</span><span class="n">coupling_point</span><span class="o">.</span><span class="n">y</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+		<span class="c1">#shift to coupling point z -&gt; z+z_c</span>
+		<span class="n">datContent</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="p">])</span><span class="o">+</span><span class="n">coupling_point</span><span class="o">.</span><span class="n">z</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+
+		<span class="c1">#shift by C-C bond length in e_c direction sin=-0.866 cos=-0.499</span>
+		<span class="n">datContent</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">])</span><span class="o">+</span><span class="n">cc_bond_length</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">coupling_angle</span><span class="p">),</span><span class="mi">5</span><span class="p">)</span>
+		<span class="c1">#shift by C-C bond length in e_c direction</span>
+		<span class="n">datContent</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="p">])</span><span class="o">+</span><span class="n">cc_bond_length</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">coupling_angle</span><span class="p">),</span><span class="mi">5</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">datContent</span></div>
+
+
+
+
+<div class="viewcode-block" id="construction_loop"><a class="viewcode-back" href="../../helper_files.html#helper_files.genome_to_molecule.construction_loop">[docs]</a><span class="k">def</span> <span class="nf">construction_loop</span><span class="p">(</span><span class="n">genome</span> <span class="p">:</span> <span class="n">Genome</span><span class="p">,</span> <span class="n">building_blocks</span><span class="p">,</span> <span class="n">config_path</span><span class="p">,</span> <span class="n">xyz_file_path</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Construction loop Genome -&gt; proper xyz file</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		param1 (Genome): Genome to build</span>
+
+<span class="sd">	Returns:</span>
+<span class="sd">		</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">determine_coupling_index</span><span class="p">(</span><span class="n">genome</span><span class="p">:</span> <span class="n">Genome</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">building_blocks</span><span class="o">=</span><span class="n">building_blocks</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		determines coupling index (atom and corresponding line in xyz file of building block refered in genome[index]) and coupling angle</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			param1 (Genome): Genome to build</span>
+<span class="sd">			param2 (int): index which block is processed and used as coupling point. Must be even -&gt; odd indices are couplings</span>
+
+<span class="sd">		Returns:</span>
+<span class="sd">			(int,float): corresponding line in xyz file of building block refered in genome[index], coupling angle</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="c1">#print(&quot;genome &quot; +str(genome) + &quot; index &quot; + str(index))</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">index</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">genome</span><span class="p">)</span><span class="o">-</span><span class="mi">2</span> <span class="ow">or</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;index is out of proper range&quot;</span><span class="p">)</span>
+
+		<span class="c1"># coupling after building_block of interest </span>
+		<span class="n">i</span> <span class="o">=</span> <span class="n">index</span> <span class="o">+</span> <span class="mi">1</span>
+		
+		<span class="c1">#para</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">genome</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span>
+			<span class="n">coupling_index</span> <span class="o">=</span> <span class="n">building_blocks</span><span class="p">[</span><span class="n">genome</span><span class="p">[</span><span class="n">index</span><span class="p">]]</span><span class="o">.</span><span class="n">para_pos</span>
+			<span class="n">coupling_angle</span> <span class="o">=</span> <span class="n">building_blocks</span><span class="p">[</span><span class="n">genome</span><span class="p">[</span><span class="n">index</span><span class="p">]]</span><span class="o">.</span><span class="n">para_angle</span>
+		<span class="c1">#meta</span>
+		<span class="k">elif</span><span class="p">(</span><span class="n">genome</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
+			<span class="n">coupling_index</span> <span class="o">=</span> <span class="n">building_blocks</span><span class="p">[</span><span class="n">genome</span><span class="p">[</span><span class="n">index</span><span class="p">]]</span><span class="o">.</span><span class="n">meta_pos</span>
+			<span class="n">coupling_angle</span> <span class="o">=</span> <span class="n">building_blocks</span><span class="p">[</span><span class="n">genome</span><span class="p">[</span><span class="n">index</span><span class="p">]]</span><span class="o">.</span><span class="n">meta_angle</span>
+		<span class="c1">#ortho</span>
+		<span class="k">elif</span><span class="p">(</span><span class="n">genome</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="mi">2</span><span class="p">):</span>
+			<span class="n">coupling_index</span> <span class="o">=</span> <span class="n">building_blocks</span><span class="p">[</span><span class="n">genome</span><span class="p">[</span><span class="n">index</span><span class="p">]]</span><span class="o">.</span><span class="n">ortho_pos</span>
+			<span class="n">coupling_angle</span> <span class="o">=</span> <span class="n">building_blocks</span><span class="p">[</span><span class="n">genome</span><span class="p">[</span><span class="n">index</span><span class="p">]]</span><span class="o">.</span><span class="n">ortho_angle</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;coupling seems to be funny&quot;</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">coupling_index</span><span class="p">,</span> <span class="n">coupling_angle</span>
+
+	<span class="k">def</span> <span class="nf">write_file_parts_to_file</span><span class="p">(</span><span class="n">xyz_file_parts</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">fixed_beginning</span><span class="p">,</span> <span class="n">fixed_end</span><span class="p">,</span><span class="n">complexity</span><span class="p">,</span> <span class="n">config_path</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		write xyz file parts to proper xyz file and turbomole coord file. Complexity is written to file </span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			param1 (List of np.ndarray): List of xyz files</span>
+<span class="sd">			param2 (String): path</span>
+<span class="sd">			param3 (int): fixed_beginning (index of atom in first block which should be fixed)</span>
+<span class="sd">			param4 (int): fixed_end (index of atom in last block which should be fixed)</span>
+<span class="sd">			param5 (int): complexity of whole molecule</span>
+<span class="sd">			param6 (String): path to config file</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="c1">#load ang to bohr factor</span>
+		<span class="n">cfg</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+		<span class="n">cfg</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
+		<span class="n">ang2Bohr</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Building Procedure&#39;</span><span class="p">,</span> <span class="s1">&#39;ang2Bohr&#39;</span><span class="p">))</span>
+
+		<span class="c1">#write complexity to file</span>
+		<span class="n">file_complexity</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s2">&quot;/complexity&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+		<span class="n">file_complexity</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">complexity</span><span class="p">))</span>
+		<span class="n">file_complexity</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+		<span class="n">file_xyz</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s2">&quot;/coord.xyz&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+		<span class="n">file_coord</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;/coord&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+		<span class="n">limits</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s2">&quot;/limits&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+		<span class="c1">#determine number of atoms</span>
+		<span class="n">n_atoms</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">xyz_file_parts</span><span class="p">)):</span>
+			<span class="n">n_atoms</span><span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">xyz_file_parts</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">,:])</span>
+
+		<span class="n">file_xyz</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">n_atoms</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="n">file_xyz</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+		<span class="n">file_coord</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;$coord&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+		<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">xyz_file_parts</span><span class="p">)):</span>		
+			<span class="n">datContent</span> <span class="o">=</span> <span class="n">xyz_file_parts</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>	
+			<span class="c1">#find lower limit. only first block is considered</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+				<span class="n">z_coords</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="n">u</span><span class="p">])</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">3</span><span class="p">,:]))]</span>
+				<span class="n">lower_limit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">z_coords</span><span class="p">)</span><span class="o">+</span><span class="mf">0.1</span>
+				<span class="c1">#print(&quot;lower_limit &quot; + str(lower_limit))</span>
+			<span class="c1">#find upper limit. only last block is considered</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">j</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">xyz_file_parts</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+				<span class="n">z_coords</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="n">u</span><span class="p">])</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">3</span><span class="p">,:]))]</span>
+				<span class="n">upper_limit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">z_coords</span><span class="p">)</span><span class="o">-</span><span class="mf">0.1</span>
+				<span class="c1">#print(&quot;upper_limit &quot; + str(upper_limit))</span>
+				
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">1</span><span class="p">,:])):</span>
+				<span class="n">file_xyz</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;	&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;	&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;	&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+				<span class="c1">#handle fixed atom in last block</span>
+				<span class="k">if</span><span class="p">(</span><span class="n">j</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">xyz_file_parts</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="n">fixed_end</span><span class="p">)):</span>
+					<span class="n">file_coord</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="n">ang2Bohr</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="n">ang2Bohr</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="n">ang2Bohr</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">i</span><span class="p">])</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span>  <span class="s1">&#39;  f&#39;</span> <span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+				<span class="c1">#handle fixed atom in first block</span>
+				<span class="k">elif</span><span class="p">(</span><span class="n">j</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">==</span> <span class="n">fixed_beginning</span><span class="p">):</span>
+					<span class="n">file_coord</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="n">ang2Bohr</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="n">ang2Bohr</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="n">ang2Bohr</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">i</span><span class="p">])</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span>  <span class="s1">&#39;  f&#39;</span> <span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">file_coord</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="n">ang2Bohr</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="n">ang2Bohr</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="n">ang2Bohr</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">i</span><span class="p">])</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		
+		<span class="n">limits</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">lower_limit</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="n">limits</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">upper_limit</span><span class="p">))</span>
+		<span class="n">limits</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+		<span class="n">file_coord</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;$user-defined bonds</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+		<span class="n">file_coord</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;$end</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+		<span class="c1">#TODO : limits</span>
+		<span class="n">file_xyz</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+		<span class="n">file_coord</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+	<span class="k">def</span> <span class="nf">determine_nearest_neighbour</span><span class="p">(</span><span class="n">datContent</span><span class="p">,</span> <span class="n">coupling_index</span><span class="p">,</span> <span class="n">atom_type</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		determines nearest neghbour of atom with index coupling index in dat content of atom type atom_type</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			param1 (List of np.ndarray): List of xyz files</span>
+<span class="sd">			param2 (int): coupling_inxex</span>
+<span class="sd">			param3 (string): atom_type of nearest neighbour</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			int : index of nearest neighbour</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">intersting_atoms</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+		<span class="n">intersting_atoms_distance</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">1</span><span class="p">,:])):</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="n">atom_type</span><span class="p">):</span>
+				<span class="n">intersting_atoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+				<span class="n">distance</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">])</span><span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">coupling_index</span><span class="p">]))</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="n">i</span><span class="p">])</span><span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="n">coupling_index</span><span class="p">]))</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="p">])</span><span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="n">datContent</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="n">coupling_index</span><span class="p">]))</span><span class="o">**</span><span class="mi">2</span>			
+				<span class="n">intersting_atoms_distance</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">distance</span><span class="p">)</span>
+		<span class="n">intersting_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span><span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">intersting_atoms_distance</span><span class="p">,</span><span class="n">intersting_atoms</span><span class="p">))]</span>
+		<span class="c1">#print(&quot;interesting neighbour &quot; + str(intersting_atoms[0]))</span>
+		<span class="k">return</span> <span class="n">intersting_atoms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+	<span class="k">def</span> <span class="nf">align_z_along_fixed_ends</span><span class="p">(</span><span class="n">xyz_file_parts</span><span class="p">,</span> <span class="n">fixed_beginning</span><span class="p">,</span> <span class="n">fixed_end</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Align molecule z axis along fixed ends. This is done by rotation about the axis given by curl(vec(fixed_beginning-&gt;fixed_end), e_z) by the angle between vec(fixed_beginning-fixed_end) and e_z</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">			param1 (List of np.ndarray): List of xyz files</span>
+<span class="sd">			param2 (int): index in xyz_file_parts[0] of fixed beginning</span>
+<span class="sd">			param3 (int): index in xyz_file_parts[-1] of fixed end</span>
+<span class="sd">		Returns:</span>
+<span class="sd">			int : (List of np.ndarray): List of xyz file</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="c1">#print(&quot;len xyz &quot; + str(len(xyz_file_parts)))</span>
+		<span class="c1">#print(&quot;xyz parts &quot; + str(xyz_file_parts))</span>
+		<span class="c1">#calculate vec(fixed_beginning-&gt;fixed_end)</span>
+		<span class="n">molecule_axis</span> <span class="o">=</span> <span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">xyz_file_parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">,</span><span class="n">fixed_end</span><span class="p">]),</span><span class="mi">5</span><span class="p">),</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">xyz_file_parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">,</span><span class="n">fixed_end</span><span class="p">]),</span><span class="mi">5</span><span class="p">),</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">xyz_file_parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">3</span><span class="p">,</span><span class="n">fixed_end</span><span class="p">]),</span><span class="mi">5</span><span class="p">)]</span>
+		<span class="c1">#print(&quot;molecule_axis &quot; + str(molecule_axis))</span>
+		<span class="c1">#calculate rotation angel</span>
+
+		<span class="n">angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">molecule_axis</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">molecule_axis</span><span class="p">))</span>
+		<span class="n">theta</span> <span class="o">=</span> <span class="n">angle</span>
+		
+		<span class="c1">#print(&quot;angle &quot; + str(angle))</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">angle</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
+			<span class="c1">#calculate rotation axis</span>
+			<span class="n">rotation_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">molecule_axis</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">])</span>
+			<span class="n">rotation_axis</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">rotation_axis</span><span class="p">)</span><span class="o">*</span><span class="n">rotation_axis</span>
+			<span class="n">u</span> <span class="o">=</span> <span class="n">rotation_axis</span>
+			<span class="c1">#print(&quot;rotation axis &quot; + str(rotation_axis))</span>
+
+			<span class="c1">#calculate rotation_matrix</span>
+			<span class="n">rotation_matrix</span> <span class="o">=</span> <span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)),</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span> <span class="o">-</span> <span class="n">u</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)],</span>
+	            <span class="p">[</span><span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)),</span> <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span> <span class="o">-</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)],</span>
+	            <span class="p">[</span><span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span> <span class="o">-</span> <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">))]]</span>
+			<span class="c1">#print(&quot;determinat &quot; + str(np.linalg.det(rotation_matrix)))</span>
+			<span class="c1">#print(&quot;matrix &quot; + str(rotation_matrix))</span>
+
+
+			<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">xyz_file_parts</span><span class="p">)):</span>
+				<span class="c1">#print(&quot;j  &quot; + str(j))</span>
+				<span class="c1">#print(xyz_file_parts[j])</span>
+				<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">xyz_file_parts</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">1</span><span class="p">,:])):</span>
+					 
+					<span class="n">vector_to_rotate</span> <span class="o">=</span> <span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">xyz_file_parts</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">]),</span><span class="mi">5</span><span class="p">),</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">xyz_file_parts</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">2</span><span class="p">,</span><span class="n">i</span><span class="p">]),</span><span class="mi">5</span><span class="p">),</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">xyz_file_parts</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="p">]),</span><span class="mi">5</span><span class="p">)]</span>
+					<span class="c1">#print(&quot;atom &quot; + str(xyz_file_parts[j][0,i]))</span>
+					<span class="c1">#print(&quot;vector_to_rotate &quot; + str(vector_to_rotate))</span>
+					<span class="n">rotated_vector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asmatrix</span><span class="p">(</span><span class="n">rotation_matrix</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">asmatrix</span><span class="p">(</span><span class="n">vector_to_rotate</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+					<span class="c1">#print(&quot;rotated vector &quot; + str(rotated_vector))</span>
+					<span class="c1">#print(&quot;----------------------&quot;)</span>
+					<span class="n">xyz_file_parts</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">rotated_vector</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="mi">5</span><span class="p">)</span>
+					<span class="n">xyz_file_parts</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">2</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">rotated_vector</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="mi">5</span><span class="p">)</span>
+					<span class="n">xyz_file_parts</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">3</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">rotated_vector</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="mi">5</span><span class="p">)</span>
+			<span class="k">return</span> <span class="n">xyz_file_parts</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">xyz_file_parts</span>
+
+
+
+	<span class="c1">#load properties from config file </span>
+	<span class="n">cfg</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+	<span class="n">cfg</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
+	<span class="n">cc_bond_length</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Building Procedure&#39;</span><span class="p">,</span> <span class="s1">&#39;CC_bond_lengt&#39;</span><span class="p">))</span>
+	<span class="n">conjugation_angle_from_file</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Building Procedure&#39;</span><span class="p">,</span> <span class="s1">&#39;conjugation_angle&#39;</span><span class="p">))</span>
+	<span class="n">building_block_path</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Building Procedure&#39;</span><span class="p">,</span> <span class="s1">&#39;building_block_path&#39;</span><span class="p">)</span>
+	<span class="c1">#conjugation_angle_from_file = 0.0</span>
+
+	<span class="c1">#ensure that genome is not empty</span>
+	<span class="k">if</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">genome</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">):</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Genome was emtpy&quot;</span><span class="p">)</span>
+		<span class="c1"># TODO: proper treatment</span>
+
+	<span class="c1">#print(genome)</span>
+	
+	<span class="c1">#add anchor to end -&gt; couplings are missing </span>
+	<span class="c1">#add left anchor</span>
+	<span class="n">anchor_left</span><span class="p">,</span> <span class="n">anchor_right</span> <span class="o">=</span> <span class="n">load_anchors_blocks</span><span class="p">(</span><span class="n">building_block_path</span><span class="p">)</span>
+	<span class="n">building_blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">anchor_left</span><span class="p">)</span>
+	<span class="c1">#para coupling</span>
+	<span class="c1">#genome.insert(0, 0)</span>
+	<span class="n">genome</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">building_blocks</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+	<span class="c1">#add right anchor</span>
+	<span class="n">building_blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">anchor_right</span><span class="p">)</span>
+	<span class="c1">#para coupling</span>
+	<span class="c1">#genome.append(0)</span>
+	<span class="n">genome</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">building_blocks</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+	
+	<span class="c1">#print(genome)</span>
+	<span class="c1">#data content of every part of xyz file is stored in this list	</span>
+	<span class="n">xyz_file_parts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+	<span class="c1">#first block as initialization directly added to list</span>
+	<span class="n">coupling_point</span> <span class="o">=</span> <span class="n">Point</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+	<span class="n">coupling_angle</span> <span class="o">=</span> <span class="mf">0.0</span>
+	<span class="n">coupling_index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+	<span class="n">conjugation_angle</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">additional_angle</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+	<span class="c1">#indices for fixed atoms in beginning and end of chain</span>
+	<span class="n">fixed_beginning</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">fixed_end</span> <span class="o">=</span> <span class="mi">0</span>
+
+	<span class="c1">#complexity measure of molecule</span>
+	<span class="n">complexity</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">genome</span><span class="p">)):</span>
+		<span class="n">complexity</span> <span class="o">+=</span> <span class="n">building_blocks</span><span class="p">[</span><span class="n">genome</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span><span class="o">.</span><span class="n">complexity</span>
+		<span class="c1">#odd index -&gt; coupling</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">i</span><span class="o">%</span><span class="mi">2</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>		
+			<span class="c1">#conclude coupling point</span>
+			<span class="n">x_c</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">xyz_file_parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">,</span><span class="n">coupling_index</span><span class="p">])</span>
+			<span class="n">y_c</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">xyz_file_parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">,</span><span class="n">coupling_index</span><span class="p">])</span>
+			<span class="n">z_c</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">xyz_file_parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">3</span><span class="p">,</span><span class="n">coupling_index</span><span class="p">])</span>
+			<span class="n">coupling_point</span> <span class="o">=</span> <span class="n">Point</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x_c</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y_c</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">z_c</span><span class="p">)</span>		
+
+
+		<span class="c1">#even index -&gt; building block</span>
+		<span class="k">elif</span><span class="p">(</span><span class="n">i</span><span class="o">%</span><span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>			
+
+			<span class="c1">#handle rotation to process consecutive para or ortho couplings</span>
+			<span class="n">additional_angle</span> <span class="o">+=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">i</span><span class="o">/</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+			<span class="n">additional_angle</span> <span class="o">=</span> <span class="mi">0</span>
+			
+			<span class="c1">#first block must not be shifted	</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+				<span class="n">datContent</span> <span class="o">=</span> <span class="n">process_block_to_add</span><span class="p">(</span><span class="n">coupling_point</span><span class="p">,</span> <span class="n">coupling_angle</span><span class="p">,</span> <span class="n">conjugation_angle</span><span class="o">+</span><span class="n">additional_angle</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">building_blocks</span><span class="p">[</span><span class="n">genome</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span>
+				<span class="n">fixed_beginning</span> <span class="o">=</span> <span class="n">building_blocks</span><span class="p">[</span><span class="n">genome</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span><span class="o">.</span><span class="n">fixed_left</span>
+				<span class="k">if</span><span class="p">(</span><span class="n">building_blocks</span><span class="p">[</span><span class="n">genome</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span><span class="o">.</span><span class="n">fixed_left</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+					<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error in first block: fixed atom not properly specified&quot;</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">datContent</span> <span class="o">=</span> <span class="n">process_block_to_add</span><span class="p">(</span><span class="n">coupling_point</span><span class="p">,</span> <span class="n">coupling_angle</span><span class="p">,</span> <span class="n">conjugation_angle</span><span class="o">+</span><span class="n">additional_angle</span><span class="p">,</span> <span class="n">cc_bond_length</span><span class="p">,</span> <span class="n">building_blocks</span><span class="p">[</span><span class="n">genome</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span>
+				<span class="c1">#find fix index of last block</span>
+				<span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">genome</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+					<span class="c1">#para_pos is assumed to be right coupling point</span>
+					<span class="n">fixed_end</span> <span class="o">=</span> <span class="n">building_blocks</span><span class="p">[</span><span class="n">genome</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span><span class="o">.</span><span class="n">para_pos</span>
+					<span class="k">if</span><span class="p">(</span><span class="n">building_blocks</span><span class="p">[</span><span class="n">genome</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span><span class="o">.</span><span class="n">para_pos</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+						<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error in last block: fixed atom not properly specified&quot;</span><span class="p">)</span>
+
+
+
+			<span class="c1">#determine index of atom at origin</span>
+			<span class="n">origin</span> <span class="o">=</span> <span class="n">building_blocks</span><span class="p">[</span><span class="n">genome</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span><span class="o">.</span><span class="n">origin</span>
+			<span class="c1">#print(&quot;old origin &quot; + str(origin))</span>
+
+			<span class="c1">#if other block will be added -&gt; hydrogen at c coupling atom must be removed</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">genome</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>				
+				<span class="c1">#determine coupling index and coupling angle</span>
+				<span class="n">coupling_index</span><span class="p">,</span> <span class="n">coupling_angle_single</span> <span class="o">=</span> <span class="n">determine_coupling_index</span><span class="p">(</span><span class="n">genome</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">building_blocks</span><span class="p">)</span>
+
+				<span class="c1">#handle sign to process consecutive para or ortho couplings</span>
+				<span class="c1">#coupling_angle += (coupling_angle_single*(-1)**(i/2+1))</span>
+				<span class="n">coupling_angle</span> <span class="o">+=</span> <span class="p">(</span><span class="n">coupling_angle_single</span><span class="p">)</span>
+				
+
+				<span class="c1">#remove hydrogen or other atom bonded to coupling atom</span>
+				<span class="c1">#print(&quot;remove coupling hydrogen&quot;)</span>
+				<span class="n">nearest_neighbour</span> <span class="o">=</span> <span class="n">determine_nearest_neighbour</span><span class="p">(</span><span class="n">datContent</span><span class="p">,</span> <span class="n">coupling_index</span><span class="p">,</span> <span class="s2">&quot;H&quot;</span><span class="p">)</span>
+				<span class="c1">#print(&quot;genome &quot; + str(genome[i]))								</span>
+				<span class="n">datContent</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">datContent</span><span class="p">,</span><span class="n">nearest_neighbour</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+				
+				<span class="c1">#update coupling index and fixed beginning</span>
+				<span class="k">if</span><span class="p">(</span><span class="n">coupling_index</span><span class="o">&gt;</span><span class="n">nearest_neighbour</span><span class="p">):</span>				
+					<span class="n">coupling_index</span> <span class="o">-=</span> <span class="mi">1</span>
+					<span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">fixed_beginning</span><span class="o">&gt;</span><span class="n">nearest_neighbour</span><span class="p">):</span>
+						<span class="n">fixed_beginning</span> <span class="o">-=</span><span class="mi">1</span>
+				<span class="c1">#update origin</span>
+				<span class="k">if</span><span class="p">(</span><span class="n">origin</span><span class="o">&gt;</span><span class="n">nearest_neighbour</span><span class="p">):</span>
+					<span class="n">origin</span> <span class="o">-=</span><span class="mi">1</span>
+					<span class="c1">#print(&quot;new origin &quot;  + str(origin))</span>
+
+
+			<span class="c1">#hydrogen bonded to C atom at origin must be removed, too (except for first atom)</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>						
+				
+				<span class="c1">#remove hydrogen or other atom bonded to atom at origin</span>
+				<span class="c1">#print(&quot;remove origin hydrogen with origin &quot; + str(origin))</span>
+				<span class="n">nearest_neighbour</span> <span class="o">=</span> <span class="n">determine_nearest_neighbour</span><span class="p">(</span><span class="n">datContent</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="s2">&quot;H&quot;</span><span class="p">)</span>				
+				<span class="n">datContent</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">datContent</span><span class="p">,</span><span class="n">nearest_neighbour</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+				<span class="c1">#update coupling index and fixed ending</span>
+				<span class="k">if</span><span class="p">(</span><span class="n">coupling_index</span><span class="o">&gt;</span><span class="n">nearest_neighbour</span><span class="p">):</span>					
+					<span class="n">coupling_index</span> <span class="o">=</span> <span class="n">coupling_index</span> <span class="o">-</span><span class="mi">1</span>
+					<span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">genome</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">fixed_end</span><span class="o">&gt;</span><span class="n">nearest_neighbour</span><span class="p">):</span>
+						<span class="n">fixed_end</span> <span class="o">-=</span><span class="mi">1</span>
+					<span class="k">pass</span>
+
+
+			<span class="n">xyz_file_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">datContent</span><span class="p">)</span>
+
+			<span class="c1">#alternating conjugation</span>
+			<span class="c1">#conjugation_angle += (-1)**(i/2+1)*conjugation_angle_from_file</span>
+			<span class="n">conjugation_angle</span> <span class="o">-=</span> <span class="n">conjugation_angle_from_file</span>
+
+	<span class="c1">#align molecule axis to z</span>
+	<span class="n">xyz_file_parts</span><span class="o">=</span> <span class="n">align_z_along_fixed_ends</span><span class="p">(</span><span class="n">xyz_file_parts</span><span class="p">,</span> <span class="n">fixed_beginning</span><span class="p">,</span> <span class="n">fixed_end</span><span class="p">)</span>
+
+	<span class="c1">#write xyz_file_parts to xyz file</span>
+	<span class="n">write_file_parts_to_file</span><span class="p">(</span><span class="n">xyz_file_parts</span><span class="p">,</span> <span class="n">xyz_file_path</span><span class="p">,</span> <span class="n">fixed_beginning</span><span class="p">,</span> <span class="n">fixed_end</span><span class="p">,</span> <span class="n">complexity</span><span class="p">,</span> <span class="n">config_path</span><span class="p">)</span>	</div>
+
+		
+<div class="viewcode-block" id="load_building_blocks"><a class="viewcode-back" href="../../helper_files.html#helper_files.genome_to_molecule.load_building_blocks">[docs]</a><span class="k">def</span> <span class="nf">load_building_blocks</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	load building blocks and set up Building_Block objects</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		param1 (path): path to dir where building_blocks are located</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		list(Building_Block)</span>
+<span class="sd">	&quot;&quot;&quot;</span>		
+	<span class="c1">#TODO : automatization</span>
+	<span class="n">benzene</span> <span class="o">=</span> <span class="n">Building_Block</span><span class="p">(</span><span class="n">abbrev</span><span class="o">=</span><span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="n">num_atoms</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span><span class="n">origin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">para_pos</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">para_angle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">meta_pos</span><span class="o">=</span><span class="mi">4</span> <span class="p">,</span> <span class="n">meta_angle</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">3.</span><span class="p">,</span> <span class="n">ortho_pos</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">ortho_angle</span><span class="o">=-</span><span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="n">fixed_left</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">complexity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="o">+</span><span class="s2">&quot;/benzene.xyz&quot;</span><span class="p">)</span>
+	<span class="n">napthtalene</span> <span class="o">=</span> <span class="n">Building_Block</span><span class="p">(</span><span class="n">abbrev</span><span class="o">=</span><span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="n">num_atoms</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span><span class="n">origin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">para_pos</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">para_angle</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">meta_pos</span><span class="o">=</span><span class="mi">11</span> <span class="p">,</span> <span class="n">meta_angle</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">3.</span><span class="p">,</span> <span class="n">ortho_pos</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">ortho_angle</span><span class="o">=-</span><span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="n">fixed_left</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">complexity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="o">+</span><span class="s2">&quot;/naphtalene.xyz&quot;</span><span class="p">)</span>
+	<span class="n">dbPc1</span> <span class="o">=</span> <span class="n">Building_Block</span><span class="p">(</span><span class="n">abbrev</span><span class="o">=</span><span class="s2">&quot;dbPc1&quot;</span><span class="p">,</span> <span class="n">num_atoms</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span><span class="n">origin</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">para_pos</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">para_angle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">meta_pos</span><span class="o">=</span><span class="mi">0</span> <span class="p">,</span> <span class="n">meta_angle</span> <span class="o">=</span> <span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">3.</span><span class="p">,</span> <span class="n">ortho_pos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ortho_angle</span><span class="o">=-</span><span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="n">fixed_left</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">complexity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="o">+</span><span class="s2">&quot;/dbPc1_block.xyz&quot;</span><span class="p">)</span>
+	<span class="n">dbPc4</span> <span class="o">=</span> <span class="n">Building_Block</span><span class="p">(</span><span class="n">abbrev</span><span class="o">=</span><span class="s2">&quot;dbPc4&quot;</span><span class="p">,</span> <span class="n">num_atoms</span><span class="o">=</span><span class="mi">55</span><span class="p">,</span><span class="n">origin</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span> <span class="n">para_pos</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">para_angle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">meta_pos</span><span class="o">=</span><span class="mi">0</span> <span class="p">,</span> <span class="n">meta_angle</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">3.</span><span class="p">,</span> <span class="n">ortho_pos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ortho_angle</span><span class="o">=-</span><span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="n">fixed_left</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">complexity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="o">+</span><span class="s2">&quot;/dbPc4.xyz&quot;</span><span class="p">)</span>
+	<span class="n">dbPc6</span> <span class="o">=</span> <span class="n">Building_Block</span><span class="p">(</span><span class="n">abbrev</span><span class="o">=</span><span class="s2">&quot;dbPc6&quot;</span><span class="p">,</span> <span class="n">num_atoms</span><span class="o">=</span><span class="mi">52</span><span class="p">,</span><span class="n">origin</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span> <span class="n">para_pos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">para_angle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">meta_pos</span><span class="o">=</span><span class="mi">1</span> <span class="p">,</span> <span class="n">meta_angle</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">3.</span><span class="p">,</span> <span class="n">ortho_pos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ortho_angle</span><span class="o">=-</span><span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="n">fixed_left</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">complexity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="o">+</span><span class="s2">&quot;/dbPc6.xyz&quot;</span><span class="p">)</span>
+	<span class="n">dbPc5</span> <span class="o">=</span> <span class="n">Building_Block</span><span class="p">(</span><span class="n">abbrev</span><span class="o">=</span><span class="s2">&quot;dbPc5&quot;</span><span class="p">,</span> <span class="n">num_atoms</span><span class="o">=</span><span class="mi">58</span><span class="p">,</span><span class="n">origin</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">para_pos</span><span class="o">=</span><span class="mi">26</span><span class="p">,</span> <span class="n">para_angle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">meta_pos</span><span class="o">=</span><span class="mi">20</span> <span class="p">,</span> <span class="n">meta_angle</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">3.</span><span class="p">,</span> <span class="n">ortho_pos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ortho_angle</span><span class="o">=-</span><span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="n">fixed_left</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">complexity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="o">+</span><span class="s2">&quot;/dbPc5.xyz&quot;</span><span class="p">)</span>
+	<span class="n">pseudo_para_naph_PCP</span> <span class="o">=</span> <span class="n">Building_Block</span><span class="p">(</span><span class="n">abbrev</span><span class="o">=</span><span class="s2">&quot;pseudo-para_naph_PCP&quot;</span><span class="p">,</span> <span class="n">num_atoms</span><span class="o">=</span><span class="mi">44</span><span class="p">,</span><span class="n">origin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">para_pos</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span> <span class="n">para_angle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">meta_pos</span><span class="o">=</span><span class="mi">16</span> <span class="p">,</span> <span class="n">meta_angle</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="n">ortho_pos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ortho_angle</span><span class="o">=-</span><span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="n">fixed_left</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">complexity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="o">+</span><span class="s2">&quot;/pseudo-para_naph_PCP.xyz&quot;</span><span class="p">)</span>
+	<span class="n">line</span> <span class="o">=</span><span class="n">Building_Block</span><span class="p">(</span><span class="n">abbrev</span><span class="o">=</span><span class="s2">&quot;line&quot;</span><span class="p">,</span> <span class="n">num_atoms</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="n">origin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">para_pos</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">para_angle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">meta_pos</span><span class="o">=</span><span class="mi">1</span> <span class="p">,</span> <span class="n">meta_angle</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">,</span> <span class="n">ortho_pos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ortho_angle</span><span class="o">=-</span><span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="n">fixed_left</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">complexity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="o">+</span><span class="s2">&quot;/line.xyz&quot;</span><span class="p">)</span>
+	<span class="n">building_blocks</span> <span class="o">=</span> <span class="p">[</span><span class="n">benzene</span><span class="p">,</span><span class="n">napthtalene</span><span class="p">,</span><span class="n">dbPc1</span><span class="p">,</span><span class="n">dbPc4</span><span class="p">,</span><span class="n">dbPc6</span><span class="p">,</span> <span class="n">dbPc5</span><span class="p">,</span><span class="n">pseudo_para_naph_PCP</span><span class="p">,</span> <span class="n">line</span><span class="p">]</span>
+	<span class="c1">#building_blocks = [benzene,napthtalene]</span>
+
+	<span class="k">return</span> <span class="n">building_blocks</span></div>
+
+<div class="viewcode-block" id="load_anchors_blocks"><a class="viewcode-back" href="../../helper_files.html#helper_files.genome_to_molecule.load_anchors_blocks">[docs]</a><span class="k">def</span> <span class="nf">load_anchors_blocks</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	load anchor blocks and set up Building_Block objects.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		param1 (path): path to dir where anchors are located</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		list(Building_Block)</span>
+<span class="sd">	&quot;&quot;&quot;</span>		
+	<span class="c1">#TODO : automatization</span>
+	<span class="c1">#left = Building_Block(abbrev=&quot;l&quot;, num_atoms=12,origin=6, para_pos=0, para_angle=0, meta_pos=1 , meta_angle = np.pi/3., ortho_pos=2, ortho_angle=-2.*np.pi/3, fixed_left = 6,complexity=1, path=path+&quot;/anchor_left.xyz&quot;)</span>
+	<span class="c1">#right = Building_Block(abbrev=&quot;r&quot;, num_atoms=12,origin=0, para_pos=6, para_angle=0., meta_pos=11 , meta_angle = -np.pi/3., ortho_pos=10, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=1, path=path+&quot;/anchor_right.xyz&quot;)</span>
+	<span class="n">left</span> <span class="o">=</span> <span class="n">Building_Block</span><span class="p">(</span><span class="n">abbrev</span><span class="o">=</span><span class="s2">&quot;l&quot;</span><span class="p">,</span> <span class="n">num_atoms</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">origin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">para_pos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">para_angle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">meta_pos</span><span class="o">=</span><span class="mi">0</span> <span class="p">,</span> <span class="n">meta_angle</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">,</span> <span class="n">ortho_pos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ortho_angle</span><span class="o">=-</span><span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="n">fixed_left</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="n">complexity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="o">+</span><span class="s2">&quot;/anchor_small_left.xyz&quot;</span><span class="p">)</span>
+	<span class="n">right</span> <span class="o">=</span> <span class="n">Building_Block</span><span class="p">(</span><span class="n">abbrev</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">num_atoms</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">origin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">para_pos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">para_angle</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">meta_pos</span><span class="o">=</span><span class="mi">0</span> <span class="p">,</span> <span class="n">meta_angle</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">,</span> <span class="n">ortho_pos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ortho_angle</span><span class="o">=-</span><span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="n">fixed_left</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">complexity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="o">+</span><span class="s2">&quot;/anchor_small_right.xyz&quot;</span><span class="p">)</span>
+	
+	<span class="n">anchors</span> <span class="o">=</span> <span class="p">[</span><span class="n">left</span><span class="p">,</span><span class="n">right</span><span class="p">]</span>
+
+	<span class="k">return</span> <span class="n">anchors</span></div>
+
+
+		
+<div class="viewcode-block" id="process_genome"><a class="viewcode-back" href="../../helper_files.html#helper_files.genome_to_molecule.process_genome">[docs]</a><span class="k">def</span> <span class="nf">process_genome</span><span class="p">(</span><span class="n">generation</span> <span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">individual</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">genome</span><span class="p">:</span><span class="n">Genome</span><span class="p">,</span> <span class="n">run_path</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	translates genome to xyz file. xyz file will be stored in $data/generation/individual and stretching and other calculations will be invoked. If geome has been processed in a previous generation, the data will be copied from the archive</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">		param1 (int): generation</span>
+<span class="sd">		param2 (int): individual in generation</span>
+<span class="sd">		param3 (Genome): genome to process</span>
+<span class="sd">		param4 (String): path of current run</span>
+<span class="sd">	Returns:</span>
+<span class="sd">		int : success (0), failure (-1)</span>
+<span class="sd">	&quot;&quot;&quot;</span>		
+	<span class="c1">#set up config path</span>
+	<span class="n">config_path</span> <span class="o">=</span> <span class="n">run_path</span> <span class="o">+</span> <span class="s2">&quot;/config&quot;</span>
+
+
+	<span class="c1">#check where building blocks are stored and generation data should be stored</span>
+	<span class="n">cfg</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+	<span class="n">cfg</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
+	<span class="c1">#TODO: set up correctly</span>
+	<span class="n">building_block_path</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Building Procedure&#39;</span><span class="p">,</span> <span class="s1">&#39;building_block_path&#39;</span><span class="p">)</span>
+	<span class="n">generation_data_path</span> <span class="o">=</span> <span class="n">run_path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Building Procedure&#39;</span><span class="p">,</span> <span class="s1">&#39;generation_data_path&#39;</span><span class="p">)</span>
+
+	<span class="c1">#create generation directory</span>
+	<span class="n">calc_path</span> <span class="o">=</span> <span class="n">generation_data_path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">generation</span><span class="p">)</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="c1">#create generation dir</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">calc_path</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">):</span>
+			<span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">calc_path</span><span class="p">)</span>
+	<span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+		<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Creation of the directory </span><span class="si">%s</span><span class="s2"> failed&quot;</span> <span class="o">%</span> <span class="n">calc_path</span><span class="p">)</span>
+		<span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+	<span class="c1">#check if genome has been processed alreaddy </span>
+	<span class="n">cfg</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+	<span class="n">cfg</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
+	<span class="n">archive_path</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Basics&#39;</span><span class="p">,</span> <span class="s1">&#39;archive_archive_path&#39;</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="n">archive_path</span><span class="p">)</span>
+	<span class="k">if</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">archive_path</span><span class="p">)</span><span class="o">==</span><span class="kc">False</span><span class="p">):</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No archive found&quot;</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="c1">#read existing archinve</span>
+		<span class="n">archive_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">archive_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+		<span class="n">archive_population</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+		<span class="n">archive_paths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+		<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">archive_file</span><span class="p">:</span>
+			<span class="k">if</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">3</span><span class="p">):</span>
+				<span class="k">continue</span>
+			<span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;	&quot;</span><span class="p">)</span>
+			<span class="n">tmp</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+			<span class="n">tmp</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+			<span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">tmp</span><span class="p">))]</span>
+			<span class="n">archive_population</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+			<span class="n">archive_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+		<span class="n">archive_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+		<span class="c1">#genome was procesed</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">genome</span> <span class="ow">in</span> <span class="n">archive_population</span><span class="p">)</span><span class="o">==</span><span class="kc">True</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;copying existing genome&quot;</span><span class="p">)</span>
+			<span class="n">index</span> <span class="o">=</span> <span class="n">archive_population</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">genome</span><span class="p">)</span>
+			<span class="n">scr_dir</span> <span class="o">=</span> <span class="n">archive_paths</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;/.&quot;</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;scr_dir &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">scr_dir</span><span class="p">))</span>
+			<span class="n">dst_dir</span> <span class="o">=</span> <span class="n">generation_data_path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">generation</span><span class="p">)</span><span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">individual</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;dst_dir &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">))</span>
+			<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;mkdir &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">))</span>
+			<span class="n">dst_dir</span> <span class="o">+=</span> <span class="s2">&quot;.&quot;</span>
+			<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;cp -R &quot;</span> <span class="o">+</span> <span class="n">scr_dir</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">dst_dir</span><span class="p">)</span>
+			<span class="c1">#create DONE file</span>
+			<span class="n">DONE_file</span> <span class="o">=</span> <span class="n">generation_data_path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">generation</span><span class="p">)</span><span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">generation</span><span class="p">)</span><span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">individual</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_DONE&quot;</span>
+			<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;touch &quot;</span> <span class="o">+</span> <span class="n">DONE_file</span><span class="p">)</span>
+			<span class="k">return</span> <span class="mi">0</span>
+
+
+
+
+	<span class="c1">#genome has not been calculated -&gt; init calcs </span>
+	<span class="c1">#create directories for calculations  </span>
+	<span class="n">calc_path</span> <span class="o">=</span> <span class="n">generation_data_path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">generation</span><span class="p">)</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="c1">#create generation dir</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">calc_path</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">):</span>
+			<span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">calc_path</span><span class="p">)</span>
+		<span class="c1">#create individual dir</span>
+		<span class="n">calc_path</span> <span class="o">=</span> <span class="n">generation_data_path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">generation</span><span class="p">)</span><span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">individual</span><span class="p">)</span>
+		<span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">calc_path</span><span class="p">)</span>
+	<span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+	    <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Creation of the directory </span><span class="si">%s</span><span class="s2"> failed&quot;</span> <span class="o">%</span> <span class="n">calc_path</span><span class="p">)</span>
+	    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+	
+	<span class="c1">#load building blocks</span>
+	<span class="n">building_blocks</span> <span class="o">=</span> <span class="n">load_building_blocks</span><span class="p">(</span><span class="n">building_block_path</span><span class="p">)</span>	
+
+	<span class="c1">#construct molecule from genome</span>
+	<span class="n">construction_loop</span><span class="p">(</span><span class="n">genome</span><span class="p">,</span> <span class="n">building_blocks</span><span class="p">,</span> <span class="n">config_path</span><span class="p">,</span> <span class="n">calc_path</span><span class="p">)</span>
+
+	<span class="c1">#run next step -&gt; invoke turbomole calculations</span>
+	<span class="n">set_up_turbo_calculations_path</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Basics&#39;</span><span class="p">,</span> <span class="s1">&#39;helper_files&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/set_up_turbo_calculations.sh&quot;</span>		
+	<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">set_up_turbo_calculations_path</span><span class="o">+</span><span class="s2">&quot; &quot;</span><span class="o">+</span><span class="n">calc_path</span><span class="o">+</span><span class="s2">&quot; &quot;</span><span class="o">+</span><span class="n">config_path</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">generation</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">individual</span><span class="p">))</span></div>
+
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+	<span class="n">path_xyz</span><span class="o">=</span><span class="s2">&quot;/alcc/gpfs2/home/u/blaschma/Master_Code/genetic_algorithm/building_blocks_xyz/&quot;</span>
+	<span class="n">benzene</span> <span class="o">=</span> <span class="n">Building_Block</span><span class="p">(</span><span class="n">abbrev</span><span class="o">=</span><span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="n">num_atoms</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span><span class="n">origin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">para_pos</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">para_angle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">meta_pos</span><span class="o">=</span><span class="mi">4</span> <span class="p">,</span> <span class="n">meta_angle</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">3.</span><span class="p">,</span> <span class="n">ortho_pos</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">ortho_angle</span><span class="o">=-</span><span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="n">fixed_left</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">complexity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path_xyz</span><span class="o">+</span><span class="s2">&quot;/benzene.xyz&quot;</span><span class="p">)</span>
+	<span class="n">napthtalene</span> <span class="o">=</span> <span class="n">Building_Block</span><span class="p">(</span><span class="n">abbrev</span><span class="o">=</span><span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="n">num_atoms</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span><span class="n">origin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">para_pos</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">para_angle</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">meta_pos</span><span class="o">=</span><span class="mi">11</span> <span class="p">,</span> <span class="n">meta_angle</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">3.</span><span class="p">,</span> <span class="n">ortho_pos</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">ortho_angle</span><span class="o">=-</span><span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="n">fixed_left</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">complexity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path_xyz</span><span class="o">+</span><span class="s2">&quot;/naphtalene.xyz&quot;</span><span class="p">)</span>
+	<span class="n">dbPc1</span> <span class="o">=</span> <span class="n">Building_Block</span><span class="p">(</span><span class="n">abbrev</span><span class="o">=</span><span class="s2">&quot;dbPc1&quot;</span><span class="p">,</span> <span class="n">num_atoms</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span><span class="n">origin</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">para_pos</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">para_angle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">meta_pos</span><span class="o">=</span><span class="mi">0</span> <span class="p">,</span> <span class="n">meta_angle</span> <span class="o">=</span> <span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">3.</span><span class="p">,</span> <span class="n">ortho_pos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ortho_angle</span><span class="o">=-</span><span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="n">fixed_left</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">complexity</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path_xyz</span><span class="o">+</span><span class="s2">&quot;/dbPc1_block.xyz&quot;</span><span class="p">)</span>
+	<span class="n">dbPc4</span> <span class="o">=</span> <span class="n">Building_Block</span><span class="p">(</span><span class="n">abbrev</span><span class="o">=</span><span class="s2">&quot;dbPc4&quot;</span><span class="p">,</span> <span class="n">num_atoms</span><span class="o">=</span><span class="mi">55</span><span class="p">,</span><span class="n">origin</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span> <span class="n">para_pos</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">para_angle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">meta_pos</span><span class="o">=</span><span class="mi">0</span> <span class="p">,</span> <span class="n">meta_angle</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">3.</span><span class="p">,</span> <span class="n">ortho_pos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ortho_angle</span><span class="o">=-</span><span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="n">fixed_left</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">complexity</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path_xyz</span><span class="o">+</span><span class="s2">&quot;/dbPc4.xyz&quot;</span><span class="p">)</span>
+	<span class="n">dbPc6</span> <span class="o">=</span> <span class="n">Building_Block</span><span class="p">(</span><span class="n">abbrev</span><span class="o">=</span><span class="s2">&quot;dbPc6&quot;</span><span class="p">,</span> <span class="n">num_atoms</span><span class="o">=</span><span class="mi">52</span><span class="p">,</span><span class="n">origin</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span> <span class="n">para_pos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">para_angle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">meta_pos</span><span class="o">=</span><span class="mi">1</span> <span class="p">,</span> <span class="n">meta_angle</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">3.</span><span class="p">,</span> <span class="n">ortho_pos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ortho_angle</span><span class="o">=-</span><span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="n">fixed_left</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">complexity</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path_xyz</span><span class="o">+</span><span class="s2">&quot;/dbPc6.xyz&quot;</span><span class="p">)</span>
+	<span class="n">dbPc5</span> <span class="o">=</span> <span class="n">Building_Block</span><span class="p">(</span><span class="n">abbrev</span><span class="o">=</span><span class="s2">&quot;dbPc5&quot;</span><span class="p">,</span> <span class="n">num_atoms</span><span class="o">=</span><span class="mi">58</span><span class="p">,</span><span class="n">origin</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">para_pos</span><span class="o">=</span><span class="mi">26</span><span class="p">,</span> <span class="n">para_angle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">meta_pos</span><span class="o">=</span><span class="mi">20</span> <span class="p">,</span> <span class="n">meta_angle</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">3.</span><span class="p">,</span> <span class="n">ortho_pos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ortho_angle</span><span class="o">=-</span><span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="n">fixed_left</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">complexity</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path_xyz</span><span class="o">+</span><span class="s2">&quot;/dbPc5.xyz&quot;</span><span class="p">)</span>
+	<span class="n">pseudo_para_naph_PCP</span> <span class="o">=</span> <span class="n">Building_Block</span><span class="p">(</span><span class="n">abbrev</span><span class="o">=</span><span class="s2">&quot;pseudo-para_naph_PCP&quot;</span><span class="p">,</span> <span class="n">num_atoms</span><span class="o">=</span><span class="mi">44</span><span class="p">,</span><span class="n">origin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">para_pos</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span> <span class="n">para_angle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">meta_pos</span><span class="o">=</span><span class="mi">16</span> <span class="p">,</span> <span class="n">meta_angle</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="n">ortho_pos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ortho_angle</span><span class="o">=-</span><span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="n">fixed_left</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">complexity</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path_xyz</span><span class="o">+</span><span class="s2">&quot;/pseudo-para_naph_PCP.xyz&quot;</span><span class="p">)</span>
+	<span class="n">line</span> <span class="o">=</span><span class="n">Building_Block</span><span class="p">(</span><span class="n">abbrev</span><span class="o">=</span><span class="s2">&quot;line&quot;</span><span class="p">,</span> <span class="n">num_atoms</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="n">origin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">para_pos</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">para_angle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">meta_pos</span><span class="o">=</span><span class="mi">1</span> <span class="p">,</span> <span class="n">meta_angle</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">,</span> <span class="n">ortho_pos</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ortho_angle</span><span class="o">=-</span><span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="n">fixed_left</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">complexity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path_xyz</span><span class="o">+</span><span class="s2">&quot;/line.xyz&quot;</span><span class="p">)</span>
+	<span class="n">building_blocks</span> <span class="o">=</span> <span class="p">[</span><span class="n">benzene</span><span class="p">,</span><span class="n">napthtalene</span><span class="p">,</span><span class="n">dbPc1</span><span class="p">,</span><span class="n">dbPc4</span><span class="p">,</span><span class="n">dbPc6</span><span class="p">,</span> <span class="n">dbPc5</span><span class="p">,</span><span class="n">pseudo_para_naph_PCP</span><span class="p">,</span> <span class="n">line</span><span class="p">]</span>
+	<span class="n">genome</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+
+
+	<span class="c1">#construction_loop(genome, building_blocks, &quot;../config&quot;, &quot;./output.xyz&quot;)</span>
+
+	<span class="n">process_genome</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">6</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="s2">&quot;/alcc/gpfs2/home/u/blaschma/manipulated/&quot;</span><span class="p">)</span>
+
+
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	coupling_point = Point(x=-4.9685, y=0.0, z=2.86857)</span>
+<span class="sd">	new = process_block_to_add(coupling_point,coupling_angle=-2.0943951023931953, conjugation_angle=0, cc_bond_length=1.54, block_to_add=benzene)</span>
+<span class="sd">	top.write_xyz_file(&#39;./benzene_rotated.xyz&#39;, &quot;test&quot;, new)</span>
+<span class="sd">	print(new)</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+		
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Master thesis</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Matthias Blaschke.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

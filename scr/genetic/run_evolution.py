@@ -47,3 +47,4 @@ if __name__ == '__main__':
 	config_path = "/alcc/gpfs2/home/u/blaschma/genetic_run_29/config"
 	calculation_path = "/alcc/gpfs2/home/u/blaschma/genetic_run_29/"
 	run_evolution(config_path, calculation_path)
+
