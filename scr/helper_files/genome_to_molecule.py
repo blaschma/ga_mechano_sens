@@ -425,7 +425,10 @@ def load_building_blocks(path):
 	dbPc5 = Building_Block(abbrev="dbPc5", num_atoms=58,origin=12, para_pos=26, para_angle=0, meta_pos=20 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=1, path=path+"/dbPc5.xyz")
 	pseudo_para_naph_PCP = Building_Block(abbrev="pseudo-para_naph_PCP", num_atoms=44,origin=0, para_pos=18, para_angle=0, meta_pos=16 , meta_angle = -np.pi/3, ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=1, path=path+"/pseudo-para_naph_PCP.xyz")
 	line =Building_Block(abbrev="line", num_atoms=4,origin=0, para_pos=1, para_angle=0, meta_pos=1 , meta_angle = 0., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=1, path=path+"/line.xyz")
-	building_blocks = [benzene,napthtalene,dbPc1,dbPc4,dbPc6, dbPc5,pseudo_para_naph_PCP, line]
+	rot=Building_Block(abbrev="line", num_atoms=47,origin=6, para_pos=16, para_angle=0, meta_pos=20 , meta_angle = 0., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=2, path=path+"/rot.xyz")
+	stacked_anth=Building_Block(abbrev="stacked_anth", num_atoms=62,origin=3, para_pos=22, para_angle=0, meta_pos=30 , meta_angle = 0., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=2, path=path+"/stacked_anth.xyz")
+	
+	building_blocks = [benzene,napthtalene,dbPc1,dbPc4,dbPc6, dbPc5,pseudo_para_naph_PCP, line,rot,stacked_anth]
 	#building_blocks = [benzene,napthtalene]
 
 	return building_blocks
@@ -563,13 +566,15 @@ if __name__ == '__main__':
 	dbPc5 = Building_Block(abbrev="dbPc5", num_atoms=58,origin=12, para_pos=26, para_angle=0, meta_pos=20 , meta_angle = -np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=2, path=path_xyz+"/dbPc5.xyz")
 	pseudo_para_naph_PCP = Building_Block(abbrev="pseudo-para_naph_PCP", num_atoms=44,origin=0, para_pos=18, para_angle=0, meta_pos=16 , meta_angle = -np.pi/3, ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=2, path=path_xyz+"/pseudo-para_naph_PCP.xyz")
 	line =Building_Block(abbrev="line", num_atoms=4,origin=0, para_pos=1, para_angle=0, meta_pos=1 , meta_angle = 0., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=1, path=path_xyz+"/line.xyz")
-	building_blocks = [benzene,napthtalene,dbPc1,dbPc4,dbPc6, dbPc5,pseudo_para_naph_PCP, line]
+	rot=Building_Block(abbrev="rot", num_atoms=47,origin=6, para_pos=16, para_angle=0, meta_pos=20 , meta_angle = 0., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=2, path=path_xyz+"/rot.xyz")
+	stacked_anth=Building_Block(abbrev="stacked_anth", num_atoms=62,origin=3, para_pos=22, para_angle=0, meta_pos=30 , meta_angle = 0., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=2, path=path_xyz+"/stacked_anth.xyz")
+	building_blocks = [benzene,napthtalene,dbPc1,dbPc4,dbPc6, dbPc5,pseudo_para_naph_PCP, line,rot,stacked_anth]
 	genome = [0,0,0]
 
 
 	#construction_loop(genome, building_blocks, "../config", "./output.xyz")
-
-	process_genome(0,6,[0,6,1],"/alcc/gpfs2/home/u/blaschma/manipulated/")
+	#process_genome(0,2,[0,8,0],"/alcc/gpfs2/home/u/blaschma/rotating_structures")
+	process_genome(0,10,[0,9,1],"/alcc/gpfs2/home/u/blaschma/rotating_structures")
 
 
 	"""

@@ -201,6 +201,7 @@ def eval_fittness(stiffness, std_stiffness, T_est, T_estimates_params):
 	min_min_T_est = 5.0
 	fit_param = list()
 	min_T_est = list()
+	median_penalty = list()
 	for i in range(len(T_estimates_params)):
 		dx = 1
 		dy = np.diff(T_est[i][1,:])/dx
@@ -208,35 +209,40 @@ def eval_fittness(stiffness, std_stiffness, T_est, T_estimates_params):
 		amplitude = np.abs(np.max(T_estimates_params[i][:])-np.min(T_estimates_params[i][:]))
 		#print(str(i) + " amplitude " + str(amplitude) + " max deriv " + str(max_deriv))
 		if(np.isfinite(float(T_estimates_params[i][0]))==True and T_estimates_params[i][2] !=0):
-			#print(str(i) + " mediane " + str(np.median(T_est[i][1])/np.min(T_est[i][1])))
-			#fit_param.append(T_estimates_params[i][0]*(np.median(T_est[i][1])/np.min(T_est[i][1])))
 			if(np.abs(T_estimates_params[i][1]/(T_estimates_params[i][0]+1E-12)) > 1.0):
 				fit_param.append(0)
+				median_penalty.append(0)
+		
 			else:
 				if(np.median(T_est[i][1])<1):
-					#fit_param.append(T_estimates_params[i][0]*(np.median(T_est[i][1])))
-					#fit_param.append(T_estimates_params[i][0]*(10**(0.1*np.log(np.median(T_est[i][1]))))*np.median(T_est[i][1])/np.min(T_est[i][1]))
-					#fit_param.append(((T_estimates_params[i][0])**0.8)*(-1/(np.log(np.median(T_est[i][1]))))*((np.median(T_est[i][1]))**0.6)/(np.min(T_est[i][1]))**1.3)
-					#fit_param.append((T_estimates_params[i][0])*(-1/(np.log(np.median(T_est[i][1]))))*((np.median(T_est[i][1])))/(np.min(T_est[i][1])))
-					median_penalty = 1/(1+np.exp(2.2*(-np.log(np.median(T_est[i][1])))-1.2))
-					fit_param.append((np.sqrt(T_estimates_params[i][0]))/(np.min(T_est[i][1]))*(((np.median(T_est[i][1])))/(np.min(T_est[i][1])))**1.5*median_penalty)
+					beta=1.2
+					gamma=1.5
+					nu=1.5
+					print(1/(1+np.exp(-beta*(-np.log(np.median(T_est[i][1])))-gamma)))
+					median_penalty.append(1/(1+np.exp(beta*(-np.log(np.median(T_est[i][1])))-gamma)))
+					fit_param.append((np.sqrt(T_estimates_params[i][0]))/(np.min(T_est[i][1]))*(((np.median(T_est[i][1])))/(np.min(T_est[i][1])))**nu)
 				else:
 					fit_param.append(T_estimates_params[i][0])
-			#fit_param.append(T_estimates_params[i][0]*(-np.log(np.median(T_est[i][1]))))
-			#fit_param.append(T_estimates_params[i][0])
+
 			min_T_est.append(T_estimates_params[i][2])
 			if(T_estimates_params[i][2] < min_min_T_est):
 				min_min_T_est = T_estimates_params[i][2]
 		else:
 			fit_param.append(0)
 			min_T_est.append(1)
+			median_penalty.append(0)
 		
 	fittness_T_est = np.asarray(fit_param)
+	median_penalty = np.asarray(median_penalty)
 	print("fittness_T_est")
+	print(len(fittness_T_est))
 	print(fittness_T_est)
+	print("median_penalty")
+	print(len(median_penalty))
+	print(median_penalty)
 	
 	
-	return fittness_stiffness*fittness_T_est
+	return fittness_stiffness,fittness_T_est,median_penalty
 
 def write_fittness(fittness, path):
 	"""
@@ -250,9 +256,11 @@ def write_fittness(fittness, path):
 
 	"""
 	file = open(path + "/fitness.dat", "w")
-	for i in range(len(fittness)):
-		file.write(str(fittness[i])+"\n")
+	for i in range(len(fittness[0])):
+		print(fittness[2])
+		file.write(str(fittness[0][i]*fittness[1][i]*fittness[2][i])+"\n")
 	file.close()
+	top.write_plot_data(path + "/fittness_contribution", fitness, "stiffness, T_est, median_penalty")
 
 
 
