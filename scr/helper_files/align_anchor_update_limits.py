@@ -136,8 +136,8 @@ def write_limits(path,coord,fixed_beginning, fixed_end, config_path):
 		lower_limit = a
 
 	file = open(path+"/limits", "w")
-	file.write(str(lower_limit) + "\n")
-	file.write(str(upper_limit))
+	file.write(str(lower_limit-0.1) + "\n")
+	file.write(str(upper_limit+0.1))
 
 
 

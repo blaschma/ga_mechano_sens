@@ -54,23 +54,23 @@ cd $(printf "%04d" $lastdir)
 if [ "$prerelax" == "T" ]; then
     echo "Prerelaxation...."
     define < $helper_files/build_calc > define.out
-    #save fixed atoms, remove fix command from coord file
-    ls -l > files_before
-    cp coord coord_save
+    #save fixed atoms, remove fix command from coord file    
     awk '{print $5}' coord > fixed
     grep -irn "f" fixed | cut -f1 -d: > fixed_lines
     awk '{print $1,$2,$3,$4}' coord > coord_unfixed
     rm -r coord 
     cp coord_unfixed coord
+    rm -r coord_unfixed
     #relax
     jobex -c $relax_iterations -level $relax_level > jobex_prerelax.log
     #fix again
     paste coord fixed > coord_fixed_again
     rm -r coord
     cp coord_fixed_again coord
+    rm -r coord_fixed_again
     #align anchors along z again and update limits
-    python3 $helper_files/align_fix_anchor.py $dispdir/$(printf "%04d" $lastdir) $config_file        
-    exit
+    python3 $helper_files/align_anchor_update_limits.py $dispdir/$(printf "%04d" $lastdir) $config_file        
+   
 fi
 jobex -c $relax_iterations -level $relax_level > jobex.log
 file=GEO_OPT_FAILED

@@ -1,17 +1,37 @@
 [Basics]
-genetic_algortim_path=/alcc/gpfs2/home/u/blaschma/Master_Code/genetic_algorithm 
+genetic_algorithm_path=/alcc/gpfs2/home/u/blaschma/Master_Code/genetic_algorithm 
 turbopath=/alcc/gpfs2/home/u/blaschma/programs/turbo.V7.5_backup/loadTurbo7_5.sh
-helper_files=genetic_algorithm_path + /scr/helper_files/
+helper_files=/alcc/gpfs2/home/u/blaschma/Master_Code/genetic_algorithm/scr/helper_files/
+intel_path=/alcc/gpfs2/sw/intel/19
+archive_archive_path=/alcc/gpfs2/home/u/blaschma/relax_test/archive.dat
+calculation_path=/alcc/gpfs2/home/u/blaschma/relax_test/
+
+[Genetic Algorithm]
+population_size=24
+generation_limit=20
+evaluation_methods_path=default
+genome_length=7
+insert_mutation_prob=0.5
+coupling_mutation_prob=0.5
+block_mutation_prob=0.5
+truncate_mutation_prob=0.5
 
 [Building Procedure]
-CC_bond_lengt=1.54
+CC_bond_lengt=1.58
 conjugation_angle=0.45
-building_block_path=../building_blocks_xyz
-generation_data_path=../generation_data
+building_block_path=
+generation_data_path=generation_data
 ang2Bohr=1.889725989
+har2Ev=27.211
 
 [Turbomole Calculations]
-partition=0
-num_cores=0
-displacement_per_step=0
-num_stretching_steps=0
+partition=epyc,alcc1
+cpus_per_task=8
+displacement_per_step=0.1
+num_stretching_steps=30
+mem_per_cpu=15G
+max_time=05:30:00
+kill_time=5700
+relax_level=xtb
+relax_iterations=730
+prerelax= #T or false
