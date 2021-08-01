@@ -21,6 +21,7 @@ echo $cpus_per_task
 
 
 cd $path
+
 #make dirs
 mkdir disp_pos
 cd disp_pos
