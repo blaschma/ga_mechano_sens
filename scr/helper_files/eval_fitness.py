@@ -48,6 +48,7 @@ def load_transmission_data(gen_dir):
 		param_file = open(gen_dir + "/" + dirs[i] + "/" + param_file)
 		T_estimates_params = list()
 		for line in param_file:
+			#print("line " + line)
 			T_estimates_params.append(float(line))
 		#print(dat_Content[1,:])
 		T_estimates.append(dat_Content)
@@ -77,7 +78,7 @@ def process_T_estimate_data(T_est, gen_path):
 			ax.plot(T_est[i][0,:], (T_est[i][1,:]), label=str(i))
 			dx = 0.1
 			dy = np.diff(T_est[i][1,:])/dx
-			print(i)
+			#print(i)
 			
 			f.write(str(i)+"\n")
 			f.write("median " + str(np.median(T_est[i][1,:]))+"\n")
@@ -147,9 +148,9 @@ def load_stiffness_data(gen_dir):
 		stiffness_file.close()
 
 		stiffness_line = stiffness_line.strip().split("	")
-		print("stiffness_line")
-		print(float(stiffness_line[0]))
-		print(stiffness_line)
+		#print("stiffness_line")
+		#print(float(stiffness_line[0]))
+		#print(stiffness_line)
 		stiffness.append(float(stiffness_line[0]))
 		std_stiffness.append(float(stiffness_line[3]))
 
@@ -169,7 +170,7 @@ def eval_fittness(stiffness, std_stiffness, T_est, T_estimates_params):
 		np.array: (fitness value)
 
 	"""
-	print("eval fitness")
+	#print("eval fitness")
 	#evaluate stiffness part
 	#mean = 0
 	counter = 0
@@ -188,14 +189,14 @@ def eval_fittness(stiffness, std_stiffness, T_est, T_estimates_params):
 			#mean+=stiffness[i]
 			counter+=1.
 	#mean = mean/counter
-	print("stiffness")
-	print(stiffness)
+	#print("stiffness")
+	#print(stiffness)
 	stiffness = np.asarray(stiffness)
 	#print("mean " + str(mean))
 	#fittness_stiffness = 1/(stiffness+mean)
 	fittness_stiffness = 1/(stiffness+0.005)
-	print("fittness_stiffness")
-	print(fittness_stiffness)
+	#print("fittness_stiffness")
+	#print(fittness_stiffness)
 
 	#evaluate T_estimate part
 	min_min_T_est = 5.0
@@ -203,31 +204,34 @@ def eval_fittness(stiffness, std_stiffness, T_est, T_estimates_params):
 	min_T_est = list()
 	median_penalty = list()
 	for i in range(len(T_estimates_params)):
-		dx = 1
-		dy = np.diff(T_est[i][1,:])/dx
-		max_deriv = np.max(np.abs(dy))
-		amplitude = np.abs(np.max(T_estimates_params[i][:])-np.min(T_estimates_params[i][:]))
-		#print(str(i) + " amplitude " + str(amplitude) + " max deriv " + str(max_deriv))
+
 		if(np.isfinite(float(T_estimates_params[i][0]))==True and T_estimates_params[i][2] !=0):
 			if(np.abs(T_estimates_params[i][1]/(T_estimates_params[i][0]+1E-12)) > 1.0):
 				fit_param.append(0)
 				median_penalty.append(0)
+				#print(np.abs(T_estimates_params[i][1]/(T_estimates_params[i][0]+1E-12)) )
+				#print(T_estimates_params)
+				#print("else fall oben ")
 		
 			else:
 				if(np.median(T_est[i][1])<1):
 					beta=1.2
-					gamma=1.5
+					gamma=2.0
 					nu=1.5
-					print(1/(1+np.exp(-beta*(-np.log(np.median(T_est[i][1])))-gamma)))
+					#print(1/(1+np.exp(-beta*(-np.log(np.median(T_est[i][1])))-gamma)))
 					median_penalty.append(1/(1+np.exp(beta*(-np.log(np.median(T_est[i][1])))-gamma)))
+					#print("wurzel")
+					#print(T_estimates_params[i][0])
 					fit_param.append((np.sqrt(T_estimates_params[i][0]))/(np.min(T_est[i][1]))*(((np.median(T_est[i][1])))/(np.min(T_est[i][1])))**nu)
 				else:
 					fit_param.append(T_estimates_params[i][0])
+					median_penalty.append(0)
+					#print("else fall")
 
 			min_T_est.append(T_estimates_params[i][2])
 			if(T_estimates_params[i][2] < min_min_T_est):
 				min_min_T_est = T_estimates_params[i][2]
-		else:
+		else:			
 			fit_param.append(0)
 			min_T_est.append(1)
 			median_penalty.append(0)
@@ -240,7 +244,9 @@ def eval_fittness(stiffness, std_stiffness, T_est, T_estimates_params):
 	print("median_penalty")
 	print(len(median_penalty))
 	print(median_penalty)
-	
+	if((len(fittness_stiffness) != len(fittness_T_est)) or (len(fittness_stiffness) != len(median_penalty))):
+		raise ValueError('Lengths of fitness measures do not match')
+
 	
 	return fittness_stiffness,fittness_T_est,median_penalty
 
@@ -282,6 +288,8 @@ if __name__ == '__main__':
 
 	#eval fitness
 	fitness = eval_fittness(stiffness, std_stiffness, T_est, T_estimates_params_list)
+	#print("fitness unten")
+	#print(fittness)
 	write_fittness(fitness,path)
 
 	"""
