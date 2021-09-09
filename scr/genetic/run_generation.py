@@ -40,12 +40,20 @@ def run_generation(generation : int, config_path, calculation_path):
 		pass
 		
 	#load specific evaluation methods
-	else:
+	elif(evaluation_methods_path == "tournament"):
 		#make sure problem_specification path is found
 		sys.path.append(os.path.realpath(genetic_algorithm_path + "/scr/"))
 		sys.path.append(os.path.realpath('..'))
 		from problem_specification import bbEV_tournament
 		ev = bbEV_tournament.bbEv_tournament(generation, 0, config_path, calculation_path) #-> todo individual processing
+		pass
+	#load specific evaluation methods
+	elif(evaluation_methods_path == "tournament_f_symmetry"):
+		#make sure problem_specification path is found
+		sys.path.append(os.path.realpath(genetic_algorithm_path + "/scr/"))
+		sys.path.append(os.path.realpath('..'))
+		from problem_specification import bbEV_tournament_f_symmetry
+		ev = bbEV_tournament_f_symmetry.bbEv_tournament_f_symmetry(generation, 0, config_path, calculation_path) #-> todo individual processing
 		pass
 
 	#first generation

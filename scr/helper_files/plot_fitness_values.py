@@ -125,7 +125,10 @@ if __name__ == '__main__':
 		else:
 			print("else")
 			fitness_means.append(np.mean(fitness_value[1][0:fitness_value[2]]))
-			std_deviation.append(np.std(np.asarray(fitness_value[1][0:fitness_value[2]])))	
+			tmp_std = [fitness_value[1][k] for k in range(0,int(len(fitness_value[1])*0.6)) if fitness_value[1][k] > 0]
+			print(tmp_std)
+			#std_deviation.append(np.std(np.asarray(fitness_value[1][0:int(fitness_value[2]*0.6)])))	
+			std_deviation.append(np.std(tmp_std))	
 	print(fitness_means)
 	print(std_deviation)
 	fig, ax = plt.subplots(1)
@@ -141,20 +144,24 @@ if __name__ == '__main__':
 	for xe, ye in zip(generations_to_check, fitness_values):
 		if(n_unique[xe] == -1):
 			for i in range(0, len(ye)):
-				ax.scatter([xe], ye[i], c=rgb_cycle[i], s=num_individuals, marker="x")
+				ax.scatter([xe], ye[i], color=rgb_cycle[i], s=num_individuals, marker="x")
 		else:
 			for i in range(0, n_unique[xe]):
-				ax.scatter([xe], ye[i], c=rgb_cycle[i], s=num_individuals, marker="x")
+				ax.scatter([xe], ye[i], color=rgb_cycle[i], s=num_individuals, marker="x")
 			for i in range(n_unique[xe], len(ye)):
-				ax.scatter([xe], ye[i], c=rgb_cycle[i], s=num_individuals, marker="o")
+				ax.scatter([xe], ye[i], color=rgb_cycle[i], s=num_individuals, marker="o")
 		#ax.scatter([xe] * len(ye), ye, c=rgb_cycle, s=num_individuals, marker="x")
 		
 	#print(generations_to_check)
-	#print(fitness_means)
-	#print(std_deviation)
+	print("now")
+	print(fitness_means)
+	print("..")
+	print(std_deviation)
+	print("..")
+	print(fitness_means-np.asarray(std_deviation))
 	ax.plot(generations_to_check, fitness_means, color="blue")
-	#ax.plot(generations_to_check, fitness_means-np.asarray(std_deviation), color="blue",linestyle='dashed')
-	#ax.plot(generations_to_check, fitness_means+np.asarray(std_deviation), color="blue",linestyle='dashed')
+	ax.plot(generations_to_check, fitness_means-np.asarray(std_deviation), color="blue",linestyle='dashed')
+	ax.plot(generations_to_check, fitness_means+np.asarray(std_deviation), color="blue",linestyle='dashed')
 	ax.set_xlabel('Generation',fontsize=20)
 	ax.set_ylabel('Fitness values',fontsize=20)
 	ax.xaxis.set_major_locator(MaxNLocator(integer=True))

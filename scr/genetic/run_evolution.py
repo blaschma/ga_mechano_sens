@@ -44,7 +44,7 @@ def test(a):
 	pass
 
 if __name__ == '__main__':
-	config_path = "/alcc/gpfs2/home/u/blaschma/genetic_runs/genetic_run_31/config"
-	calculation_path = "/alcc/gpfs2/home/u/blaschma/genetic_runs/genetic_run_31/"
+	config_path = "/alcc/gpfs2/home/u/blaschma/genetic_runs/genetic_run_37/config"
+	calculation_path = "/alcc/gpfs2/home/u/blaschma/genetic_runs/genetic_run_37/"
 	run_evolution(config_path, calculation_path)
 

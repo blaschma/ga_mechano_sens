@@ -577,7 +577,7 @@ if __name__ == '__main__':
 
 	#construction_loop(genome, building_blocks, "../config", "./output.xyz")
 	#process_genome(0,2,[0,8,0],"/alcc/gpfs2/home/u/blaschma/rotating_structures")
-	process_genome(0,1,[0,0,0,6,0,2,0],"/alcc/gpfs2/home/u/blaschma/genetic_runs/genetic_run_31/test/")
+	process_genome(1,42,[0,0,1,1,0,2,0],"/alcc/gpfs2/home/u/blaschma/naphPCP/")
 
 
 	"""
