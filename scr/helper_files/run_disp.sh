@@ -13,13 +13,15 @@ source $config_file
 trap  ". $helper_files/action_before_death.sh $dispdir $config_file"  SIGUSR1
 #trap  "touch ./signal"  SIGUSR1
 
+# set Intel environment
+module load intel
+module load openmpi
+module load mkl
 
 #set turbo path
 . $turbopath
 
-# set Intel environment
-INTEL=$intel_path
-. $INTEL/bin/compilervars.sh intel64
+
 
 
 

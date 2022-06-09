@@ -560,7 +560,7 @@ def process_genome(generation : int, individual: int, genome:Genome, run_path):
 
 
 if __name__ == '__main__':
-	path_xyz="/alcc/gpfs2/home/u/blaschma/Master_Code/genetic_algorithm/building_blocks_xyz/"
+	path_xyz="/data/scc/matthias.blaschke/programs/genetic_algorithm_mechano_sens/building_blocks_xyz"
 	benzene = Building_Block(abbrev="B", num_atoms=6,origin=0, para_pos=3, para_angle=0, meta_pos=4 , meta_angle = -np.pi/3., ortho_pos=5, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=1, path=path_xyz+"/benzene.xyz")
 	napthtalene = Building_Block(abbrev="N", num_atoms=18,origin=0, para_pos=12, para_angle=0., meta_pos=11 , meta_angle = -np.pi/3., ortho_pos=10, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=1, path=path_xyz+"/naphtalene.xyz")
 	dbPc1 = Building_Block(abbrev="dbPc1", num_atoms=32,origin=13, para_pos=1, para_angle=0, meta_pos=0 , meta_angle = +np.pi/3., ortho_pos=0, ortho_angle=-2.*np.pi/3, fixed_left = -1,complexity=2, path=path_xyz+"/dbPc1_block.xyz")
@@ -577,7 +577,7 @@ if __name__ == '__main__':
 
 	#construction_loop(genome, building_blocks, "../config", "./output.xyz")
 	#process_genome(0,2,[0,8,0],"/alcc/gpfs2/home/u/blaschma/rotating_structures")
-	process_genome(1,42,[0,0,1,1,0,2,0],"/alcc/gpfs2/home/u/blaschma/naphPCP/")
+	process_genome(0,0,[0,1,0],"/data/scc/matthias.blaschke/test")
 
 
 	"""
