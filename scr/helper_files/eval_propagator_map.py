@@ -126,7 +126,7 @@ def plot_T_vs_d_energy_resolved(calc_path, molecule_name, n_occupied, config_pat
 	T_est = np.reshape(T_est, (-1, len(E)))
 	fig, ax1 = plt.subplots(1)
 	cs = ax1.imshow(T_est.T, origin='lower', extent=[min(disp), max(disp), (E_min-e_f)*har2eV, (E_max-e_f)*har2eV], norm=LogNorm(),
-					aspect='auto', interpolation='None')
+					aspect='auto', interpolation='None', cmap='jet')
 
 	plt.xlabel(r'Displacement $\AA$', fontsize=20)
 	plt.ylabel('Energy (eV)', fontsize=20)

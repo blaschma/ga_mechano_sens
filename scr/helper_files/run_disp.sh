@@ -64,7 +64,7 @@ if [ "$prerelax" == "T" ]; then
     cp coord_unfixed coord
     rm -r coord_unfixed
     #relax
-    jobex -c $relax_iterations -level $relax_level > jobex_prerelax.log
+    jobex -ri -c $relax_iterations -level $relax_level > jobex_prerelax.log
     #fix again
     paste coord fixed > coord_fixed_again
     rm -r coord
@@ -74,7 +74,7 @@ if [ "$prerelax" == "T" ]; then
     python3 $helper_files/align_anchor_update_limits.py $dispdir/$(printf "%04d" $lastdir) $config_file        
    
 fi
-jobex -c $relax_iterations -level $relax_level > jobex.log
+jobex -ri -c $relax_iterations -level $relax_level > jobex.log
 file=GEO_OPT_FAILED
 if test -f "$file" ; then 
     echo "Geo opt failed"
@@ -132,7 +132,7 @@ do
     echo $upper >> limits
 
     echo "starting turbomole calculation in" $zpcurrentdir
-    jobex -c $relax_iterations -level $relax_level > jobex.log
+    jobex -ri -c $relax_iterations -level $relax_level > jobex.log
     file=GEO_OPT_FAILED
     if test -f "$file" ; then 
         echo "Geo opt failed"
@@ -191,6 +191,8 @@ if test -f "$file"; then
             line=$(grep -o " number of occupied orbitals : .*" ./0000/ridft.out)
             homo=${line//$"number of occupied orbitals :"}
             python3 $helper_files/eval_propagator.py ../ $filename $homo $config_file
+
+            python3 $helper_files/eval_propagator_map.py ../ $filename $homo $config_file 3.0 2000
 
 
             #now everything is done
