@@ -5,6 +5,7 @@ helper_files=/alcc/gpfs2/home/u/blaschma/Master_Code/genetic_algorithm/scr/helpe
 intel_path=/alcc/gpfs2/sw/intel/19
 archive_archive_path=/alcc/gpfs2/home/u/blaschma/relax_test/archive.dat
 calculation_path=/alcc/gpfs2/home/u/blaschma/relax_test/
+queuing= (SLURM or GE)
 
 [Genetic Algorithm]
 population_size=24
