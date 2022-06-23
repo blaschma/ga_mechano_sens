@@ -5,6 +5,7 @@ helper_files=/alcc/gpfs2/home/u/blaschma/Master_Code/genetic_algorithm/scr/helpe
 intel_path=/alcc/gpfs2/sw/intel/19
 archive_archive_path=/alcc/gpfs2/home/u/blaschma/relax_test/archive.dat
 calculation_path=/alcc/gpfs2/home/u/blaschma/relax_test/
+queuing= (SLURM or GE)
 
 [Genetic Algorithm]
 population_size=24
@@ -28,10 +29,12 @@ har2Ev=27.211
 partition=epyc,alcc1
 cpus_per_task=8
 displacement_per_step=0.1
-num_stretching_steps=30
+num_stretching_steps_pos=30
+num_stretching_steps_neg=30
 mem_per_cpu=15G
 max_time=05:30:00
 kill_time=5700
 relax_level=xtb
 relax_iterations=730
 prerelax= #T or false
+define_input=build_calc
