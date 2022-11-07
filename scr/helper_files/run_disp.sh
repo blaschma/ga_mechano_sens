@@ -121,7 +121,7 @@ do
     
     echo "displacing atoms with block limits" $lower "and" $upper
     
-    python  $jobgen  -displace $zplastdir/coord $zpcurrentdir/coord $displacement $lower $upper
+    python3  $jobgen  -displace $zplastdir/coord $zpcurrentdir/coord $displacement $lower $upper
     lower=$(echo $lower - $disphalf|bc -l)
     upper=$(echo $upper + $disphalf|bc -l)
 
