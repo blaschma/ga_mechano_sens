@@ -182,6 +182,12 @@ def breaking_ana(path, generation, individual):
     print(f"Breaking dist asym = {breaking_dist_asymmetric-s_s_dist[min_disp_index]}")
     print(f"Force constant sym (N/m) = {popt_asymmetric}")
 
+    with open(f"{path}/{generation}_{individual}_breaking_ana.dat", 'w') as f:
+        f.write(f"Breaking dist sym = {breaking_dist_symmetric}\n")
+        f.write(f"Force constant sym (N/m) = {popt_symmetric}\n")
+        f.write(f"Breaking dist asym = {breaking_dist_asymmetric}\n")
+        f.write(f"Force constant asym (N/m) = {popt_asymmetric}\n")
+
     numerical_force = np.gradient(energy, np.mean(np.diff(s_s_dist)))
 
     fig, (ax1, ax2) = plt.subplots(1, 2)
