@@ -45,7 +45,7 @@ def eval_T(disp_index, para):
 
 	eigenvectors = np.asmatrix(eigenvectors)
 
-	delta = 1E-12
+	delta = 1E-9
 	T_est = list()
 	numerator = np.asarray([(eigenvectors[r_range[0]:r_range[1],i])*np.transpose(eigenvectors[s_range[0]:s_range[1],i]) for i in range(0,len(eigenvalues))])
 	denominator = np.asarray([(E - eigenvalues[i] + 1.0j* delta)  for i in range(0,len(eigenvalues))])
@@ -126,7 +126,7 @@ def plot_T_vs_d_energy_resolved(calc_path, molecule_name, n_occupied, config_pat
 	T_est = np.reshape(T_est, (-1, len(E)))
 	fig, ax1 = plt.subplots(1)
 	cs = ax1.imshow(T_est.T, origin='lower', extent=[min(disp), max(disp), (E_min-e_f)*har2eV, (E_max-e_f)*har2eV], norm=LogNorm(),
-					aspect='auto', interpolation='None', cmap='jet')
+					aspect='auto', interpolation='None', cmap='jet', vmax=np.max(T_est)*1E-5)
 
 	plt.xlabel(r'Displacement $\AA$', fontsize=20)
 	plt.ylabel('Energy (eV)', fontsize=20)

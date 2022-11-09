@@ -178,7 +178,9 @@ def breaking_ana(path, generation, individual):
     breaking_dist_symmetric = F_breaking / (popt_symmetric)
     breaking_dist_asymmetric = F_breaking / (popt_asymmetric)
     print(f"Breaking dist sym = {breaking_dist_symmetric-s_s_dist[min_disp_index]}")
+    print(f"Force constant sym (N/m) = {popt_symmetric}")
     print(f"Breaking dist asym = {breaking_dist_asymmetric-s_s_dist[min_disp_index]}")
+    print(f"Force constant sym (N/m) = {popt_asymmetric}")
 
     numerical_force = np.gradient(energy, np.mean(np.diff(s_s_dist)))
 
