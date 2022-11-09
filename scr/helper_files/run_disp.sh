@@ -194,6 +194,8 @@ if test -f "$file"; then
 
             python3 $helper_files/eval_propagator_map.py ../ $filename $homo $config_file 3.0 2000
 
+            python3 $helper_files/breaking_ana.py ../ $generation $individual
+
 
             #now everything is done
             echo "i reached the end...tell everyone"
