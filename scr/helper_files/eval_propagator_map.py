@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib
+from matplotlib import cm
 from matplotlib.colors import LogNorm
 
 matplotlib.use('Agg') # Must be before importing matplotlib.pyplot or pylab!
@@ -135,9 +136,35 @@ def plot_T_vs_d_energy_resolved(calc_path, molecule_name, n_occupied, config_pat
 	cb.set_label(r"$|\mathrm{G_{l,r}^{r/a}}|^2$", fontsize=20)
 	plt.tick_params(axis="x", labelsize=15)
 	plt.tick_params(axis="y", labelsize=15)
-
 	plt.savefig(calc_path + "/" + molecule_name + "_T_estimate_map.pdf", bbox_inches='tight')
 	plt.savefig(calc_path + "/" + molecule_name + "_T_estimate_map.svg", bbox_inches='tight')
+
+	#Seebeck coeff
+	dE = np.abs(E[0] - E[1])
+	S = np.gradient(T_est.T, dE, axis=0)
+	S = np.array(S)
+	S = -S / T_est.T
+
+	S_median = np.median(S)
+
+
+	fig, ax1 = plt.subplots(1)
+	cmap = cm.get_cmap('jet')
+	cmap.set_under('white')
+	cs = ax1.imshow(S, origin='lower',
+					extent=[min(disp), max(disp), (E_min - e_f) * har2eV, (E_max - e_f) * har2eV],
+					aspect='auto', interpolation='None', cmap=cmap, vmin = 0, vmax=S_median+1E3)
+	plt.xlabel(r'Displacement $\AA$', fontsize=20)
+	plt.ylabel('Energy (eV)', fontsize=20)
+	cb = fig.colorbar(cs, ax=ax1)
+	cb.ax.tick_params(labelsize=15)
+	cb.set_label(r"$\left[\mathrm{|G_{l,r}|^2}\right]^\prime/\left[\mathrm{|G_{l,r}|^2}\right]$", fontsize=20)
+	plt.tick_params(axis="x", labelsize=15)
+	plt.tick_params(axis="y", labelsize=15)
+	plt.savefig(calc_path + "/" + molecule_name + "_S_estimate_map.pdf", bbox_inches='tight')
+	plt.savefig(calc_path + "/" + molecule_name + "_S_estimate_map.svg", bbox_inches='tight')
+
+
 
 
 if __name__ == '__main__':
