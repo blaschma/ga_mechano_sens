@@ -27,7 +27,7 @@ Requirements
   * Generate directory "generation_data" in it
   * Create config file (see next part)
   * Run evolution: python3 PATH_TO_CODE/genetic/run_evolution.py <config_path> <calculation_path>  
-##Config file
+## Config file
 (With exemplary values. Adjust that to your calculations)
 ````
 [Basics]
@@ -71,10 +71,11 @@ relax_iterations=730
 prerelax= #T or false
 define_input=build_calc
 ````
-##Flow Chart
+
+## Flow Chart
 Insert picture
 
-##Evolution
+## Evolution
 Insert picture
 
 # Standalone evaluation of molecules
