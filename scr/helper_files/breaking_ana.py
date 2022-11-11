@@ -95,7 +95,8 @@ def calc_junction_extent(path, gen, ind, write_out=False):
         coord = top.read_coord_file(subdirs[j] + "/coord")
         z_coord = list()
         for i in range(0,len(coord)):
-            z_coord.append(float(coord[i][2]))
+            if(coord[i][3] != 'h'):
+                z_coord.append(float(coord[i][2]))
         s_s_dist.append(np.abs(np.max(z_coord) - np.min(z_coord))*__bohr2Ang__)
 
     rootdir = f'{path}/disp_pos'
@@ -107,7 +108,8 @@ def calc_junction_extent(path, gen, ind, write_out=False):
         coord = top.read_coord_file(subdirs[j] + "/coord")
         z_coord = list()
         for i in range(0, len(coord)):
-            z_coord.append(float(coord[i][2]))
+            if(coord[i][3] != 'h'):
+                z_coord.append(float(coord[i][2]))
         s_s_dist.append(np.abs(np.max(z_coord) - np.min(z_coord)) * __bohr2Ang__)
 
     if(write_out == True):

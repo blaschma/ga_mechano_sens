@@ -2,7 +2,7 @@ Genetic Algorithm
 ==============
 This code was developed for my Master thesis
 
-#TOC
+# TOC
 * [Requirements](#Requirements)
 * [Usage](#Usage)
   * [Preparation](#Preparation)
