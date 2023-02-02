@@ -121,7 +121,8 @@ do
     
     echo "displacing atoms with block limits" $lower "and" $upper
     
-    python3  $jobgen  -displace $zplastdir/coord $zpcurrentdir/coord $displacement $lower $upper
+
+    python3  $jobgen  -fixed_atoms $zplastdir/coord $zpcurrentdir/coord $displacement
     lower=$(echo $lower - $disphalf|bc -l)
     upper=$(echo $upper + $disphalf|bc -l)
 
@@ -144,6 +145,8 @@ do
         exit 0
         fi
     fi
+    #remove!
+    touch GEO_OPT_CONVERGED
     file=GEO_OPT_CONVERGED 
     if test -f "$file" ; then  
     	ls
@@ -194,7 +197,9 @@ if test -f "$file"; then
 
             python3 $helper_files/eval_propagator_map.py ../ $filename $homo $config_file 3.0 2000
 
-            python3 $helper_files/breaking_ana.py ../ $generation $individual
+            python3 $helper_files/breaking_ana.py ../ $filename
+
+            . $helper_files/collect_coord.sh ../ ./stretching.xyz tmp_coord.xyz
 
 
             #now everything is done

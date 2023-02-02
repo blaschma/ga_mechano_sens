@@ -1,117 +1,128 @@
-import numpy
-import os
 import sys
-import shutil
-import pickle
+import tmoutproc as top
 
-Ang2Bohr = 1.889725989
-Bohr2Ang = 1/Ang2Bohr
+"""
+This script can be used to strech coord file for stretching trajectories.
+@author: Matthias Blaschke
+"""
 
-template_dir = './templates/'
-tmtrans_in = 'tmtrans_control.in'
+def strech_on_z_coord(coord, disp, lower, upper):
+    """
+    Displaces atoms with z_coord < lower -disp/2 and atoms with z_coord>lower +disp/s. All coordinates between lower
+    and upper are proportionally stretched, like on a rubber band
 
-def replace(source_path, to_replace, replace_with, destination_path = ''):
-    temp_path = ''
-    if source_path == destination_path or destination_path == '':
-        temp_path = source_path + '.temp'
-        shutil.copyfile(source_path, temp_path)
-        destination_path = source_path
-        source_path = temp_path
-    source = open(source_path)
-    destination = open(destination_path, 'w')
+    Args:
+        coord (np.ndarray): Coord file from top
+        disp (float): displacement in Bohr
+        lower (float): Lower cut in Bohr
+        upper (float): Upper cut in Bohr
 
-    if isinstance(replace_with, str):
-        for line in source:
-            if to_replace in line:
-                line = line.replace(to_replace, replace_with)
-            destination.write(line)
-    elif isinstance(replace_with, list):
-        for line in source:
-            if to_replace in line: break
-            else: destination.write(line)
-        for line in replace_with:
-            destination.write(line)
-        for line in source:
-            destination.write(line)
+    Returns:
+        coord (np.ndarray): Stretched coord file
+    """
+    assert lower < upper, "Limits are not reasonable"
+    for i in range(0, coord.shape[1]):
+        if (coord[2,i] < lower):
+            coord[2,i] -= disp / 2
+        elif (coord[2,i] > upper):
+            coord[2,i] += disp / 2
+        else:  # stretch all atom coordinates in between limits
+            norm = (2 * coord[2,i] - upper - lower) / (upper - lower)
+            coord[2,i] += norm * disp / 2
+    return coord
+
+def stretch_on_indices(coord, disp, lower_index, upper_index):
+    """
+    Displaces atoms with z_coord <= z_coord[lower_index] -disp/2 and atoms with z_coord >= z_coord[lower_index] +disp/s.
+    All coordinates between lower and upper are proportionally stretched, like on a rubber band
+    Args:
+        coord (np.ndarray): Coord file from top
+        disp (float): displacement in Bohr
+        lower (int): Index of lower atom
+        upper (int): Index of uppper atom
+
+    Returns:
+        coord (np.ndarray): Stretched coord file
+    """
+    lower = coord[2,lower_index]
+    upper = coord[2, upper_index]
+    assert  lower < upper, "Indices are not reasonable"
+    for i in range(0, coord.shape[1]):
+        old = coord[2,i]
+        if (coord[2,i] <= lower):
+            coord[2,i] -= disp / 2
+        elif (coord[2,i] >= upper):
+            coord[2,i] += disp / 2
+        else:  # stretch all atom coordinates in between limits
+            norm = (2 * coord[2,i] - upper - lower) / (upper - lower)
+            coord[2,i] += norm * disp / 2
+        print(coord[2,i], old, coord[2,i])
+    return coord
+
+def find_fixed_atoms(coord):
+    """
+    Finds the first two fixed atoms in coord file
+    Args:
+        coord: coord file from top
+
+    Returns:
+        fixed_atoms (list): List with indices of fixed atoms
+    """
+    fixed_atoms = []
+    for i in range(0, coord.shape[1]):
+        if(coord[4,i] == "f"):
+            fixed_atoms.append(i)
+        if(len(fixed_atoms)==2):
+            break
+    return fixed_atoms
+
+def find_atom_index_by_type(coord, type):
+    """
+    Finds the first two atoms of type type in coord file
+    Args:
+        coord: coord file from top
+        type (String): Atom type to be found
+
+    Returns:
+        fixed_atoms (list): List with indices of fixed atoms
+    """
+    atoms = []
+    for i in range(0, coord.shape[1]):
+        if(coord[3,i] == type):
+            atoms.append(i)
+        if(len(atoms)==2):
+            break
+    return atoms
+
+if __name__ == '__main__':
+    coord_in_file_path = sys.argv[2]
+    coord_out_file_path = sys.argv[3]
+
+    disp = float(sys.argv[4]) * top.ANG2BOHR
+    coord_in_file = top.read_coord_file(coord_in_file_path)
+
+    #cuts are defined by zcoord
+    if(sys.argv[1] == "-zcoord"):
+        lower = float(sys.argv[5]) * top.ANG2BOHR
+        upper = float(sys.argv[6]) * top.ANG2BOHR
+        coord = strech_on_z_coord(coord_in_file, disp, lower, upper)
+    #cuts are defined by two fixed atoms. There can be only two fixed atoms. Mode is made for isolated molecules
+    elif(sys.argv[1] == "-fixed_atoms"):
+        fixed_atoms = find_fixed_atoms(coord_in_file)
+        assert len(fixed_atoms)==2, "Not two fixed atoms"
+        coord = stretch_on_indices(coord_in_file, disp, fixed_atoms[0], fixed_atoms[1])
+    #cuts are defined by two atoms of type sys.argv[5]
+    elif(sys.argv[1] == "-type"):
+        type = str(sys.argv[5])
+        atoms = find_atom_index_by_type(coord_in_file, type)
+        assert len(atoms)==2, "Not two atoms"
+        coord = stretch_on_indices(coord_in_file, disp, atoms[0], atoms[1])
     else:
-        print('replace_with has to be either a string or a list of strings. Exiting ...')
-        exit()
+        print("Usage")
+        print("jobgen.py [-zcoord] coords_in coords_out displacement[Ang] lower[Ang] upper[Ang]")
+        print("or")
+        print("jobgen.py [-fixed_sulfur] coords_in coords_out displacement[Ang]")
+        print("or")
+        print("jobgen.py [-type] coords_in coords_out displacement[Ang] type")
 
-    source.close()
-    destination.close()
-    if temp_path != '' and os.path.exists(temp_path): os.remove(temp_path)
-
-def read_coords(filename):
-    fi = open(filename, 'r') # input file
-    coords = []
-    elements = []
-    fixed = []
-    fi.readline()
-    for line in fi:
-        if('$' in line): break
-        sline = line.split()
-        coords.append(list(map(float, sline[0:3])))
-        elements.append(sline[3])
-        if(len(sline) == 4):
-            fixed.append(False)
-        elif(len(sline) == 5 and sline[4] in ['f', 'F']):
-            fixed.append(True)
-        else:
-            print('Check format of coord file! Exiting ...')
-            exit()
-    return numpy.array(coords), elements, fixed
-
-def write_coords(filename, coords, elements, fixed):
-    fo = open(filename, 'w') # output file
-    fo.write('$coord\n')
-    for i, element in enumerate(elements):
-        for d in range(3):
-            fo.write(str(coords[i][d]) + ' ')
-        fo.write(element + ' ' + ('f' if fixed[i] else '') + '\n')
-    fo.write('$user-defined bonds\n')
-    fo.write('$end\n')
-
-if len(sys.argv) > 1:
-    request = sys.argv[1]
-    if request == '-displace':
-        job_type = 'displace'
-        if len(sys.argv) > 2:
-            coord_in_file = sys.argv[2]
-            coord_out_file = sys.argv[3]
-            disp = float(sys.argv[4]) * Ang2Bohr
-            lower = float(sys.argv[5]) * Ang2Bohr
-            upper = float(sys.argv[6]) * Ang2Bohr
-    else:
-        print('Unknown job type.')
-        exit()
-else:
-    print('Usage:')
-    print('jobge.py -displace coords_in coords_out displacement[Ang] lower[Ang] upper[Ang]')
-    exit()
-
-##################################################################################################
-
-# moves all atoms within [-inf,lower] by -disp/2
-# and all atoms defined by [upper,+inf] by +disp/2
-# all other positions are not changed
-elastic = True
-# elastic stretching means that all coordinates between lower and upper are
-# proportionally stretched, like on a rubber band
-if job_type == 'displace':
-    if(lower > upper):
-        print('Check lowe/upper limits! ' + str(lower) + ' ' + str(upper))
-        print('Exiting ...')
-        exit()
-    coords, elements, fixed = read_coords(coord_in_file)
-    for i, element in enumerate(elements):
-        if(coords[i][2] < lower):
-            coords[i][2] -= disp/2
-        elif(coords[i][2] > upper):
-            coords[i][2] += disp/2
-        elif(elastic): # stretch all atom coordinates in between limits
-            norm = (2*coords[i][2] - upper - lower) / (upper - lower)
-            coords[i][2] += norm * disp/2
-    write_coords(coord_out_file, coords, elements, fixed)
-    #replace(template_dir + tmtrans_in,
-            #'#LOWER_LIMIT#', str(lower*Bohr2Ang), destination_path = tmtrans_in)
-    #replace(tmtrans_in, '#UPPER_LIMIT#', str(upper*Bohr2Ang))
+    top.write_coord_file(coord_out_file_path, coord)
