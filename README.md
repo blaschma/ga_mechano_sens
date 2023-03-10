@@ -1,6 +1,7 @@
 Genetic Algorithm
 ==============
-This code was developed for my Master thesis
+This code is part of "Designing Mechanosensitive Molecules from Building Blocks: A Genetic Algorithm-Based
+Approach"
 
 # TOC
 * [Requirements](#Requirements)
@@ -17,10 +18,10 @@ This code was developed for my Master thesis
 
 Requirements
 ------------
-* Top library from  [here](https://github.com/blaschma/turbomoleOuptputProcessing)
+* tmoutproc library from  [here](https://github.com/blaschma/tmoutproc). Tested with version 0.1
 * Queuing system slurm or GE
 * Python 3.x
-* Turbomole
+* [Turbomole](https://www.turbomole.org/). Version >7.5
 # Usage
 ## Preparation
 * Create directory where the evulution runs
