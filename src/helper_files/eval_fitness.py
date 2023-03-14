@@ -25,18 +25,13 @@ def load_transmission_data(gen_dir):
 	dirs = os.listdir(gen_dir)
 	dirs = [int(i) for i in dirs if os.path.isdir(gen_dir + "/" + i)]
 	dirs = sorted(dirs)
-	print(dirs)
 	dirs = [str(i) for i in dirs]
 	
 	T_estimates = list()
-	T_estimates_params = list()
 	T_estimates_params_list = list()
 
 	#read stiffness files and append stiffness and std to lists
 	for i in range(len(dirs)):
-		if(i==8):
-			#continue
-			pass
 		for file in os.listdir(gen_dir + "/" + dirs[i]):
 			if fnmatch.fnmatch(file, '*T_estimate.dat'):
 				transmission_file = file
@@ -48,9 +43,7 @@ def load_transmission_data(gen_dir):
 		param_file = open(gen_dir + "/" + dirs[i] + "/" + param_file)
 		T_estimates_params = list()
 		for line in param_file:
-			#print("line " + line)
 			T_estimates_params.append(float(line))
-		#print(dat_Content[1,:])
 		T_estimates.append(dat_Content)
 		T_estimates_params_list.append(T_estimates_params)
 
@@ -72,29 +65,26 @@ def process_T_estimate_data(T_est, gen_path):
 	NUM_COLORS = len(T_est)
 	cm = plt.get_cmap('nipy_spectral')
 	ax.set_prop_cycle('color', [cm(1.*i/NUM_COLORS) for i in range(NUM_COLORS)])
-	f = open(gen_path + "/T_est_data.dat", "w")
-	for i in range(len(T_est)):
-		if(i != 6 and i!=7 and i!=8 or True):
-			ax.plot(T_est[i][0,:], (T_est[i][1,:]), label=str(i))
-			dx = 0.1
-			dy = np.diff(T_est[i][1,:])/dx
-			#print(i)
-			
-			f.write(str(i)+"\n")
-			f.write("median " + str(np.median(T_est[i][1,:]))+"\n")
-			f.write("max derivate " + str(np.max(dy))+"\n")
-			f.write("median derivate " + str(np.median(dy))+"\n")
-			f.write("avg derivate " + str(np.average(dy))+"\n")
-			f.write("min derivate " + str(np.min(dy))+"\n")
-			f.write("max abs derivate " + str((np.max(np.abs(dy))))+"\n")
-			f.write("median abs derivate " + str(np.median(abs(dy)))+"\n")
-			f.write("min abs derivate " + str(np.min(abs(dy)))+"\n")
+	with open(gen_path + "/T_est_data.dat", "w") as f:
+		for i in range(len(T_est)):
+			if(i != 6 and i!=7 and i!=8 or True):
+				ax.plot(T_est[i][0,:], (T_est[i][1,:]), label=str(i))
+				dx = 0.1
+				dy = np.diff(T_est[i][1,:])/dx
 
-			f.write(".-.-.-.-."+"\n")
+				f.write(str(i)+"\n")
+				f.write("median " + str(np.median(T_est[i][1,:]))+"\n")
+				f.write("max derivate " + str(np.max(dy))+"\n")
+				f.write("median derivate " + str(np.median(dy))+"\n")
+				f.write("avg derivate " + str(np.average(dy))+"\n")
+				f.write("min derivate " + str(np.min(dy))+"\n")
+				f.write("max abs derivate " + str((np.max(np.abs(dy))))+"\n")
+				f.write("median abs derivate " + str(np.median(abs(dy)))+"\n")
+				f.write("min abs derivate " + str(np.min(abs(dy)))+"\n")
+
+				f.write(".-.-.-.-."+"\n")
 	ax.set_yscale('log')
-	f.close()
-	#ax.set_xlim(-0.1,0.1)
-	#ax.set_ylim(-0.0000001,0.00004)
+
 	ax.set_xlabel('Displacement ($\mathrm{\AA}$)',fontsize=20)
 	ax.set_ylabel('$\mathrm{T}_{\mathrm{estimate}}$',fontsize=20)
 	ax.legend(loc='lower left', ncol = 6, bbox_to_anchor=(0.,1.02,1.,.102), mode="expand", borderaxespad=0., fontsize=10)
@@ -148,12 +138,8 @@ def load_stiffness_data(gen_dir):
 		stiffness_file.close()
 
 		stiffness_line = stiffness_line.strip().split("	")
-		#print("stiffness_line")
-		#print(float(stiffness_line[0]))
-		#print(stiffness_line)
 		stiffness.append(float(stiffness_line[0]))
 		std_stiffness.append(float(stiffness_line[3]))
-
 
 	return stiffness, std_stiffness
 
@@ -170,9 +156,8 @@ def eval_fittness(stiffness, std_stiffness, T_est, T_estimates_params):
 		np.array: (fitness value)
 
 	"""
-	#print("eval fitness")
+
 	#evaluate stiffness part
-	#mean = 0
 	counter = 0
 	for i in range(len(stiffness)):
 
@@ -188,15 +173,8 @@ def eval_fittness(stiffness, std_stiffness, T_est, T_estimates_params):
 		else:
 			#mean+=stiffness[i]
 			counter+=1.
-	#mean = mean/counter
-	#print("stiffness")
-	#print(stiffness)
 	stiffness = np.asarray(stiffness)
-	#print("mean " + str(mean))
-	#fittness_stiffness = 1/(stiffness+mean)
 	fittness_stiffness = 1/(stiffness+0.005)
-	#print("fittness_stiffness")
-	#print(fittness_stiffness)
 
 	#evaluate T_estimate part
 	min_min_T_est = 5.0
@@ -209,24 +187,17 @@ def eval_fittness(stiffness, std_stiffness, T_est, T_estimates_params):
 			if(np.abs(T_estimates_params[i][1]/(T_estimates_params[i][0]+1E-12)) > 1.0):
 				fit_param.append(0)
 				median_penalty.append(0)
-				#print(np.abs(T_estimates_params[i][1]/(T_estimates_params[i][0]+1E-12)) )
-				#print(T_estimates_params)
-				#print("else fall oben ")
-		
+
 			else:
 				if(np.median(T_est[i][1])<1):
 					beta=1.2
 					gamma=2.0
 					nu=1.5
-					#print(1/(1+np.exp(-beta*(-np.log(np.median(T_est[i][1])))-gamma)))
 					median_penalty.append(1/(1+np.exp(beta*(-np.log(np.median(T_est[i][1])))-gamma)))
-					#print("wurzel")
-					#print(T_estimates_params[i][0])
 					fit_param.append((np.sqrt(T_estimates_params[i][0]))/(np.min(T_est[i][1]))*(((np.median(T_est[i][1])))/(np.min(T_est[i][1])))**nu)
 				else:
 					fit_param.append(T_estimates_params[i][0])
 					median_penalty.append(0)
-					#print("else fall")
 
 			min_T_est.append(T_estimates_params[i][2])
 			if(T_estimates_params[i][2] < min_min_T_est):
@@ -246,7 +217,6 @@ def eval_fittness(stiffness, std_stiffness, T_est, T_estimates_params):
 	print(median_penalty)
 	if((len(fittness_stiffness) != len(fittness_T_est)) or (len(fittness_stiffness) != len(median_penalty))):
 		raise ValueError('Lengths of fitness measures do not match')
-
 	
 	return fittness_stiffness,fittness_T_est,median_penalty
 
@@ -261,17 +231,13 @@ def write_fittness(fittness, path):
 		
 
 	"""
-	file = open(path + "/fitness.dat", "w")
-	for i in range(len(fittness[0])):
-		print(fittness[2])
-		file.write(str(fittness[0][i]*fittness[1][i]*fittness[2][i])+"\n")
+	with open(path + "/fitness.dat", "w") as file:
+		for i in range(len(fittness[0])):
+			print(fittness[2])
+			file.write(str(fittness[0][i]*fittness[1][i]*fittness[2][i])+"\n")
 	file.close()
+
 	top.write_plot_data(path + "/fittness_contribution", fitness, "stiffness, T_est, median_penalty")
-
-
-
-
-
 
 
 if __name__ == '__main__':
@@ -288,22 +254,10 @@ if __name__ == '__main__':
 
 	#eval fitness
 	fitness = eval_fittness(stiffness, std_stiffness, T_est, T_estimates_params_list)
-	#print("fitness unten")
-	#print(fittness)
 	write_fittness(fitness,path)
 
-	"""
-	"""
-	file = open(path + "/T_est_params", "w")
-	for i in range(len(T_estimates_params_list)):
-		file.write(str(T_estimates_params_list[i][0]).replace(".", ",")+"	"+str(T_estimates_params_list[i][1]).replace(".", ",")+"	"+str(T_estimates_params_list[i][2]).replace(".", ",")+"	"+str(T_estimates_params_list[i][3]).replace(".", ",") + "\n")
-	file.close()
-	#"""
-	#plot all T estimates
-	#"""
-	#print(T_est)
-	
+	with open(path + "/T_est_params", "w") as file:
+		for i in range(len(T_estimates_params_list)):
+			file.write(str(T_estimates_params_list[i][0]).replace(".", ",")+"	"+str(T_estimates_params_list[i][1]).replace(".", ",")+"	"+str(T_estimates_params_list[i][2]).replace(".", ",")+"	"+str(T_estimates_params_list[i][3]).replace(".", ",") + "\n")
 
-	#fittness = eval_fittness(stiffness, std_stiffness)
-	#
-	#"""
+

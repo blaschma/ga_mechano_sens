@@ -32,6 +32,7 @@ export PARA_ARCH=SMP
 #export SMPCPUS=$cpus_per_task
 cpus_per_task=$(head -n 1 ../complexity)
 export SMPCPUS=$cpus_per_task
+export OMP_NUM_THREADS=$cpus_per_task
 
 ulimit -s unlimited
 ulimit -a > mylimits.out
@@ -71,8 +72,8 @@ if [ "$prerelax" == "T" ]; then
     cp coord_fixed_again coord
     rm -r coord_fixed_again
     #align anchors along z again and update limits
-    python3 $helper_files/align_anchor_update_limits.py $dispdir/$(printf "%04d" $lastdir) $config_file        
-   
+    python3 $helper_files/align_anchor_update_limits.py $dispdir/$(printf "%04d" $lastdir) $config_file
+
 fi
 jobex -ri -c $relax_iterations -level $relax_level > jobex.log
 file=GEO_OPT_FAILED

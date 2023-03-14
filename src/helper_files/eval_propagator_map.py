@@ -40,8 +40,9 @@ def eval_T(disp_index, para):
 		print("error " + str(e))
 		return 0.0, float(disp_index)
 
-	s_range = top.find_c_range_atom("s", 1, directory + "/coord")
-	r_range = top.find_c_range_atom("s", 2, directory + "/coord")
+	coord = top.read_coord_file(directory + "/coord")
+	s_range = top.find_c_range_atom("s", 1, coord)
+	r_range = top.find_c_range_atom("s", 2, coord)
 
 	eigenvectors = np.asmatrix(eigenvectors)
 

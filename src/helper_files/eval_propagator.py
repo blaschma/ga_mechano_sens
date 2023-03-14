@@ -34,9 +34,9 @@ def eval_T(disp_index, para):
 	except ValueError as e: 
 		print("error " + str(e))
 		return 0.0, float(disp_index)
-
-	s_range = top.find_c_range_atom("s", 1, directory + "/coord")
-	r_range = top.find_c_range_atom("s", 2, directory + "/coord")
+	coord = top.read_coord_file(directory + "/coord")
+	s_range = top.find_c_range_atom("s", 1, coord)
+	r_range = top.find_c_range_atom("s", 2, coord)
 
 	e_f = (eigenvalues[n_occupied-1]+eigenvalues[n_occupied])/2.
 

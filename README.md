@@ -32,13 +32,13 @@ Requirements
 (With exemplary values. Adjust that to your calculations)
 ````
 [Basics]
-genetic_algorithm_path=/alcc/gpfs2/home/u/blaschma/Master_Code/genetic_algorithm 
-turbopath=/alcc/gpfs2/home/u/blaschma/programs/turbo.V7.5_backup/loadTurbo7_5.sh
-helper_files=/alcc/gpfs2/home/u/blaschma/Master_Code/genetic_algorithm/scr/helper_files/
-intel_path=/alcc/gpfs2/sw/intel/19
-archive_archive_path=/alcc/gpfs2/home/u/blaschma/relax_test/archive.dat
-calculation_path=/alcc/gpfs2/home/u/blaschma/relax_test/
-queuing= (SLURM or GE)
+genetic_algorithm_path=PATH TO GENETIC ALGORITHM 
+turbopath=PATH TO TURBOMOLE
+helper_files=PATH TO HELPER FILES
+intel_path=PATH TO INTEL Routines
+archive_archive_path=PATH TO ARCHIVE OF MOLECULES
+calculation_path=PATH TO CURRENT CALCULATION
+queuing=(SLURM or GE)
 
 [Genetic Algorithm]
 population_size=24
@@ -74,10 +74,12 @@ define_input=build_calc
 ````
 
 ## Flow Chart
-Insert picture
+Overview of program sequence:
+![Flow chart](./doc/flow_chart.png)
 
 ## Evolution
-Insert picture
+Evolution loop implemented in the algorithm:
+![Evolution loop](./doc/evolution_loop.png)
 
 # Standalone evaluation of molecules
 ## Stretching for molecules build from building blocks

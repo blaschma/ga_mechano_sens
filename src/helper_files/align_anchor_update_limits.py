@@ -144,6 +144,6 @@ if __name__ == '__main__':
 	#rotate and shift
 	coord = align_z_along_fixed_ends(coord, fixed_index[0], fixed_index[1])
 	#write coord file
-	top.write_coord_file(coord, sys.argv[1]+ "/coord")
+	top.write_coord_file(sys.argv[1]+ "/coord", coord)
 	#write limits
 	write_limits(sys.argv[1], coord, fixed_index[0], fixed_index[1], sys.argv[2])

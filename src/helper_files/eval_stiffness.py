@@ -22,7 +22,7 @@ def load_and_plot(molecule_name,n_atoms):
 
 	#load data
 	try:
-		data, headers = top.read_plot_data(molecule_name + "_totalEnergy.dat", return_header=True)
+		data = top.read_plot_data(molecule_name + "_totalEnergy.dat")
 	except ValueError as e:
 		print(e)
 		file = open(molecule_name + "_stiffness.dat", "w")

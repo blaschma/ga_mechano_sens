@@ -145,6 +145,7 @@ def construction_loop(genome : Genome, building_blocks, config_path, xyz_file_pa
 		coord = top.x2t(concat_xyz)
 		#fix right atoms
 		coord[4,fixed_beginning] = "f"
+		fixed_end = sum(np.array([xyz_file_parts[i].shape[1] for i in range(0,len(xyz_file_parts)-1)]))+fixed_end
 		coord[4, fixed_end] = "f"
 		top.write_coord_file(path+"/coord", coord)
 
