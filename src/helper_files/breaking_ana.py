@@ -16,7 +16,7 @@ F_breaking = 1.5E-9
 
 def calculate_s_s_dist(path, filename, write_out=False):
     """
-    Calculates distance of Sulfur atoms (fixed) in Angstroms for stretching procedure and stors it under {gen}_{ind}_s_s_dist.dat
+    Calculates distance of Sulfur atoms (fixed) in Angstroms for stretching procedure and stores it under {gen}_{ind}_s_s_dist.dat
     path: where disp_pos and disp_neg is located
     filename: prefix for output file
     """

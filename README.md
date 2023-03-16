@@ -49,6 +49,7 @@ insert_mutation_prob=0.5
 coupling_mutation_prob=0.5
 block_mutation_prob=0.5
 truncate_mutation_prob=0.5
+n_tournament_selection=2
 
 [Building Procedure]
 CC_bond_lengt=1.58
@@ -75,7 +76,10 @@ define_input=build_calc
 
 ## Flow Chart
 Overview of program sequence:
-![Flow chart](./doc/flow_chart.png)
+![Flow chart pic](./doc/flow_chart.png)
+The programm will create a folder structure similar to this:
+![Dir struc](./doc/dir_structure.png)
+
 
 ## Evolution
 Evolution loop implemented in the algorithm:
