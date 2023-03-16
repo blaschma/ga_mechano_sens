@@ -85,26 +85,14 @@ The programm will create a folder structure similar to this:
 Evolution loop implemented in the algorithm:
 ![Evolution loop](./doc/evolution_loop.png)
 
-# Standalone evaluation of molecules
-## Stretching for molecules build from building blocks
-Insert instructions here
-## Stretching for arbitrary isolated molecules
-Insert instructions here
-
-## Analysis for full transport calculations
-Some scripts can be used for the evaluation of full transport and stretching traces. Since the code was developed for the genetic algorithm, the usage is sometimes quite cumbersome. 
-### Breaking Analysis
-breaking_ana.py can be used to evaluate the force in full transport calculation (with ECC):
-* Prepare total energy file: 
-  * cd to disp_pos or disp_neg directory
-  * . eval_stiffness.sh <DIRECTORY_TO_PROCESS> <FILENAME> <config_file>
-  * <DIRECTORY_TO_PROCESS>: Where disp_pos and disp_neg are located
-  * FILENAME: Prefix of generated file generation_individual (-> Important for breaking analysis)
-  * <config_file> Not needed for standalone evaluation
-* Run breaking analysis: python3 <DIRECTORY_TO_PROCESS> <generation> <individual>
-  * <DIRECTORY_TO_PROCESS>: Where disp_pos and disp_neg are located
-  * generation: Generation for energy file
-  * individual: Individual for energy file -> generation_individual_totalEnergy.dat
+## Standalone evaluation of molecules
+### Stretching for molecules build from building blocks
+You can bypass the evolution and evaluate molecules directly build from building blocks by running directly 
+genome_to_molecule.py.
+### Stretching for arbitrary isolated molecules
+You can bypass the evolution and evaluate arbitrary molecules by running directly set_up_turbo_calculations.sh. 
+Generate folder structure as shown in the structure above. Place coord, coord.xyz, complexity and limits file, prepare 
+config file and rund set_up_turbo_calculations.sh.
 
 
 
