@@ -1,0 +1,7 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: Blaschke
+    given-names: Matthias
+title: "Designing mechanosensitive molecules from molecular building blocks: A genetic algorithm-based approach"
+version: 1.0.1
