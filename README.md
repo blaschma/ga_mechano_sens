@@ -13,8 +13,6 @@ Approach"
 * [Standalone evaluation of molecules](#Standalone evaluation of molecules)
 * [Stretching for molecules build from building blocks](#Stretching for molecules build from building blocks)
 * [Stretching for arbitrary isolated molecules](#Stretching for arbitrary isolated molecules)
-* [Analysis for full transport calculations](#Analysis for full transport calculations)
-  * [Breaking Analysis](#Breaking Analysis)
 
 Requirements
 ------------
